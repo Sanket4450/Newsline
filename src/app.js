@@ -2,11 +2,19 @@ require('dotenv').config({ path: '.env.dev' })
 
 const express = require('express')
 const cors = require('cors')
+const httpStatus = require('http-status')
+const Logger = require('./utils/logger')
 const connectDB = require('./config/db')
+const { userRouter, adminRouter } = require('./routes')
+const ApiError = require('./utils/ApiError')
+const messages = require('./constants/messages')
+const { errorConverter, errorHandler } = require('./middlewares/error')
 
 const port = process.env.PORT || 8888
 
 const app = express()
+
+global.Logger = Logger
 
 connectDB()
 
@@ -42,6 +50,17 @@ app.use(express.json())
 app.get('/', (_, res) => {
   res.send('App is running...')
 })
+
+app.use('/api', userRouter)
+app.use('/api/admin', adminRouter)
+
+app.use((_, __, next) => {
+  next(new ApiError(messages.ERROR.ROUTE_NOT_FOUND, httpStatus.NOT_FOUND))
+})
+
+app.use(errorConverter)
+
+app.use(errorHandler)
 
 app.listen(port, () => {
   console.log(`Server is listening on PORT: ${port}`)

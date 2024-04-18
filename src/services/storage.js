@@ -17,7 +17,7 @@ exports.uploadFile = async (folderName, fileName, file) => {
       if (err) {
         reject(
           new ApiError(
-            messages.SOMETHING_WENT_WRONG,
+            messages.ERROR.SOMETHING_WENT_WRONG,
             httpStatus.INTERNAL_SERVER_ERROR
           )
         )

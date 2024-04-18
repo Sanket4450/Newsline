@@ -1,5 +1,16 @@
 const messages = {
-  SOMETHING_WENT_WRONG: 'Something went wrong, please try again',
+  ERROR: {
+    ACCOUNT_EXISTS_WITH_EMAIL: 'Account already exists with this email',
+    INVALID_SECRET: 'Invalid Admin secret',
+    SOMETHING_WENT_WRONG: 'Something went wrong, please try again',
+    INVALID_TOKEN: 'Invalid token or signature',
+    TOKEN_EXPIRED: 'Token expired',
+    NOT_ALLOWED: 'Not allowed to do this action',
+    ROUTE_NOT_FOUND: 'Route not found',
+  },
+  SUCCESS: {
+    ACCOUNT_CREATED: 'Account created successfully',
+  },
 }
 
 module.exports = messages

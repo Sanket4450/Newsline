@@ -41,12 +41,13 @@ const accountSchema = new Schema({
     type: String,
   },
   language: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Language',
   },
   type: {
     type: String,
     enum: ['author', 'publisher'],
+    default: 'author',
   },
   role: {
     type: String,
@@ -55,19 +56,19 @@ const accountSchema = new Schema({
   },
   interests: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Topic',
     },
   ],
   followingAccounts: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Account',
     },
   ],
   followingTags: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Tag',
     },
   ],

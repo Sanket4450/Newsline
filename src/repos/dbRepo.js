@@ -1,3 +1,5 @@
+const domain = require('../models')
+
 class DbRepo {
   static findOne(collectionName, queryObject) {
     return new Promise((resolve, reject) => {
