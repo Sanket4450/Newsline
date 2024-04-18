@@ -1,0 +1,28 @@
+{
+  "name": "newsline",
+  "version": "1.0.0",
+  "description": "a news application where people can read, post, save & comment on news",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "Sanket4450",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1601.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "joi": "^17.12.3",
+    "mongoose": "^8.3.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
+    "swagger-ui-dist": "^5.15.2",
+    "swagger-ui-express": "^5.0.0",
+    "winston": "^3.13.0",
+    "yaml": "^2.4.1"
+  }
+}
