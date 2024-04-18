@@ -23,7 +23,14 @@ const login = {
   }),
 }
 
+const forgotPassword = {
+  body: joi.object({
+    email: emailValidation,
+  }),
+}
+
 module.exports = {
   register,
   login,
+  forgotPassword,
 }

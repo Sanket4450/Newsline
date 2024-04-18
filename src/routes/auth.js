@@ -15,4 +15,10 @@ router.post(
   authController.login
 )
 
+router.post(
+  '/forgot-password',
+  validate(authValidation.forgotPassword),
+  authController.forgotPassword
+)
+
 module.exports = router

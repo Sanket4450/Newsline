@@ -12,10 +12,14 @@ exports.verifyToken = (token, secret) => {
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {
         if (err.name === 'JsonWebTokenError') {
-          reject(new ApiError(messages.ERROR.INVALID_TOKEN, httpStatus.UNAUTHORIZED))
+          reject(
+            new ApiError(messages.ERROR.INVALID_TOKEN, httpStatus.UNAUTHORIZED)
+          )
         }
         if (err.name === 'TokenExpiredError') {
-          reject(new ApiError(messages.ERROR.TOKEN_EXPIRED, httpStatus.UNAUTHORIZED))
+          reject(
+            new ApiError(messages.ERROR.TOKEN_EXPIRED, httpStatus.UNAUTHORIZED)
+          )
         }
         reject(new ApiError(err.message, httpStatus.UNAUTHORIZED))
       } else {
@@ -38,5 +42,18 @@ exports.generateAccessToken = (accountId, role = 'user') => {
   return generateToken({
     payload,
     secret: process.env.ACCESS_TOKEN_SECRET,
+  })
+}
+
+exports.generateResetToken = (accountId) => {
+  Logger.info(`Inside generateResetToken => account = ${accountId}`)
+
+  const payload = {
+    sub: accountId,
+  }
+
+  return generateToken({
+    payload,
+    secret: process.env.RESET_TOKEN_SECRET,
   })
 }

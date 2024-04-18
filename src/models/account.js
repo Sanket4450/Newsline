@@ -19,6 +19,9 @@ const accountSchema = new Schema({
     type: String,
     required: true,
   },
+  resetPasswordOtp: {
+    type: Number,
+  },
   mobile: {
     type: Number,
     index: true,

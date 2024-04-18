@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const { Types } = require('mongoose')
 const bcrypt = require('bcryptjs')
 const httpStatus = require('http-status')
 const DbRepo = require('../repos/dbRepo')
@@ -16,4 +16,28 @@ exports.createAccount = (body) => {
   }
 
   return DbRepo.create(collections.ACCOUNT, { data })
+}
+
+exports.updateAccountById = (accountId, updateData = {}) => {
+  const query = {
+    _id: Types.ObjectId.createFromHexString(accountId),
+  }
+
+  const data = {
+    $set: {
+      ...updateData,
+    },
+  }
+
+  return DbRepo.updateOne(collections.ACCOUNT, { query, data })
+}
+
+exports.updateAccount = (query = {}, updateData = {}) => {
+  const data = {
+    $set: {
+      ...updateData,
+    },
+  }
+
+  return DbRepo.updateOne(collections.ACCOUNT, { query, data })
 }

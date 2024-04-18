@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const accountService = require('./account')
+const tokenService = require('./token')
+const emailService = require('./email')
 
 exports.checkAccountNotExistWithEmail = async (email) => {
   Logger.info(`Inside checkAccountNotExistWithEmail => email = ${email}`)
@@ -60,4 +62,25 @@ exports.loginAccount = async (body) => {
   const account = await accountService.getAccount({ email: body.email }, data)
 
   return { accountId: String(account._id), role: account.role }
+}
+
+exports.forgotPasswordWithEmail = async (email) => {
+  Logger.info(`Inside forgotPasswordWithEmail => email = ${email}`)
+
+  const account = await accountService.getAccount(
+    { email },
+    { fullName: 1 }
+  )
+
+  const otp = Math.floor(Math.random() * 9000) + 1000
+
+  const emailOptions = {
+    name: account.fullName ?? '',
+    email,
+    otp,
+  }
+
+  await emailService.sendResetOTP(emailOptions)
+
+  return { accountId: String(account._id), otp }
 }
