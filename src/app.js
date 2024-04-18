@@ -2,10 +2,13 @@ require('dotenv').config({ path: '.env.dev' })
 
 const express = require('express')
 const cors = require('cors')
+const connectDB = require('./config/db')
 
 const port = process.env.PORT || 8888
 
 const app = express()
+
+connectDB()
 
 app.use((_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
