@@ -1,6 +1,7 @@
 const messages = {
   ERROR: {
     ACCOUNT_EXISTS_WITH_EMAIL: 'Account already exists with this email',
+    ACCOUNT_NOT_EXIST_WITH_EMAIL: 'Account does not exist with this email',
     INVALID_SECRET: 'Invalid Admin secret',
     SOMETHING_WENT_WRONG: 'Something went wrong, please try again',
     INVALID_TOKEN: 'Invalid token or signature',

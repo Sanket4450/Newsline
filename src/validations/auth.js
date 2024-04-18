@@ -16,6 +16,14 @@ const register = {
   }),
 }
 
+const login = {
+  body: joi.object({
+    email: emailValidation,
+    password: passwordValidation,
+  }),
+}
+
 module.exports = {
   register,
+  login,
 }
