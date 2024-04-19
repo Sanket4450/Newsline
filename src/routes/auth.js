@@ -27,4 +27,10 @@ router.post(
   authController.verifyResetPasswordOtp
 )
 
+router.post(
+  '/reset-password',
+  validate(authValidation.resetPassword),
+  authController.resetPassword
+)
+
 module.exports = router

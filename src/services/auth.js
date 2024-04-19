@@ -56,9 +56,17 @@ exports.loginAccount = async (body) => {
 
   const data = {
     role: 1,
+    password: 1,
   }
 
   const account = await accountService.getAccount({ email: body.email }, data)
+
+  if (!await bcrypt.compare(body.password, account.password)) {
+    throw new ApiError(
+      messages.ERROR.INCORRECT_PASSWORD,
+      httpStatus.UNAUTHORIZED
+    )
+  }
 
   return { accountId: String(account._id), role: account.role }
 }
@@ -66,10 +74,7 @@ exports.loginAccount = async (body) => {
 exports.forgotPasswordWithEmail = async (email) => {
   Logger.info(`Inside forgotPasswordWithEmail => email = ${email}`)
 
-  const account = await accountService.getAccount(
-    { email },
-    { fullName: 1 }
-  )
+  const account = await accountService.getAccount({ email }, { fullName: 1 })
 
   const otp = Math.floor(Math.random() * 9000) + 1000
 
@@ -90,6 +95,19 @@ exports.verifyResetPasswordOtp = (otp, resetPasswordOtp) => {
   )
 
   if (otp !== resetPasswordOtp) {
-    throw new ApiError(messages.ERROR.INVALID_RESET_PASSWORD_OTP, httpStatus.UNAUTHORIZED)
+    throw new ApiError(
+      messages.ERROR.INVALID_RESET_PASSWORD_OTP,
+      httpStatus.UNAUTHORIZED
+    )
   }
+}
+
+exports.resetNewPassword = async (accountId, password) => {
+  Logger.info(`Inside resetNewPassword => accountId = ${accountId}`)
+
+  const hashedPassword = await bcrypt.hash(password, 10)
+
+  return accountService.updateAccountById(accountId, {
+    password: hashedPassword,
+  })
 }

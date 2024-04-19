@@ -2,6 +2,7 @@ const messages = {
   ERROR: {
     ACCOUNT_EXISTS_WITH_EMAIL: 'Account already exists with this email',
     ACCOUNT_NOT_EXIST_WITH_EMAIL: 'Account does not exist with this email',
+    INCORRECT_PASSWORD: 'Incorrect password',
     ACCOUNT_NOT_FOUND: 'Account not found',
     INVALID_SECRET: 'Invalid Admin secret',
     ERROR_SENDING_MAIL: 'Error sending mail',
@@ -17,6 +18,7 @@ const messages = {
     ACCOUNT_LOGGED_IN: 'Account logged in successfully',
     PASSWORD_RESET_OTP_SENT: 'Password reset OTP sent to your email',
     PASSWORD_RESET_OTP_VERIFIED: 'Password reset OTP verified successfully',
+    PASSWORD_RESET: 'Password reset successfully',
   },
   SUBJECT: {
     RESET_PASSWORD: 'Reset your password',

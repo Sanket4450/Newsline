@@ -38,9 +38,17 @@ const verifyResetPasswordOtp = {
   }),
 }
 
+const resetPassword = {
+  body: joi.object({
+    password: passwordValidation,
+    resetToken: stringReqValidation,
+  }),
+}
+
 module.exports = {
   register,
   login,
   forgotPassword,
   verifyResetPasswordOtp,
+  resetPassword,
 }

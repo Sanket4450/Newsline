@@ -97,3 +97,23 @@ exports.verifyResetPasswordOtp = catchAsyncErrors(async (req, res) => {
     messages.SUCCESS.PASSWORD_RESET_OTP_VERIFIED
   )
 })
+
+exports.resetPassword = catchAsyncErrors(async (req, res) => {
+  const body = req.body
+
+  const decoded = await tokenService.verifyToken(
+    body.resetToken,
+    process.env.RESET_TOKEN_SECRET
+  )
+
+  await accountService.checkAccountExistById(decoded.sub)
+
+  await authService.resetNewPassword(decoded.sub, body.password)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    {},
+    messages.SUCCESS.PASSWORD_RESET
+  )
+})
