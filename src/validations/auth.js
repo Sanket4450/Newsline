@@ -5,6 +5,8 @@ const {
   passwordValidation,
   booleanValidation,
   stringValidation,
+  otpValidation,
+  stringReqValidation,
 } = require('./common')
 
 const register = {
@@ -29,8 +31,16 @@ const forgotPassword = {
   }),
 }
 
+const verifyResetPasswordOtp = {
+  body: joi.object({
+    otp: otpValidation,
+    resetToken: stringReqValidation,
+  }),
+}
+
 module.exports = {
   register,
   login,
   forgotPassword,
+  verifyResetPasswordOtp,
 }

@@ -1,7 +1,6 @@
 const httpStatus = require('http-status')
 const catchAsyncErrors = require('../utils/catchAsyncErrors')
 const sendResponse = require('../utils/responseHandler')
-const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const {
   authService,
@@ -70,5 +69,31 @@ exports.forgotPassword = catchAsyncErrors(async (req, res) => {
     httpStatus.OK,
     { resetToken },
     messages.SUCCESS.PASSWORD_RESET_OTP_SENT
+  )
+})
+
+exports.verifyResetPasswordOtp = catchAsyncErrors(async (req, res) => {
+  const body = req.body
+
+  const decoded = await tokenService.verifyToken(
+    body.resetToken,
+    process.env.RESET_TOKEN_SECRET
+  )
+
+  const account = await accountService.checkAccountExistById(decoded.sub, {
+    resetPasswordOtp: 1,
+  })
+
+  authService.verifyResetPasswordOtp(body.otp, account.resetPasswordOtp)
+
+  await accountService.removeAccountFieldsById(decoded.sub, {
+    resetPasswordOtp: '',
+  })
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    {},
+    messages.SUCCESS.PASSWORD_RESET_OTP_VERIFIED
   )
 })

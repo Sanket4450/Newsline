@@ -55,5 +55,8 @@ exports.generateResetToken = (accountId) => {
   return generateToken({
     payload,
     secret: process.env.RESET_TOKEN_SECRET,
+    options: {
+      expiresIn: process.env.RESET_TOKEN_EXPIRY,
+    },
   })
 }

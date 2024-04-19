@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const accountService = require('./account')
-const tokenService = require('./token')
 const emailService = require('./email')
 
 exports.checkAccountNotExistWithEmail = async (email) => {
@@ -83,4 +82,14 @@ exports.forgotPasswordWithEmail = async (email) => {
   await emailService.sendResetOTP(emailOptions)
 
   return { accountId: String(account._id), otp }
+}
+
+exports.verifyResetPasswordOtp = (otp, resetPasswordOtp) => {
+  Logger.info(
+    `Inside verifyResetPasswordOtp => otp = ${otp} resetPasswordOtp = ${resetPasswordOtp}`
+  )
+
+  if (otp !== resetPasswordOtp) {
+    throw new ApiError(messages.ERROR.INVALID_RESET_PASSWORD_OTP, httpStatus.UNAUTHORIZED)
+  }
 }

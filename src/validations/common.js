@@ -27,6 +27,10 @@ const idValidation = stringValidation
 
 const idReqValidation = idValidation.required()
 
+const otpValidation = integerNumberReqValidation.min(1000).max(9999).messages({
+  'integer.pattern.base': 'OTP should be 4 digit number',
+})
+
 module.exports = {
   stringValidation,
   stringReqValidation,
@@ -44,4 +48,5 @@ module.exports = {
   pageAndLimit,
   idValidation,
   idReqValidation,
+  otpValidation,
 }
