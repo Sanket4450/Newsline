@@ -1,3 +1,4 @@
+const { Types } = require('mongoose')
 const httpStatus = require('http-status')
 const bcrypt = require('bcryptjs')
 const ApiError = require('../utils/ApiError')
@@ -61,7 +62,7 @@ exports.loginAccount = async (body) => {
 
   const account = await accountService.getAccount({ email: body.email }, data)
 
-  if (!await bcrypt.compare(body.password, account.password)) {
+  if (!(await bcrypt.compare(body.password, account.password))) {
     throw new ApiError(
       messages.ERROR.INCORRECT_PASSWORD,
       httpStatus.UNAUTHORIZED

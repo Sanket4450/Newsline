@@ -47,6 +47,10 @@ const accountSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Language',
   },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
   type: {
     type: String,
     enum: ['author', 'publisher'],

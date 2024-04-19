@@ -10,6 +10,10 @@ const sessionSchema = new Schema({
     type: String,
     required: true,
   },
+  lastActive: {
+    type: Date,
+    default: Date.now(),
+  },
 })
 
 module.exports = model('Session', sessionSchema)

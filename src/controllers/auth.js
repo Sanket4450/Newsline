@@ -110,6 +110,8 @@ exports.resetPassword = catchAsyncErrors(async (req, res) => {
 
   await authService.resetNewPassword(decoded.sub, body.password)
 
+  await sessionService.deleteAllSessions(decoded.sub)
+
   return sendResponse(
     res,
     httpStatus.OK,

@@ -1,7 +1,7 @@
 const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
-const { tokenService } = require('../services')
+const { tokenService, sessionService } = require('../services')
 
 exports.authChecker = async (req, _, next) => {
   try {
@@ -13,6 +13,10 @@ exports.authChecker = async (req, _, next) => {
       token,
       process.env.ACCESS_TOKEN_SECRET
     )
+
+    await sessionService.checkSessionExists(decoded.sub, token)
+    await sessionService.updateLastActive(token)
+
     req.user = decoded
     next()
   } catch (error) {
@@ -24,7 +28,9 @@ exports.authChecker = async (req, _, next) => {
 exports.authorizeRole = (role) => async (req, _, next) => {
   try {
     if (role !== req.user.role) {
-      return next(new ApiError(messages.ERROR.NOT_ALLOWED, httpStatus.FORBIDDEN))
+      return next(
+        new ApiError(messages.ERROR.NOT_ALLOWED, httpStatus.FORBIDDEN)
+      )
     }
     next()
   } catch (error) {

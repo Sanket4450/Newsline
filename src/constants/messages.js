@@ -10,6 +10,7 @@ const messages = {
     SOMETHING_WENT_WRONG: 'Something went wrong, please try again',
     INVALID_TOKEN: 'Invalid token or signature',
     TOKEN_EXPIRED: 'Token expired',
+    SESSION_NOT_FOUND: 'Session not found',
     NOT_ALLOWED: 'Not allowed to do this action',
     ROUTE_NOT_FOUND: 'Route not found',
   },
@@ -19,6 +20,7 @@ const messages = {
     PASSWORD_RESET_OTP_SENT: 'Password reset OTP sent to your email',
     PASSWORD_RESET_OTP_VERIFIED: 'Password reset OTP verified successfully',
     PASSWORD_RESET: 'Password reset successfully',
+    ACCOUNT_FETCHED: 'Account fetched successfully',
   },
   SUBJECT: {
     RESET_PASSWORD: 'Reset your password',
