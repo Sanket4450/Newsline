@@ -28,7 +28,7 @@ exports.register = catchAsyncErrors(async (req, res) => {
     res,
     httpStatus.OK,
     { accessToken },
-    messages.SUCCESS.ACCOUNT_CREATED
+    messages.SUCCESS.ACCOUNT_REGISTERED
   )
 })
 

@@ -31,6 +31,14 @@ const otpValidation = integerNumberReqValidation.min(1000).max(9999).messages({
   'integer.pattern.base': 'OTP should be 4 digit number',
 })
 
+const mobileValidation = numberValidation
+  .min(10 ** 9)
+  .max(10 ** 10 - 1)
+  .messages({
+    'number.min': 'Mobile number should be 10 digit',
+    'number.max': 'Mobile number should be 10 digit',
+  })
+
 module.exports = {
   stringValidation,
   stringReqValidation,
@@ -49,4 +57,5 @@ module.exports = {
   idValidation,
   idReqValidation,
   otpValidation,
+  mobileValidation,
 }

@@ -1,13 +1,10 @@
 const httpStatus = require('http-status')
+const folders = require('../constants/folders')
+const fields = require('../constants/fields')
 const catchAsyncErrors = require('../utils/catchAsyncErrors')
 const sendResponse = require('../utils/responseHandler')
 const messages = require('../constants/messages')
-const {
-  authService,
-  tokenService,
-  sessionService,
-  accountService,
-} = require('../services')
+const { accountService, fileService } = require('../services')
 
 exports.getAccount = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.sub
@@ -27,10 +24,18 @@ exports.getAccount = catchAsyncErrors(async (req, res) => {
     _id: 0,
   })
 
-  return sendResponse(
-    res,
-    httpStatus.OK,
-    { account },
-    messages.SUCCESS.ACCOUNT_FETCHED
-  )
+  return sendResponse(res, httpStatus.OK, { account }, messages.SUCCESS.ACCOUNT_FETCHED)
+})
+
+exports.createAccount = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.sub
+
+  const file = req.file
+  const body = req.body
+
+  await fileService.handleFile(file, folders.USER)
+
+  await accountService.updateAccountById(accountId, body)
+
+  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.ACCOUNT_CREATED)
 })

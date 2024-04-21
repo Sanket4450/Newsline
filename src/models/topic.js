@@ -5,7 +5,7 @@ const topicSchema = new Schema({
     type: String,
     required: true,
   },
-  imageKey: {
+  iconKey: {
     type: String,
     required: true,
   },
