@@ -66,23 +66,23 @@ exports.validateSelectedTopics = async (accountId) => {
   }
 }
 
-exports.addFileUrls = async (records) => {
+exports.addFileUrls = async (topics) => {
   try {
-    const updatedRecords = await Promise.all(
-      records.map(async (record) => {
-        const iconUrl = record.iconKey
-          ? await storageService.getFileUrl(record.iconKey)
+    const updatedTopics = await Promise.all(
+      topics.map(async (topic) => {
+        const iconUrl = topic.iconKey
+          ? await storageService.getFileUrl(topic.iconKey)
           : null
 
         return {
-          id: record._id,
-          title: record.title,
+          id: topic._id,
+          title: topic.title,
           iconUrl,
         }
       })
     )
 
-    return updatedRecords
+    return updatedTopics
   } catch (error) {
     throw new ApiError(
       error.message,

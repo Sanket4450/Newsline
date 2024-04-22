@@ -76,3 +76,23 @@ exports.updateAccount = catchAsyncErrors(async (req, res) => {
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.ACCOUNT_UPDATED)
 })
+
+exports.getPublishers = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+
+  let publishers = await accountService.getAccounts(
+    { type: 'publisher' },
+    { profileImageKey: 1, fullName: 1 }
+  )
+
+  publishers = await accountService.validateFollowedAccounts(accountId, publishers)
+
+  publishers = await accountService.addFileUrls(publishers)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { publishers },
+    messages.SUCCESS.PUBLISHERS_FETCHED
+  )
+})

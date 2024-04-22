@@ -24,4 +24,10 @@ userRouter.put(
   accountController.updateAccount
 )
 
+userRouter.get(
+  '/publishers',
+  authChecker,
+  accountController.getPublishers
+)
+
 module.exports = { userRouter }

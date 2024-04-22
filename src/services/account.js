@@ -4,6 +4,7 @@ const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
+const storageService = require('./storage')
 
 exports.getAccountById = (accountId, data = { _id: 1 }) => {
   const query = {
@@ -15,6 +16,10 @@ exports.getAccountById = (accountId, data = { _id: 1 }) => {
 
 exports.getAccount = (query = {}, data = { _id: 1 }) => {
   return DbRepo.findOne(collections.ACCOUNT, { query, data })
+}
+
+exports.getAccounts = (query = {}, data = { _id: 1 }) => {
+  return DbRepo.find(collections.ACCOUNT, { query, data })
 }
 
 exports.checkAccountExistById = async (accountId, data = { _id: 1 }) => {
@@ -85,4 +90,56 @@ exports.removeAccountFieldsById = (accountId, fields = {}) => {
   }
 
   return DbRepo.updateOne(collections.ACCOUNT, { query, data })
+}
+
+exports.validateFollowedAccounts = async (accountId, accounts) => {
+  try {
+    const { followingAccounts } = await exports.getAccountById(
+      accountId,
+      {
+        followingAccounts: 1,
+      }
+    )
+
+    accounts.forEach((account) => {
+      if (followingAccounts.includes(account._id)) {
+        account.isFollowed = true
+      } else {
+        account.isFollowed = false
+      }
+    })
+
+    return accounts
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
+
+exports.addFileUrls = async (accounts) => {
+  try {
+    const updatedAccounts = await Promise.all(
+      accounts.map(async (account) => {
+        const profileImageUrl = account.profileImageKey
+          ? await storageService.getFileUrl(account.profileImageKey)
+          : null
+
+        return {
+          id: account._id,
+          fullName: account.fullName,
+          isFollowed: account.isFollowed,
+          profileImageUrl,
+        }
+      })
+    )
+
+    return updatedAccounts
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
 }
