@@ -19,13 +19,45 @@ exports.checkAccountNotExistWithEmail = async (email) => {
   }
 }
 
-exports.checkAccountNotExistWithMobile = async (mobile) => {
-  Logger.info(`Inside checkAccountNotExistWithMobile => mobile = ${mobile}`)
+exports.checkAccountNotExistWithUserName = async (userName, accountId) => {
+  Logger.info(
+    `Inside checkAccountNotExistWithUserName => userName = ${userName}`
+  )
 
-  const account = await accountService.getAccount({ mobile })
+  const query = {
+    userName,
+    ...(accountId && {
+      _id: { $ne: Types.ObjectId.createFromHexString(accountId) },
+    }),
+  }
+
+  const account = await accountService.getAccount(query)
 
   if (account) {
-    throw new ApiError(messages.ERROR.ACCOUNT_EXISTS_WITH_MOBILE, httpStatus.CONFLICT)
+    throw new ApiError(
+      messages.ERROR.ACCOUNT_EXISTS_WITH_USERNAME,
+      httpStatus.CONFLICT
+    )
+  }
+}
+
+exports.checkAccountNotExistWithMobile = async (mobile, accountId) => {
+  Logger.info(`Inside checkAccountNotExistWithMobile => mobile = ${mobile}`)
+
+  const query = {
+    mobile,
+    ...(accountId && {
+      _id: { $ne: Types.ObjectId.createFromHexString(accountId) },
+    }),
+  }
+
+  const account = await accountService.getAccount(query)
+
+  if (account) {
+    throw new ApiError(
+      messages.ERROR.ACCOUNT_EXISTS_WITH_MOBILE,
+      httpStatus.CONFLICT
+    )
   }
 }
 

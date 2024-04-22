@@ -23,7 +23,12 @@ exports.getAccount = catchAsyncErrors(async (req, res) => {
     _id: 0,
   })
 
-  return sendResponse(res, httpStatus.OK, { account }, messages.SUCCESS.ACCOUNT_FETCHED)
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { account },
+    messages.SUCCESS.ACCOUNT_FETCHED
+  )
 })
 
 exports.setAccount = catchAsyncErrors(async (req, res) => {
@@ -31,6 +36,8 @@ exports.setAccount = catchAsyncErrors(async (req, res) => {
 
   const file = req.file
   const body = req.body
+
+  await authService.checkAccountNotExistWithUserName(body.userName)
 
   if (body.mobile) {
     await authService.checkAccountNotExistWithMobile(body.mobile)
@@ -44,4 +51,28 @@ exports.setAccount = catchAsyncErrors(async (req, res) => {
   await accountService.updateAccountById(accountId, body)
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.ACCOUNT_CREATED)
+})
+
+exports.updateAccount = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+
+  const file = req.file
+  const body = req.body
+
+  if (body.userName) {
+    await authService.checkAccountNotExistWithUserName(body.userName, accountId)
+  }
+
+  if (body.mobile) {
+    await authService.checkAccountNotExistWithMobile(body.mobile, accountId)
+  }
+
+  if (file) {
+    const profileImageKey = await fileService.handleFile(file, folders.USER)
+    body.profileImageKey = profileImageKey
+  }
+
+  await accountService.updateAccountById(accountId, body)
+
+  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.ACCOUNT_UPDATED)
 })

@@ -16,4 +16,12 @@ userRouter.post(
   accountController.setAccount
 )
 
+userRouter.put(
+  '/',
+  authChecker,
+  uploadFile(fields.PROFILE),
+  validate(accountValidation.updateAccount),
+  accountController.updateAccount
+)
+
 module.exports = { userRouter }

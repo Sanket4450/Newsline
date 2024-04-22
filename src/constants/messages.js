@@ -1,6 +1,7 @@
 const messages = {
   ERROR: {
     ACCOUNT_EXISTS_WITH_EMAIL: 'Account already exists with this email',
+    ACCOUNT_EXISTS_WITH_USERNAME: 'Account already exists with this User name',
     ACCOUNT_EXISTS_WITH_MOBILE:
       'Account already exists with this mobile number',
     ACCOUNT_NOT_EXIST_WITH_EMAIL: 'Account does not exist with this email',
@@ -35,6 +36,7 @@ const messages = {
     PASSWORD_RESET: 'Password reset successfully',
     ACCOUNT_CREATED: 'Account created successfully',
     ACCOUNT_FETCHED: 'Account fetched successfully',
+    ACCOUNT_UPDATED: 'Account updated successfully',
     TOPICS_FETCHED: 'Topics fetched successfully',
     TOPIC_CREATED: 'Topic created successfully',
   },

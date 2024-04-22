@@ -7,6 +7,7 @@ const accountSchema = new Schema(
     },
     userName: {
       type: String,
+      index: true,
     },
     profileImageKey: {
       type: String,
@@ -24,7 +25,6 @@ const accountSchema = new Schema(
     },
     mobile: {
       type: Number,
-      index: true,
     },
     dateOfBirth: {
       type: Date,
