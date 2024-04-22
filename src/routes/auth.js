@@ -1,36 +1,28 @@
-const router = require('express').Router()
+const userRouter = require('express').Router()
 const validate = require('../middlewares/validate')
 const { authValidation } = require('../validations')
 const { authController } = require('../controllers')
 
-router.post(
-  '/register',
-  validate(authValidation.register),
-  authController.register
-)
+userRouter.post('/register', validate(authValidation.register), authController.register)
 
-router.post(
-  '/login',
-  validate(authValidation.login),
-  authController.login
-)
+userRouter.post('/login', validate(authValidation.login), authController.login)
 
-router.post(
+userRouter.post(
   '/forgot-password',
   validate(authValidation.forgotPassword),
   authController.forgotPassword
 )
 
-router.post(
+userRouter.post(
   '/verify-reset-password-otp',
   validate(authValidation.verifyResetPasswordOtp),
   authController.verifyResetPasswordOtp
 )
 
-router.post(
+userRouter.post(
   '/reset-password',
   validate(authValidation.resetPassword),
   authController.resetPassword
 )
 
-module.exports = router
+module.exports = { userRouter }

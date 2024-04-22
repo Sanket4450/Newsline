@@ -1,15 +1,14 @@
 const httpStatus = require('http-status')
 const folders = require('../constants/folders')
-const fields = require('../constants/fields')
 const catchAsyncErrors = require('../utils/catchAsyncErrors')
 const sendResponse = require('../utils/responseHandler')
 const messages = require('../constants/messages')
 const { accountService, fileService, authService } = require('../services')
 
 exports.getAccount = catchAsyncErrors(async (req, res) => {
-  const accountId = req.user.sub
+  const accountId = req.user.accountId
 
-  const account = await accountService.checkAccountExistById(accountId, {
+  const account = await accountService.getAccountById(accountId, {
     fullName: 1,
     userName: 1,
     email: 1,
@@ -27,13 +26,11 @@ exports.getAccount = catchAsyncErrors(async (req, res) => {
   return sendResponse(res, httpStatus.OK, { account }, messages.SUCCESS.ACCOUNT_FETCHED)
 })
 
-exports.createAccount = catchAsyncErrors(async (req, res) => {
-  const accountId = req.user.sub
+exports.setAccount = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
 
   const file = req.file
   const body = req.body
-
-  await accountService.checkAccountExistById(accountId)
 
   if (body.mobile) {
     await authService.checkAccountNotExistWithMobile(body.mobile)
@@ -42,6 +39,7 @@ exports.createAccount = catchAsyncErrors(async (req, res) => {
   const profileImageKey = await fileService.handleFile(file, folders.USER)
 
   body.profileImageKey = profileImageKey
+  body.isProfileCompleted = true
 
   await accountService.updateAccountById(accountId, body)
 

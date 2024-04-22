@@ -7,7 +7,7 @@ const {
   dateValidation,
 } = require('./common')
 
-const createAccount = {
+const setAccount = {
   body: joi.object({
     fullName: stringValidation,
     userName: stringReqValidation,
@@ -21,5 +21,5 @@ const createAccount = {
 }
 
 module.exports = {
-  createAccount,
+  setAccount,
 }

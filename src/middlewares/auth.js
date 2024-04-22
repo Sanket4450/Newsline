@@ -1,7 +1,7 @@
 const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
-const { tokenService, sessionService } = require('../services')
+const { tokenService, accountService, sessionService } = require('../services')
 
 exports.authChecker = async (req, _, next) => {
   try {
@@ -14,10 +14,13 @@ exports.authChecker = async (req, _, next) => {
       process.env.ACCESS_TOKEN_SECRET
     )
 
-    await sessionService.checkSessionExists(decoded.sub, token)
+    const accountId = decoded.sub
+
+    await accountService.checkAccountExistById(accountId)
+    await sessionService.checkSessionExists(accountId, token)
     await sessionService.updateLastActive(token)
 
-    req.user = decoded
+    req.user = { accountId, ...decoded }
     next()
   } catch (error) {
     Logger.error(error)

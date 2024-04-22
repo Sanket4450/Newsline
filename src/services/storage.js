@@ -17,7 +17,10 @@ exports.uploadFile = async (folderName, fileName, file) => {
 
     return params.Key
   } catch (error) {
-    throw new ApiError(messages.ERROR.SOMETHING_WENT_WRONG, httpStatus.INTERNAL_SERVER_ERROR)
+    throw new ApiError(
+      messages.ERROR.SOMETHING_WENT_WRONG,
+      httpStatus.INTERNAL_SERVER_ERROR
+    )
   }
 }
 
@@ -34,6 +37,9 @@ exports.getFileUrl = async (Key) => {
 
     return signedUrl
   } catch (error) {
-    throw new ApiError(messages.ERROR.SOMETHING_WENT_WRONG, httpStatus.INTERNAL_SERVER_ERROR)
+    throw new ApiError(
+      messages.ERROR.SOMETHING_WENT_WRONG,
+      httpStatus.INTERNAL_SERVER_ERROR
+    )
   }
 }

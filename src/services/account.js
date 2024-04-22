@@ -36,7 +36,7 @@ exports.checkAccountExistById = async (accountId, data = { _id: 1 }) => {
   } catch (error) {
     throw new ApiError(
       error.message,
-      httpStatus.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
     )
   }
 }
