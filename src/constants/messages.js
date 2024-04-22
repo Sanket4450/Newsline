@@ -1,6 +1,7 @@
 const messages = {
   ERROR: {
     ACCOUNT_EXISTS_WITH_EMAIL: 'Account already exists with this email',
+    ACCOUNT_EXISTS_WITH_MOBILE: 'Account already exists with this mobile number',
     ACCOUNT_NOT_EXIST_WITH_EMAIL: 'Account does not exist with this email',
     INCORRECT_PASSWORD: 'Incorrect password',
     ACCOUNT_NOT_FOUND: 'Account not found',

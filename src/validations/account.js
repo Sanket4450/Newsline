@@ -1,11 +1,7 @@
 const joi = require('joi')
 
 const {
-  emailValidation,
-  passwordValidation,
-  booleanValidation,
   stringValidation,
-  otpValidation,
   stringReqValidation,
   mobileValidation,
   dateValidation,
@@ -21,7 +17,6 @@ const createAccount = {
     country: stringValidation,
     bio: stringValidation.max(200),
     website: stringValidation,
-    
   }),
 }
 

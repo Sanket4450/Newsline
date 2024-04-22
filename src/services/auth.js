@@ -19,6 +19,16 @@ exports.checkAccountNotExistWithEmail = async (email) => {
   }
 }
 
+exports.checkAccountNotExistWithMobile = async (mobile) => {
+  Logger.info(`Inside checkAccountNotExistWithMobile => mobile = ${mobile}`)
+
+  const account = await accountService.getAccount({ mobile })
+
+  if (account) {
+    throw new ApiError(messages.ERROR.ACCOUNT_EXISTS_WITH_MOBILE, httpStatus.CONFLICT)
+  }
+}
+
 exports.checkAccountExistWithEmail = async (email) => {
   Logger.info(`Inside checkAccountExistWithEmail => email = ${email}`)
 

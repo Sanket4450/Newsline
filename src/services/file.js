@@ -21,10 +21,11 @@ exports.handleFile = async (file, folderName) => {
   }
 
   const fileName = file.originalname
-  validateFileType(file.originalname)
+  validateFileType(fileName)
 
   const fileBuffer = fs.readFileSync(file.path)
 
-  const fileLocation = await storageService.uploadFile(folderName, fileName, fileBuffer)
-  console.log(fileLocation)
+  const fileKey = await storageService.uploadFile(folderName, fileName, fileBuffer)
+
+  return fileKey
 }

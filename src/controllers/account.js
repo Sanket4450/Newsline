@@ -4,7 +4,7 @@ const fields = require('../constants/fields')
 const catchAsyncErrors = require('../utils/catchAsyncErrors')
 const sendResponse = require('../utils/responseHandler')
 const messages = require('../constants/messages')
-const { accountService, fileService } = require('../services')
+const { accountService, fileService, authService } = require('../services')
 
 exports.getAccount = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.sub
@@ -33,7 +33,15 @@ exports.createAccount = catchAsyncErrors(async (req, res) => {
   const file = req.file
   const body = req.body
 
-  await fileService.handleFile(file, folders.USER)
+  await accountService.checkAccountExistById(accountId)
+
+  if (body.mobile) {
+    await authService.checkAccountNotExistWithMobile(body.mobile)
+  }
+
+  const profileImageKey = await fileService.handleFile(file, folders.USER)
+
+  body.profileImageKey = profileImageKey
 
   await accountService.updateAccountById(accountId, body)
 
