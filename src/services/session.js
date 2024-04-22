@@ -1,13 +1,13 @@
-const { Types } = require('mongoose')
 const httpStatus = require('http-status')
 const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
 const messages = require('../constants/messages')
 const ApiError = require('../utils/ApiError')
+const getObjectId = require('../utils/getObjectId')
 
 exports.createSession = (accountId, token) => {
   const data = {
-    accountId: Types.ObjectId.createFromHexString(accountId),
+    accountId: getObjectId(accountId),
     token,
   }
 
@@ -16,7 +16,7 @@ exports.createSession = (accountId, token) => {
 
 exports.checkSessionExists = async (accountId, token) => {
   const query = {
-    accountId: Types.ObjectId.createFromHexString(accountId),
+    accountId: getObjectId(accountId),
     token,
   }
 
@@ -44,7 +44,7 @@ exports.deleteAllSessions = (accountId) => {
   Logger.info(`Inside deleteAllSessions => accountId = ${accountId}`)
 
   const query = {
-    accountId: Types.ObjectId.createFromHexString(accountId),
+    accountId: getObjectId(accountId),
   }
 
   return DbRepo.deleteMany(collections.SESSION, { query })

@@ -1,8 +1,8 @@
-const { Types } = require('mongoose')
 const httpStatus = require('http-status')
 const bcrypt = require('bcryptjs')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
+const getObjectId = require('../utils/getObjectId')
 const accountService = require('./account')
 const emailService = require('./email')
 
@@ -27,7 +27,7 @@ exports.checkAccountNotExistWithUserName = async (userName, accountId) => {
   const query = {
     userName,
     ...(accountId && {
-      _id: { $ne: Types.ObjectId.createFromHexString(accountId) },
+      _id: { $ne: getObjectId(accountId) },
     }),
   }
 
@@ -47,7 +47,7 @@ exports.checkAccountNotExistWithMobile = async (mobile, accountId) => {
   const query = {
     mobile,
     ...(accountId && {
-      _id: { $ne: Types.ObjectId.createFromHexString(accountId) },
+      _id: { $ne: getObjectId(accountId) },
     }),
   }
 

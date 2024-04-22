@@ -1,16 +1,16 @@
-const { Types } = require('mongoose')
 const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
+const getObjectId = require('../utils/getObjectId')
 const accountService = require('./account')
 const storageService = require('./storage')
 
 exports.checkTopicExistById = async (topicId, data = { _id: 1 }) => {
   try {
     const query = {
-      _id: Types.ObjectId.createFromHexString(topicId),
+      _id: getObjectId(topicId),
     }
 
     const topic = await DbRepo.findOne(collections.TOPIC, { query, data })
@@ -101,7 +101,7 @@ exports.createTopic = (body) => {
 
 exports.updateTopicById = (topicId, updateData = {}) => {
   const query = {
-    _id: Types.ObjectId.createFromHexString(topicId),
+    _id: getObjectId(topicId),
   }
 
   const data = {

@@ -24,10 +24,13 @@ userRouter.put(
   accountController.updateAccount
 )
 
-userRouter.get(
-  '/publishers',
+userRouter.get('/publishers', authChecker, accountController.getPublishers)
+
+userRouter.patch(
+  '/toggle-follow',
   authChecker,
-  accountController.getPublishers
+  validate(accountValidation.toggleFollow),
+  accountController.toggleFollow
 )
 
 module.exports = { userRouter }

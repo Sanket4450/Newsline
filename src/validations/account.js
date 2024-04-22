@@ -5,7 +5,10 @@ const {
   stringReqValidation,
   mobileValidation,
   dateValidation,
+  booleanReqValidation,
+  idReqValidation,
 } = require('./common')
+const account = require('../models/account')
 
 const setAccount = {
   body: joi.object({
@@ -33,7 +36,15 @@ const updateAccount = {
   }),
 }
 
+const toggleFollow = {
+  body: joi.object({
+    accountId: idReqValidation,
+    isFollowed: booleanReqValidation,
+  }),
+}
+
 module.exports = {
   setAccount,
   updateAccount,
+  toggleFollow,
 }

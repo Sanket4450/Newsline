@@ -1,14 +1,14 @@
-const { Types } = require('mongoose')
 const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
+const getObjectId = require('../utils/getObjectId')
 const storageService = require('./storage')
 
 exports.getAccountById = (accountId, data = { _id: 1 }) => {
   const query = {
-    _id: Types.ObjectId.createFromHexString(accountId),
+    _id: getObjectId(accountId),
   }
 
   return DbRepo.findOne(collections.ACCOUNT, { query, data })
@@ -25,7 +25,7 @@ exports.getAccounts = (query = {}, data = { _id: 1 }) => {
 exports.checkAccountExistById = async (accountId, data = { _id: 1 }) => {
   try {
     const query = {
-      _id: Types.ObjectId.createFromHexString(accountId),
+      _id: getObjectId(accountId),
     }
 
     const account = await DbRepo.findOne(collections.ACCOUNT, { query, data })
@@ -56,7 +56,7 @@ exports.createAccount = (body) => {
 
 exports.updateAccountById = (accountId, updateData = {}) => {
   const query = {
-    _id: Types.ObjectId.createFromHexString(accountId),
+    _id: getObjectId(accountId),
   }
 
   const data = {
@@ -80,7 +80,7 @@ exports.updateAccount = (query = {}, updateData = {}) => {
 
 exports.removeAccountFieldsById = (accountId, fields = {}) => {
   const query = {
-    _id: Types.ObjectId.createFromHexString(accountId),
+    _id: getObjectId(accountId),
   }
 
   const data = {
@@ -94,12 +94,9 @@ exports.removeAccountFieldsById = (accountId, fields = {}) => {
 
 exports.validateFollowedAccounts = async (accountId, accounts) => {
   try {
-    const { followingAccounts } = await exports.getAccountById(
-      accountId,
-      {
-        followingAccounts: 1,
-      }
-    )
+    const { followingAccounts } = await exports.getAccountById(accountId, {
+      followingAccounts: 1,
+    })
 
     accounts.forEach((account) => {
       if (followingAccounts.includes(account._id)) {
@@ -142,4 +139,24 @@ exports.addFileUrls = async (accounts) => {
       error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
     )
   }
+}
+
+exports.toggleFollow = (followerAccountId, followingAccountId, isFollowed) => {
+  const query = isFollowed
+    ? {
+        _id: getObjectId(followerAccountId),
+        followingAccounts: { $ne: getObjectId(followingAccountId) },
+      }
+    : {
+        _id: getObjectId(followerAccountId),
+        followingAccounts: { $eq: getObjectId(followingAccountId) },
+      }
+
+  const data = {
+    [isFollowed ? '$push' : '$pull']: {
+      followingAccounts: getObjectId(followingAccountId),
+    },
+  }
+
+  return DbRepo.updateOne(collections.ACCOUNT, { query, data })
 }

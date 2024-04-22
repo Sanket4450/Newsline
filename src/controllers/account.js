@@ -85,7 +85,10 @@ exports.getPublishers = catchAsyncErrors(async (req, res) => {
     { profileImageKey: 1, fullName: 1 }
   )
 
-  publishers = await accountService.validateFollowedAccounts(accountId, publishers)
+  publishers = await accountService.validateFollowedAccounts(
+    accountId,
+    publishers
+  )
 
   publishers = await accountService.addFileUrls(publishers)
 
@@ -94,5 +97,25 @@ exports.getPublishers = catchAsyncErrors(async (req, res) => {
     httpStatus.OK,
     { publishers },
     messages.SUCCESS.PUBLISHERS_FETCHED
+  )
+})
+
+exports.toggleFollow = catchAsyncErrors(async (req, res) => {
+  const followerAccountId = req.user.accountId
+  const { accountId: followingAccountId, isFollowed } = req.body
+
+  await accountService.checkAccountExistById(followingAccountId)
+
+  await accountService.toggleFollow(
+    followerAccountId,
+    followingAccountId,
+    isFollowed
+  )
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { isFollowed },
+    `Account ${isFollowed ? 'Followed' : 'Unfollowed'} successfully`
   )
 })
