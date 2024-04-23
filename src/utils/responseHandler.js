@@ -1,10 +1,10 @@
 const sendResponse = (res, status, data = {}, message) => {
-    return res.status(status).json({
-        success: true,
-        code: status,
-        message: message || 'OK',
-        results: data,
-    })
+  return res.status(status).json({
+    success: true,
+    code: status,
+    message: message || 'OK',
+    results: data,
+  })
 }
 
-module.exports = sendResponse
+module.exports = { sendResponse }

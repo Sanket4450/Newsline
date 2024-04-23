@@ -24,6 +24,13 @@ userRouter.put(
   accountController.updateAccount
 )
 
+userRouter.put(
+  '/interests',
+  authChecker,
+  validate(accountValidation.setInterests),
+  accountController.setInterests
+)
+
 userRouter.get('/publishers', authChecker, accountController.getPublishers)
 
 userRouter.patch(

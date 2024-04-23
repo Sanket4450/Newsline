@@ -3,7 +3,7 @@ const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
-const getObjectId = require('../utils/getObjectId')
+const { getObjectId } = require('../utils/getObjectId')
 const storageService = require('./storage')
 
 exports.getAccountById = (accountId, data = { _id: 1 }) => {

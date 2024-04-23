@@ -3,7 +3,7 @@ const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
 const messages = require('../constants/messages')
 const ApiError = require('../utils/ApiError')
-const getObjectId = require('../utils/getObjectId')
+const { getObjectId } = require('../utils/getObjectId')
 
 exports.createSession = (accountId, token) => {
   const data = {

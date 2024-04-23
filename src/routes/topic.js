@@ -7,11 +7,7 @@ const { uploadFile } = require('../middlewares/multer')
 const { topicValidation } = require('../validations')
 const { topicController } = require('../controllers')
 
-userRouter.get(
-  '/',
-  authChecker,
-  topicController.getTopics
-)
+userRouter.get('/', authChecker, topicController.getTopics)
 
 adminRouter.post(
   '/',
@@ -20,6 +16,14 @@ adminRouter.post(
   uploadFile(fields.TOPIC),
   validate(topicValidation.createTopic),
   topicController.createTopic
+)
+
+adminRouter.delete(
+  '/',
+  authChecker,
+  authorizeRole('admin'),
+  validate(topicValidation.deleteTopic),
+  topicController.deleteTopic
 )
 
 module.exports = { userRouter, adminRouter }

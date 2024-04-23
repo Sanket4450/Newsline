@@ -7,8 +7,9 @@ const {
   dateValidation,
   booleanReqValidation,
   idReqValidation,
+  arrayReqValidation,
+  idValidation,
 } = require('./common')
-const account = require('../models/account')
 
 const setAccount = {
   body: joi.object({
@@ -36,6 +37,12 @@ const updateAccount = {
   }),
 }
 
+const setInterests = {
+  body: joi.object({
+    selectedInterests: arrayReqValidation.items(idValidation),
+  }),
+}
+
 const toggleFollow = {
   body: joi.object({
     accountId: idReqValidation,
@@ -46,5 +53,6 @@ const toggleFollow = {
 module.exports = {
   setAccount,
   updateAccount,
+  setInterests,
   toggleFollow,
 }

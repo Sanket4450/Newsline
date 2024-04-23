@@ -1,6 +1,9 @@
 const joi = require('joi')
 
-const { stringReqValidation } = require('./common')
+const {
+  stringReqValidation,
+  idReqValidation,
+} = require('./common')
 
 const createTopic = {
   body: joi.object({
@@ -8,6 +11,13 @@ const createTopic = {
   }),
 }
 
+const deleteTopic = {
+  body: joi.object({
+    topicId: idReqValidation,
+  }),
+}
+
 module.exports = {
   createTopic,
+  deleteTopic,
 }

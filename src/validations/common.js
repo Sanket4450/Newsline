@@ -13,6 +13,7 @@ const booleanReqValidation = booleanValidation.required()
 const dateValidation = joi.date()
 const dateReqValidation = joi.date().required()
 const arrayValidation = joi.array()
+const arrayReqValidation = arrayValidation.required()
 
 const pageAndLimit = {
   page: integerNumberValidation.min(1),
@@ -53,6 +54,7 @@ module.exports = {
   dateValidation,
   dateReqValidation,
   arrayValidation,
+  arrayReqValidation,
   pageAndLimit,
   idValidation,
   idReqValidation,

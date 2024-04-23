@@ -1,9 +1,16 @@
 const httpStatus = require('http-status')
 const folders = require('../constants/folders')
-const catchAsyncErrors = require('../utils/catchAsyncErrors')
-const sendResponse = require('../utils/responseHandler')
+const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
+const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
-const { accountService, fileService, authService } = require('../services')
+const { getObjectId } = require('../utils/getObjectId')
+const { removeDuplicates } = require('../utils/removeDuplicates')
+const {
+  accountService,
+  fileService,
+  authService,
+  topicService,
+} = require('../services')
 
 exports.getAccount = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
@@ -75,6 +82,27 @@ exports.updateAccount = catchAsyncErrors(async (req, res) => {
   await accountService.updateAccountById(accountId, body)
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.ACCOUNT_UPDATED)
+})
+
+exports.setInterests = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  const { selectedInterests } = req.body
+
+  const interests = removeDuplicates(selectedInterests)
+
+  for (let topicId of interests) {
+    await topicService.checkTopicExistById(topicId)
+    topicId = getObjectId(topicId)
+  }
+
+  await accountService.updateAccountById(accountId, { interests })
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    {},
+    messages.SUCCESS.INTERESTS_SELECTED
+  )
 })
 
 exports.getPublishers = catchAsyncErrors(async (req, res) => {

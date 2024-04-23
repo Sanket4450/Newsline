@@ -39,7 +39,9 @@ const messages = {
     ACCOUNT_UPDATED: 'Account updated successfully',
     TOPICS_FETCHED: 'Topics fetched successfully',
     TOPIC_CREATED: 'Topic created successfully',
+    TOPIC_DELETED: 'Topic deleted successfully',
     PUBLISHERS_FETCHED: 'Publishers fetched successfully',
+    INTERESTS_SELECTED: 'Interests selected successfully',
   },
   SUBJECT: {
     RESET_PASSWORD: 'Reset your password',

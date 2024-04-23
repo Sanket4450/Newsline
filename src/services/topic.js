@@ -3,7 +3,7 @@ const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
-const getObjectId = require('../utils/getObjectId')
+const { getObjectId } = require('../utils/getObjectId')
 const accountService = require('./account')
 const storageService = require('./storage')
 
@@ -111,4 +111,12 @@ exports.updateTopicById = (topicId, updateData = {}) => {
   }
 
   return DbRepo.updateOne(collections.TOPIC, { query, data })
+}
+
+exports.deleteTopic = (topicId) => {
+  const query = {
+    _id: getObjectId(topicId),
+  }
+
+  return DbRepo.deleteOne(collections.TOPIC, { query })
 }

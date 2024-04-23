@@ -2,7 +2,7 @@ const httpStatus = require('http-status')
 const bcrypt = require('bcryptjs')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
-const getObjectId = require('../utils/getObjectId')
+const { getObjectId } = require('../utils/getObjectId')
 const accountService = require('./account')
 const emailService = require('./email')
 

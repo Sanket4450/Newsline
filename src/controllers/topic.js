@@ -1,8 +1,8 @@
 const httpStatus = require('http-status')
 const folders = require('../constants/folders')
-const catchAsyncErrors = require('../utils/catchAsyncErrors')
+const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
 const ApiError = require('../utils/ApiError')
-const sendResponse = require('../utils/responseHandler')
+const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
 const { topicService, fileService } = require('../services')
 
@@ -40,4 +40,14 @@ exports.createTopic = catchAsyncErrors(async (req, res) => {
   await topicService.createTopic(body)
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.TOPIC_CREATED)
+})
+
+exports.deleteTopic = catchAsyncErrors(async (req, res) => {
+  const { topicId } = req.body
+
+  await topicService.checkTopicExistById(topicId)
+
+  await topicService.deleteTopic(topicId)
+
+  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.TOPIC_DELETED)
 })

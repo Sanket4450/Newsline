@@ -1,8 +1,13 @@
 const httpStatus = require('http-status')
-const catchAsyncErrors = require('../utils/catchAsyncErrors')
-const sendResponse = require('../utils/responseHandler')
+const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
+const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
-const { authService, tokenService, sessionService, accountService } = require('../services')
+const {
+  authService,
+  tokenService,
+  sessionService,
+  accountService,
+} = require('../services')
 
 exports.register = catchAsyncErrors(async (req, res) => {
   const body = req.body
@@ -19,7 +24,12 @@ exports.register = catchAsyncErrors(async (req, res) => {
 
   await sessionService.createSession(accountId, accessToken)
 
-  return sendResponse(res, httpStatus.OK, { accessToken }, messages.SUCCESS.ACCOUNT_REGISTERED)
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { accessToken },
+    messages.SUCCESS.ACCOUNT_REGISTERED
+  )
 })
 
 exports.login = catchAsyncErrors(async (req, res) => {
@@ -29,15 +39,23 @@ exports.login = catchAsyncErrors(async (req, res) => {
 
   const { accountId, role } = await authService.loginAccount(body)
 
-  const { isProfileCompleted } = await accountService.getAccountById(accountId, {
-    isProfileCompleted: 1,
-  })
+  const { isProfileCompleted } = await accountService.getAccountById(
+    accountId,
+    {
+      isProfileCompleted: 1,
+    }
+  )
 
   const accessToken = tokenService.generateAccessToken(accountId, role)
 
   await sessionService.createSession(accountId, accessToken)
 
-  return sendResponse(res, httpStatus.OK, { accessToken, isProfileCompleted }, messages.SUCCESS.ACCOUNT_LOGGED_IN)
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { accessToken, isProfileCompleted },
+    messages.SUCCESS.ACCOUNT_LOGGED_IN
+  )
 })
 
 exports.forgotPassword = catchAsyncErrors(async (req, res) => {
@@ -45,19 +63,29 @@ exports.forgotPassword = catchAsyncErrors(async (req, res) => {
 
   await authService.checkAccountExistWithEmail(body.email)
 
-  const { accountId, otp } = await authService.forgotPasswordWithEmail(body.email)
+  const { accountId, otp } = await authService.forgotPasswordWithEmail(
+    body.email
+  )
 
   await accountService.updateAccountById(accountId, { resetPasswordOtp: otp })
 
   const resetToken = tokenService.generateResetToken(accountId)
 
-  return sendResponse(res, httpStatus.OK, { resetToken }, messages.SUCCESS.PASSWORD_RESET_OTP_SENT)
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { resetToken },
+    messages.SUCCESS.PASSWORD_RESET_OTP_SENT
+  )
 })
 
 exports.verifyResetPasswordOtp = catchAsyncErrors(async (req, res) => {
   const body = req.body
 
-  const decoded = await tokenService.verifyToken(body.resetToken, process.env.RESET_TOKEN_SECRET)
+  const decoded = await tokenService.verifyToken(
+    body.resetToken,
+    process.env.RESET_TOKEN_SECRET
+  )
 
   const account = await accountService.checkAccountExistById(decoded.sub, {
     resetPasswordOtp: 1,
@@ -69,13 +97,21 @@ exports.verifyResetPasswordOtp = catchAsyncErrors(async (req, res) => {
     resetPasswordOtp: '',
   })
 
-  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.PASSWORD_RESET_OTP_VERIFIED)
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    {},
+    messages.SUCCESS.PASSWORD_RESET_OTP_VERIFIED
+  )
 })
 
 exports.resetPassword = catchAsyncErrors(async (req, res) => {
   const body = req.body
 
-  const decoded = await tokenService.verifyToken(body.resetToken, process.env.RESET_TOKEN_SECRET)
+  const decoded = await tokenService.verifyToken(
+    body.resetToken,
+    process.env.RESET_TOKEN_SECRET
+  )
 
   await accountService.checkAccountExistById(decoded.sub)
 
