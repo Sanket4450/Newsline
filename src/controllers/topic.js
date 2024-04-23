@@ -6,12 +6,8 @@ const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
 const { topicService, fileService } = require('../services')
 
-exports.getTopics = catchAsyncErrors(async (req, res) => {
-  const accountId = req.user.accountId
-  let topics
-
-  topics = await topicService.validateSelectedTopics(accountId)
-  topics = await topicService.addFileUrls(topics)
+exports.getTopics = catchAsyncErrors(async (_, res) => {
+  const topics = await topicService.getAllTopics({ title: 1 })
 
   return sendResponse(
     res,

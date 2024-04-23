@@ -92,6 +92,21 @@ exports.updateAccount = catchAsyncErrors(async (req, res) => {
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.ACCOUNT_UPDATED)
 })
 
+exports.getInterests = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  let interests
+
+  interests = await topicService.validateSelectedInterests(accountId)
+  interests = await topicService.addFileUrls(interests)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { interests },
+    messages.SUCCESS.INTERESTS_FETCHED
+  )
+})
+
 exports.setInterests = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
   const { selectedInterests } = req.body
@@ -126,7 +141,7 @@ exports.getPublishers = catchAsyncErrors(async (req, res) => {
     publishers
   )
 
-  publishers = await accountService.addFileUrls(publishers)
+  publishers = await accountService.addPublishersFileUrls(publishers)
 
   return sendResponse(
     res,
@@ -153,5 +168,38 @@ exports.toggleFollow = catchAsyncErrors(async (req, res) => {
     httpStatus.OK,
     { isFollowed },
     `Account ${isFollowed ? 'Followed' : 'Unfollowed'} successfully`
+  )
+})
+
+exports.getAdminAccounts = catchAsyncErrors(async (req, res) => {
+  let accounts = await accountService.getAccountsWithFilter(req.body)
+
+  accounts = await accountService.addAccountsFileUrls(accounts)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { accounts },
+    messages.SUCCESS.ACCOUNTS_FETCHED
+  )
+})
+
+exports.updateUserType = catchAsyncErrors(async (req, res) => {
+  const { accountId, userType } = req.body
+
+  await accountService.checkAccountExistById(accountId)
+
+  const updateData = {
+    type: userType,
+    isVerified: userType === 'publisher',
+  }
+
+  await accountService.updateAccountById(accountId, updateData)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { userType },
+    `User type is updated to ${userType}`
   )
 })

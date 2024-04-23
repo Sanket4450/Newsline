@@ -1,7 +1,8 @@
 const userRouter = require('express').Router()
+const adminRouter = require('express').Router()
 const fields = require('../constants/fields')
 const validate = require('../middlewares/validate')
-const { authChecker } = require('../middlewares/auth')
+const { authChecker, authorizeRole } = require('../middlewares/auth')
 const { uploadFile } = require('../middlewares/multer')
 const { accountValidation } = require('../validations')
 const { accountController } = require('../controllers')
@@ -24,6 +25,8 @@ userRouter.put(
   accountController.updateAccount
 )
 
+userRouter.get('/interests', authChecker, accountController.getInterests)
+
 userRouter.put(
   '/interests',
   authChecker,
@@ -40,4 +43,20 @@ userRouter.patch(
   accountController.toggleFollow
 )
 
-module.exports = { userRouter }
+adminRouter.post(
+  '/users',
+  authChecker,
+  authorizeRole('admin'),
+  validate(accountValidation.getAdminAccounts),
+  accountController.getAdminAccounts
+)
+
+adminRouter.patch(
+  '/user-type',
+  authChecker,
+  authorizeRole('admin'),
+  validate(accountValidation.updateUserType),
+  accountController.updateUserType
+)
+
+module.exports = { userRouter, adminRouter }

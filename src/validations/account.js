@@ -9,6 +9,7 @@ const {
   idReqValidation,
   arrayReqValidation,
   idValidation,
+  pageAndLimit,
 } = require('./common')
 
 const setAccount = {
@@ -50,9 +51,34 @@ const toggleFollow = {
   }),
 }
 
+const getAdminAccounts = {
+  body: joi.object({
+    search: stringValidation,
+    userType: stringValidation.valid('reader', 'author', 'publisher'),
+    sortBy: stringValidation.valid(
+      'userName_asc',
+      'userName_desc',
+      'email_asc',
+      'email_desc',
+      'newest_first',
+      'oldest_first'
+    ),
+    ...pageAndLimit,
+  }),
+}
+
+const updateUserType = {
+  body: joi.object({
+    accountId: idReqValidation,
+    userType: stringReqValidation.valid('reader', 'author', 'publisher'),
+  }),
+}
+
 module.exports = {
   setAccount,
   updateAccount,
   setInterests,
   toggleFollow,
+  getAdminAccounts,
+  updateUserType,
 }

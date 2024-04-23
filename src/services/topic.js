@@ -32,16 +32,11 @@ exports.getTopic = (query = {}, data = { _id: 1 }) => {
   return DbRepo.findOne(collections.TOPIC, { query, data })
 }
 
-exports.getAllTopics = () => {
-  const data = {
-    title: 1,
-    iconKey: 1,
-  }
-
+exports.getAllTopics = (data = { title: 1, iconKey: 1 }) => {
   return DbRepo.find(collections.TOPIC, { data })
 }
 
-exports.validateSelectedTopics = async (accountId) => {
+exports.validateSelectedInterests = async (accountId) => {
   try {
     const topics = await exports.getAllTopics()
 
