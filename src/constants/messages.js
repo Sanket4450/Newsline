@@ -29,6 +29,9 @@ const messages = {
     TOPIC_NOT_FOUND: 'Topic not found',
     ROUTE_NOT_FOUND: 'Route not found',
     TOPIC_EXISTS_WITH_TITLE: 'Topic already exists with this title',
+    TAG_NOT_FOUND: 'Tag not found',
+    INVALID_JSON: 'Invalid JSON, please provide valid JSON form-data',
+    NOT_ALLOWED_TO_POST_STORY: 'Your account is not allowed to post a story',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',
@@ -47,6 +50,7 @@ const messages = {
     INTERESTS_SELECTED: 'Interests selected successfully',
     ACCOUNTS_FETCHED: 'Accounts fetched successfully',
     TOPICS_FETCHED: 'Topics fetched successfully',
+    STORY_CREATED: 'Story created successfully',
   },
   SUBJECT: {
     REGISTER_ACCOUNT: 'Register your account',

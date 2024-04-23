@@ -7,7 +7,12 @@ const messages = require('../constants/messages')
 const { topicService, fileService } = require('../services')
 
 exports.getTopics = catchAsyncErrors(async (_, res) => {
-  const topics = await topicService.getAllTopics({ title: 1 })
+  let topics = await topicService.getAllTopics({ title: 1 })
+
+  topics = topics.map((topic) => ({
+    id: topic._id,
+    title: topic.title,
+  }))
 
   return sendResponse(
     res,

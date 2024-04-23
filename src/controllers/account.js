@@ -65,7 +65,34 @@ exports.setAccount = catchAsyncErrors(async (req, res) => {
 
   await accountService.updateAccountById(accountId, body)
 
-  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.ACCOUNT_CREATED)
+  const account = await accountService.getAccountById(accountId, {
+    fullName: 1,
+    userName: 1,
+    profileImageKey: 1,
+    email: 1,
+    mobile: 1,
+    dateOfBirth: 1,
+    gender: 1,
+    country: 1,
+    bio: 1,
+    website: 1,
+    language: 1,
+    isVerified: 1,
+    _id: 0,
+  })
+
+  account._doc.profileImageUrl = account.profileImageKey
+    ? await storageService.getFileUrl(account.profileImageKey)
+    : null
+
+  delete account._doc.profileImageKey
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { account },
+    messages.SUCCESS.ACCOUNT_CREATED
+  )
 })
 
 exports.updateAccount = catchAsyncErrors(async (req, res) => {

@@ -46,6 +46,24 @@ exports.checkAccountExistById = async (accountId, data = { _id: 1 }) => {
   }
 }
 
+exports.validateAccountType = async (accountId) => {
+  try {
+    const { type } = await exports.getAccountById(accountId, { type: 1 })
+
+    if (type !== 'author' && type !== 'publisher') {
+      throw new ApiError(
+        messages.ERROR.NOT_ALLOWED_TO_POST_STORY,
+        httpStatus.FORBIDDEN
+      )
+    }
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
+
 exports.createAccount = (body) => {
   const data = {
     ...body,
