@@ -18,6 +18,13 @@ const register = {
   }),
 }
 
+const verifyRegisterOtp = {
+  body: joi.object({
+    otp: otpValidation,
+    registerToken: stringReqValidation,
+  }),
+}
+
 const login = {
   body: joi.object({
     email: emailValidation,
@@ -47,6 +54,7 @@ const resetPassword = {
 
 module.exports = {
   register,
+  verifyRegisterOtp,
   login,
   forgotPassword,
   verifyResetPasswordOtp,

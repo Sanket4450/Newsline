@@ -9,6 +9,8 @@ const messages = {
     ACCOUNT_NOT_FOUND: 'Account not found',
     INVALID_SECRET: 'Invalid Admin secret',
     ERROR_SENDING_MAIL: 'Error sending mail',
+    INVALID_REGISTER_OTP: 'Invalid registeration OTP',
+    EMAIL_NOT_VERIFIED: 'Email is not verified',
     INVALID_RESET_PASSWORD_OTP: 'Invalid reset password OTP',
     SOMETHING_WENT_WRONG: 'Something went wrong, please try again',
     INVALID_TOKEN: 'Invalid token or signature',
@@ -29,6 +31,7 @@ const messages = {
     TOPIC_EXISTS_WITH_TITLE: 'Topic already exists with this title',
   },
   SUCCESS: {
+    REGISTER_OTP_SENT: 'Registration OTP sent to your email',
     ACCOUNT_REGISTERED: 'Account registered successfully',
     ACCOUNT_LOGGED_IN: 'Account logged in successfully',
     PASSWORD_RESET_OTP_SENT: 'Password reset OTP sent to your email',
@@ -46,6 +49,7 @@ const messages = {
     TOPICS_FETCHED: 'Topics fetched successfully',
   },
   SUBJECT: {
+    REGISTER_ACCOUNT: 'Register your account',
     RESET_PASSWORD: 'Reset your password',
   },
 }

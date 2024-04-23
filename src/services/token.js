@@ -29,6 +29,22 @@ exports.verifyToken = (token, secret) => {
   })
 }
 
+exports.generateRegisterToken = (accountId) => {
+  Logger.info(`Inside generateRegisterToken => account = ${accountId}`)
+
+  const payload = {
+    sub: accountId,
+  }
+
+  return generateToken({
+    payload,
+    secret: process.env.REGISTER_TOKEN_SECRET,
+    options: {
+      expiresIn: process.env.REGISTER_TOKEN_EXPIRY,
+    },
+  })
+}
+
 exports.generateAccessToken = (accountId, role = 'user') => {
   Logger.info(
     `Inside generateAccessToken => account = ${accountId} role = ${role}`

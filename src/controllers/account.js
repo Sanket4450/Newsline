@@ -89,7 +89,34 @@ exports.updateAccount = catchAsyncErrors(async (req, res) => {
 
   await accountService.updateAccountById(accountId, body)
 
-  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.ACCOUNT_UPDATED)
+  const account = await accountService.getAccountById(accountId, {
+    fullName: 1,
+    userName: 1,
+    profileImageKey: 1,
+    email: 1,
+    mobile: 1,
+    dateOfBirth: 1,
+    gender: 1,
+    country: 1,
+    bio: 1,
+    website: 1,
+    language: 1,
+    isVerified: 1,
+    _id: 0,
+  })
+
+  account._doc.profileImageUrl = account.profileImageKey
+    ? await storageService.getFileUrl(account.profileImageKey)
+    : null
+
+  delete account._doc.profileImageKey
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { account },
+    messages.SUCCESS.ACCOUNT_UPDATED
+  )
 })
 
 exports.getInterests = catchAsyncErrors(async (req, res) => {
@@ -111,19 +138,26 @@ exports.setInterests = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
   const { selectedInterests } = req.body
 
-  const interests = removeDuplicates(selectedInterests)
+  const updatedInterests = removeDuplicates(selectedInterests)
 
-  for (let topicId of interests) {
+  for (let topicId of updatedInterests) {
     await topicService.checkTopicExistById(topicId)
     topicId = getObjectId(topicId)
   }
 
-  await accountService.updateAccountById(accountId, { interests })
+  await accountService.updateAccountById(accountId, {
+    interests: updatedInterests,
+  })
+
+  let interests
+
+  interests = await topicService.validateSelectedInterests(accountId)
+  interests = await topicService.addFileUrls(interests)
 
   return sendResponse(
     res,
     httpStatus.OK,
-    {},
+    { interests },
     messages.SUCCESS.INTERESTS_SELECTED
   )
 })

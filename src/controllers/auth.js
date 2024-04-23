@@ -18,7 +18,44 @@ exports.register = catchAsyncErrors(async (req, res) => {
     authService.checkSecret(body.secret)
   }
 
-  const { accountId, role } = await authService.createAccount(body)
+  const { otp } = await authService.sendRegisterOtp(body.email)
+  body.otp = otp
+
+  const { accountId } = await authService.createAccount(body)
+
+  const registerToken = tokenService.generateRegisterToken(accountId)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { registerToken },
+    messages.SUCCESS.REGISTER_OTP_SENT
+  )
+})
+
+exports.verifyRegisterOtp = catchAsyncErrors(async (req, res) => {
+  const body = req.body
+
+  const decoded = await tokenService.verifyToken(
+    body.registerToken,
+    process.env.REGISTER_TOKEN_SECRET
+  )
+
+  const account = await accountService.checkAccountExistById(decoded.sub, {
+    registerOtp: 1,
+    role: 1,
+  })
+
+  const accountId = String(account._id)
+  const role = account.role
+
+  authService.verifyRegisterOtp(body.otp, account.registerOtp)
+
+  await accountService.removeAccountFieldsById(accountId, {
+    registerOtp: '',
+  })
+
+  await accountService.updateAccountById(accountId, { isEmailVerified: true })
 
   const accessToken = tokenService.generateAccessToken(accountId, role)
 
@@ -35,9 +72,13 @@ exports.register = catchAsyncErrors(async (req, res) => {
 exports.login = catchAsyncErrors(async (req, res) => {
   const body = req.body
 
-  await authService.checkAccountExistWithEmail(body.email)
+  const { accountId, role } = await authService.checkAccountExistWithEmail(
+    body.email
+  )
 
-  const { accountId, role } = await authService.loginAccount(body)
+  await authService.checkEmailVerified(accountId)
+
+  await authService.loginAccount(body)
 
   const { isProfileCompleted } = await accountService.getAccountById(
     accountId,

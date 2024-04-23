@@ -20,6 +20,13 @@ const accountSchema = new Schema(
       type: String,
       required: true,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    registerOtp: {
+      type: Number,
+    },
     resetPasswordOtp: {
       type: Number,
     },

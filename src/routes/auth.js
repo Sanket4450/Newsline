@@ -3,7 +3,17 @@ const validate = require('../middlewares/validate')
 const { authValidation } = require('../validations')
 const { authController } = require('../controllers')
 
-userRouter.post('/register', validate(authValidation.register), authController.register)
+userRouter.post(
+  '/register',
+  validate(authValidation.register),
+  authController.register
+)
+
+userRouter.post(
+  '/verify-register-otp',
+  validate(authValidation.verifyRegisterOtp),
+  authController.verifyRegisterOtp
+)
 
 userRouter.post('/login', validate(authValidation.login), authController.login)
 

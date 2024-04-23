@@ -31,6 +31,28 @@ const sendMail = async ({ email, subject, templateFile, data }) => {
   }
 }
 
+exports.sendRegisterOTP = async ({ email, otp }) => {
+  try {
+    Logger.info(`Inside sendRegisterOTP => email = ${email}, otp = ${otp}`)
+
+    const templateFile = path.join(__dirname, '../views/registerOtp.ejs')
+
+    sendMail({
+      email,
+      subject: messages.SUBJECT.REGISTER_ACCOUNT,
+      templateFile,
+      data: { otp },
+    })
+  } catch (error) {
+    Logger.error(`sendRegisterOTP error => ${error}`)
+
+    throw new ApiError(
+      messages.ERROR.SOMETHING_WENT_WRONG,
+      httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
+
 exports.sendResetOTP = async ({ name, email, otp }) => {
   try {
     Logger.info(

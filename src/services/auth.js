@@ -2,6 +2,7 @@ const httpStatus = require('http-status')
 const bcrypt = require('bcryptjs')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
+const { generateOtp } = require('../utils/generateOtp')
 const { getObjectId } = require('../utils/getObjectId')
 const accountService = require('./account')
 const emailService = require('./email')
@@ -64,12 +65,29 @@ exports.checkAccountNotExistWithMobile = async (mobile, accountId) => {
 exports.checkAccountExistWithEmail = async (email) => {
   Logger.info(`Inside checkAccountExistWithEmail => email = ${email}`)
 
-  const account = await accountService.getAccount({ email })
+  const account = await accountService.getAccount({ email }, { role: 1 })
 
   if (!account) {
     throw new ApiError(
       messages.ERROR.ACCOUNT_NOT_EXIST_WITH_EMAIL,
       httpStatus.CONFLICT
+    )
+  }
+
+  return { accountId: String(account._id), role: account.role }
+}
+
+exports.checkEmailVerified = async (accountId) => {
+  Logger.info(`Inside checkEmailVerified => account = ${accountId}`)
+
+  const { isEmailVerified } = await accountService.getAccountById(accountId, {
+    isEmailVerified: 1,
+  })
+
+  if (!isEmailVerified) {
+    throw new ApiError(
+      messages.ERROR.EMAIL_NOT_VERIFIED,
+      httpStatus.UNAUTHORIZED
     )
   }
 }
@@ -80,6 +98,21 @@ exports.checkSecret = (secret) => {
   }
 }
 
+exports.sendRegisterOtp = async (email) => {
+  Logger.info(`Inside sendRegisterOtp => email = ${email}`)
+
+  const otp = generateOtp()
+
+  const emailOptions = {
+    email,
+    otp,
+  }
+
+  await emailService.sendRegisterOTP(emailOptions)
+
+  return { otp }
+}
+
 exports.createAccount = async (body) => {
   Logger.info(`Inside createAccount => body = ${body}`)
 
@@ -88,10 +121,24 @@ exports.createAccount = async (body) => {
   const account = await accountService.createAccount({
     email: body.email,
     password: hashedPassword,
+    registerOtp: body.otp,
     role: body.isAdmin && body.isAdmin === true ? 'admin' : 'user',
   })
 
-  return { accountId: String(account._id), role: account.role }
+  return { accountId: String(account._id) }
+}
+
+exports.verifyRegisterOtp = (otp, registerOtp) => {
+  Logger.info(
+    `Inside verifyRegisterOtp => otp = ${otp} registerOtp = ${registerOtp}`
+  )
+
+  if (otp !== registerOtp) {
+    throw new ApiError(
+      messages.ERROR.INVALID_REGISTER_OTP,
+      httpStatus.UNAUTHORIZED
+    )
+  }
 }
 
 exports.loginAccount = async (body) => {
@@ -110,8 +157,6 @@ exports.loginAccount = async (body) => {
       httpStatus.UNAUTHORIZED
     )
   }
-
-  return { accountId: String(account._id), role: account.role }
 }
 
 exports.forgotPasswordWithEmail = async (email) => {
@@ -119,7 +164,7 @@ exports.forgotPasswordWithEmail = async (email) => {
 
   const account = await accountService.getAccount({ email }, { fullName: 1 })
 
-  const otp = Math.floor(Math.random() * 9000) + 1000
+  const otp = generateOtp()
 
   const emailOptions = {
     name: account.fullName ?? '',

@@ -2,7 +2,7 @@ const fields = {
   PROFILE: 'profileImage',
   LANGUAGE: 'image',
   TOPIC: 'icon',
-  STORY: 'image',
+  STORY: 'coverImage',
 }
 
 module.exports = fields

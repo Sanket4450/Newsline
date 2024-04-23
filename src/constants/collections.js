@@ -3,6 +3,7 @@ const collections = {
   SESSION: 'Session',
   LANGUAGE: 'Language',
   TOPIC: 'Topic',
+  STORY: 'Story',
   TAG: 'Tag',
 }
 
