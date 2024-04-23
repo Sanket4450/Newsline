@@ -10,6 +10,7 @@ const {
   fileService,
   authService,
   topicService,
+  storageService,
 } = require('../services')
 
 exports.getAccount = catchAsyncErrors(async (req, res) => {
@@ -18,6 +19,7 @@ exports.getAccount = catchAsyncErrors(async (req, res) => {
   const account = await accountService.getAccountById(accountId, {
     fullName: 1,
     userName: 1,
+    profileImageKey: 1,
     email: 1,
     mobile: 1,
     dateOfBirth: 1,
@@ -29,6 +31,12 @@ exports.getAccount = catchAsyncErrors(async (req, res) => {
     isVerified: 1,
     _id: 0,
   })
+
+  account._doc.profileImageUrl = account.profileImageKey
+    ? await storageService.getFileUrl(account.profileImageKey)
+    : null
+
+  delete account._doc.profileImageKey
 
   return sendResponse(
     res,

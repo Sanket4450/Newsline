@@ -11,7 +11,6 @@ exports.getTopics = catchAsyncErrors(async (req, res) => {
   let topics
 
   topics = await topicService.validateSelectedTopics(accountId)
-
   topics = await topicService.addFileUrls(topics)
 
   return sendResponse(

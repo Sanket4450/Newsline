@@ -98,13 +98,13 @@ exports.validateFollowedAccounts = async (accountId, accounts) => {
       followingAccounts: 1,
     })
 
-    accounts.forEach((account) => {
+    for (let account of accounts) {
       if (followingAccounts.includes(account._id)) {
         account.isFollowed = true
       } else {
         account.isFollowed = false
       }
-    })
+    }
 
     return accounts
   } catch (error) {
@@ -126,8 +126,8 @@ exports.addFileUrls = async (accounts) => {
         return {
           id: account._id,
           fullName: account.fullName,
-          isFollowed: account.isFollowed,
           profileImageUrl,
+          isFollowed: account.isFollowed,
         }
       })
     )

@@ -49,13 +49,13 @@ exports.validateSelectedTopics = async (accountId) => {
       interests: 1,
     })
 
-    topics.forEach((topic) => {
+    for (let topic of topics) {
       if (interests.includes(topic._id)) {
         topic.isSelected = true
       } else {
         topic.isSelected = false
       }
-    })
+    }
 
     return topics
   } catch (error) {
@@ -78,6 +78,7 @@ exports.addFileUrls = async (topics) => {
           id: topic._id,
           title: topic.title,
           iconUrl,
+          isSelected: topic.isSelected,
         }
       })
     )
