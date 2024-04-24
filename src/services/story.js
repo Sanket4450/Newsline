@@ -1,10 +1,30 @@
 const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
-const messages = require('../constants/messages')
 const DbRepo = require('../repos/dbRepo')
+const messages = require('../constants/messages')
 const collections = require('../constants/collections')
 const { getObjectId } = require('../utils/getObjectId')
-const accountService = require('./account')
+
+exports.checkStoryExistById = async (storyId, data = { _id: 1 }) => {
+  try {
+    const query = {
+      _id: getObjectId(storyId),
+    }
+
+    const story = await DbRepo.findOne(collections.STORY, { query, data })
+
+    if (!story) {
+      throw new ApiError(messages.ERROR.STORY_NOT_FOUND, httpStatus.NOT_FOUND)
+    }
+
+    return story
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
 
 exports.createStory = (body) => {
   const data = {

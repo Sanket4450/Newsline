@@ -5,6 +5,8 @@ const collections = {
   TOPIC: 'Topic',
   STORY: 'Story',
   TAG: 'Tag',
+  COMMENT: 'Comment',
+  REPLY: 'Reply',
 }
 
 module.exports = collections

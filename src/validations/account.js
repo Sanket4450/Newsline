@@ -14,7 +14,7 @@ const {
 
 const setAccount = {
   body: joi.object({
-    fullName: stringValidation,
+    fullName: stringReqValidation,
     userName: stringReqValidation,
     mobile: mobileValidation,
     dateOfBirth: dateValidation,

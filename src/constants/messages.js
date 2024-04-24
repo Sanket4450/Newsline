@@ -32,6 +32,8 @@ const messages = {
     TAG_NOT_FOUND: 'Tag not found',
     INVALID_JSON: 'Invalid JSON, please provide valid JSON form-data',
     NOT_ALLOWED_TO_POST_STORY: 'Your account is not allowed to post a story',
+    STORY_NOT_FOUND: 'Story not found',
+    COMMENT_NOT_FOUND: 'Comment not found',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',
@@ -53,6 +55,8 @@ const messages = {
     STORY_CREATED: 'Story created successfully',
     HOME_DATA_FETCHED: 'Home data fetched successfully',
     STORIES_FETCHED: 'Stories fetched successfully',
+    COMMENT_POSTED: 'Comment posted successfully',
+    COMMENTS_FETCHED: 'Comments fetched successfully',
   },
   SUBJECT: {
     REGISTER_ACCOUNT: 'Register your account',
