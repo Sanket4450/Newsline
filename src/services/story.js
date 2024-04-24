@@ -163,11 +163,17 @@ exports.getStories = (body) => {
       },
     },
     {
+      $addFields: {
+        commentCount: 0,
+      },
+    },
+    {
       $project: {
         title: 1,
         description: 1,
         coverImageKey: 1,
         views: 1,
+        commentCount: 1,
         createdAt: 1,
         topic: {
           title: 1,

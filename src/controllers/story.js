@@ -30,6 +30,7 @@ exports.getStories = catchAsyncErrors(async (req, res) => {
         ? await storageService.getFileUrl(story.coverImageKey)
         : null,
       views: story.views,
+      commentCount: story.commentCount,
       createdAt: story.createdAt,
       topic: {
         id: String(story.topic.id),
