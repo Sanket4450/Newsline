@@ -21,28 +21,28 @@ exports.getStories = catchAsyncErrors(async (req, res) => {
 
   let stories = await storyService.getStories(body)
 
-  // stories = await Promise.all(
-  //   stories.map(async (story) => ({
-  //     id: String(story.id),
-  //     title: story.title,
-  //     description: story.description,
-  //     coverImageUrl: story.coverImageKey
-  //       ? await storageService.getFileUrl(story.coverImageKey)
-  //       : null,
-  //     views: story.views,
-  //     createdAt: story.createdAt,
-  //     topic: {
-  //       id: String(story.topic.id),
-  //       title: story.topic.title,
-  //     },
-  //     account: {
-  //       fullName: story.account.fullName,
-  //       profileImageUrl: story.account.profileImageKey
-  //         ? await storageService.getFileUrl(story.account.profileImageKey)
-  //         : null,
-  //     },
-  //   }))
-  // )
+  stories = await Promise.all(
+    stories.map(async (story) => ({
+      id: String(story.id),
+      title: story.title,
+      description: story.description,
+      coverImageUrl: story.coverImageKey
+        ? await storageService.getFileUrl(story.coverImageKey)
+        : null,
+      views: story.views,
+      createdAt: story.createdAt,
+      topic: {
+        id: String(story.topic.id),
+        title: story.topic.title,
+      },
+      account: {
+        fullName: story.account.fullName,
+        profileImageUrl: story.account.profileImageKey
+          ? await storageService.getFileUrl(story.account.profileImageKey)
+          : null,
+      },
+    }))
+  )
 
   return sendResponse(res, httpStatus.OK, { stories }, messages.SUCCESS.STORIES_FETCHED)
 })
