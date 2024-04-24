@@ -6,6 +6,7 @@ const {
   userRouter: userAccountRouter,
   adminRouter: adminAccountRouter,
 } = require('./account')
+const { userRouter: userRootRouter } = require('./root')
 const {
   userRouter: userTopicRouter,
   adminRouter: adminTopicRouter,
@@ -14,6 +15,7 @@ const { userRouter: userStoryRouter } = require('./story')
 
 userRouter.use('/auth', userAuthRouter)
 userRouter.use('/account', userAccountRouter)
+userRouter.use('/', userRootRouter)
 userRouter.use('/topics', userTopicRouter)
 userRouter.use('/stories', userStoryRouter)
 
