@@ -5,7 +5,18 @@ const {
   stringReqValidation,
   arrayReqValidation,
   idReqValidation,
+  idValidation,
+  pageAndLimit,
 } = require('./common')
+
+const getStories = {
+  body: joi.object({
+    search: stringValidation,
+    topicId: idValidation,
+    sortBy: stringValidation.valid('trending', 'latest'),
+    ...pageAndLimit
+  }),
+}
 
 const createStory = {
   body: joi.object({
@@ -17,5 +28,6 @@ const createStory = {
 }
 
 module.exports = {
+  getStories,
   createStory,
 }

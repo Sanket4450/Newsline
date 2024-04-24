@@ -1,7 +1,6 @@
 const httpStatus = require('http-status')
 const folders = require('../constants/folders')
 const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
-const ApiError = require('../utils/ApiError')
 const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
 const {
@@ -10,7 +9,43 @@ const {
   tagService,
   fileService,
   accountService,
+  storageService,
 } = require('../services')
+
+exports.getStories = catchAsyncErrors(async (req, res) => {
+  const body = req.body
+  
+  if (body.topicId) {
+    await topicService.checkTopicExistById(body.topicId)
+  }
+
+  let stories = await storyService.getStories(body)
+
+  // stories = await Promise.all(
+  //   stories.map(async (story) => ({
+  //     id: String(story.id),
+  //     title: story.title,
+  //     description: story.description,
+  //     coverImageUrl: story.coverImageKey
+  //       ? await storageService.getFileUrl(story.coverImageKey)
+  //       : null,
+  //     views: story.views,
+  //     createdAt: story.createdAt,
+  //     topic: {
+  //       id: String(story.topic.id),
+  //       title: story.topic.title,
+  //     },
+  //     account: {
+  //       fullName: story.account.fullName,
+  //       profileImageUrl: story.account.profileImageKey
+  //         ? await storageService.getFileUrl(story.account.profileImageKey)
+  //         : null,
+  //     },
+  //   }))
+  // )
+
+  return sendResponse(res, httpStatus.OK, { stories }, messages.SUCCESS.STORIES_FETCHED)
+})
 
 exports.createStory = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId

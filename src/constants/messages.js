@@ -52,6 +52,7 @@ const messages = {
     TOPICS_FETCHED: 'Topics fetched successfully',
     STORY_CREATED: 'Story created successfully',
     HOME_DATA_FETCHED: 'Home data fetched successfully',
+    STORIES_FETCHED: 'Stories fetched successfully',
   },
   SUBJECT: {
     REGISTER_ACCOUNT: 'Register your account',
