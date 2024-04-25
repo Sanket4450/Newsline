@@ -186,7 +186,7 @@ exports.getStories = (body) => {
     },
     {
       $addFields: {
-        commentCount: 0,
+        commentsCount: 0,
       },
     },
     {
@@ -195,7 +195,7 @@ exports.getStories = (body) => {
         description: 1,
         coverImageKey: 1,
         views: 1,
-        commentCount: 1,
+        commentsCount: 1,
         createdAt: 1,
         topic: {
           title: 1,
@@ -235,12 +235,18 @@ exports.getFullStory = (storyId) => {
       },
     },
     {
+      $addFields: {
+        commentsCount: 0,
+      },
+    },
+    {
       $project: {
         title: 1,
         description: 1,
         coverImageKey: 1,
         tags: 1,
         views: 1,
+        commentsCount: 1,
         createdAt: 1,
         account: {
           fullName: 1,

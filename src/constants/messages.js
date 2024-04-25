@@ -55,7 +55,7 @@ const messages = {
     STORY_CREATED: 'Story created successfully',
     HOME_DATA_FETCHED: 'Home data fetched successfully',
     STORIES_FETCHED: 'Stories fetched successfully',
-    STORY_DATA_FETCHED: 'Story data fetched successfully',
+    STORY_DATA_FETCHED: 'Full Story data fetched successfully',
     COMMENT_POSTED: 'Comment posted successfully',
     COMMENTS_FETCHED: 'Comments fetched successfully',
     NOTIFICATION_FETCHED: 'Notification fetched successfully',

@@ -32,7 +32,7 @@ exports.getStories = catchAsyncErrors(async (req, res) => {
         ? await storageService.getFileUrl(story.coverImageKey)
         : null,
       views: story.views,
-      commentCount: story.commentCount,
+      commentsCount: story.commentsCount,
       createdAt: story.createdAt,
       topic: {
         id: String(story.topic.id),
@@ -63,11 +63,11 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
 
   let [story] = await storyService.getFullStory(storyId)
 
-  const comments = await commentService.getComments(storyId, {
+  let comments = await commentService.getComments(storyId, {
     limit: 3,
   })
 
-  const stories = await storyService.getStories({
+  let moreStories = await storyService.getStories({
     accountId: String(story.account.id),
     limit: 10,
   })
@@ -92,10 +92,55 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
   } else {
   }
 
+  comments = await commentService.validateLikedComments(accountId, comments)
+
+  comments = await Promise.all(
+    comments.map(async (comment) => {
+      comment.account.profileImageUrl = comment.account.profileImageKey
+        ? await storageService.getFileUrl(comment.account.profileImageKey)
+        : null
+
+      delete comment.account.profileImageKey
+      delete comment.likedBy
+
+      return comment
+    })
+  )
+
+  moreStories = await Promise.all(
+    moreStories.map(async (story) => ({
+      id: String(story.id),
+      title: story.title,
+      description: story.description,
+      coverImageUrl: story.coverImageKey
+        ? await storageService.getFileUrl(story.coverImageKey)
+        : null,
+      views: story.views,
+      commentsCount: story.commentsCount,
+      createdAt: story.createdAt,
+      topic: {
+        id: String(story.topic.id),
+        title: story.topic.title,
+      },
+      account: {
+        fullName: story.account.fullName,
+        profileImageUrl: story.account.profileImageKey
+          ? await storageService.getFileUrl(story.account.profileImageKey)
+          : null,
+      },
+    }))
+  )
+
+  const fullStory = {
+    ...story,
+    comments,
+    moreStories,
+  }
+
   return sendResponse(
     res,
     httpStatus.OK,
-    { story },
+    { fullStory },
     messages.SUCCESS.STORY_DATA_FETCHED
   )
 })
