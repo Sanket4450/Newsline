@@ -40,6 +40,19 @@ class DbRepo {
     })
   }
 
+  static updateMany(collectionName, queryObject) {
+    return new Promise((resolve, reject) => {
+      domain[collectionName]
+        .updateMany(queryObject.query, queryObject.data, queryObject.options)
+        .then((results) => {
+          resolve(results)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  }
+
   static deleteOne(collectionName, queryObject) {
     return new Promise((resolve, reject) => {
       domain[collectionName]

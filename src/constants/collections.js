@@ -7,6 +7,7 @@ const collections = {
   TAG: 'Tag',
   COMMENT: 'Comment',
   REPLY: 'Reply',
+  NOTIFICATION: 'Notification',
 }
 
 module.exports = collections

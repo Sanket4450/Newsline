@@ -57,10 +57,16 @@ const messages = {
     STORIES_FETCHED: 'Stories fetched successfully',
     COMMENT_POSTED: 'Comment posted successfully',
     COMMENTS_FETCHED: 'Comments fetched successfully',
+    NOTIFICATION_FETCHED: 'Notification fetched successfully',
+    NOTIFICATION_DELETED: 'Notification deleted successfully',
+    NOTIFICATION_UPDATED: 'Notification updated successfully',
   },
   SUBJECT: {
     REGISTER_ACCOUNT: 'Register your account',
     RESET_PASSWORD: 'Reset your password',
+  },
+  NOTIFICATION: {
+    USER_CREATED_SUCCESSFULLY: 'Your account is ready!',
   },
 }
 

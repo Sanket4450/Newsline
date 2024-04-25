@@ -297,3 +297,11 @@ exports.getAccountsWithFilter = (filter) => {
 
   return DbRepo.aggregate(collections.ACCOUNT, pipeline)
 }
+
+exports.getFollowers = (accountId) => {
+  const query = {
+    followingAccounts: getObjectId(accountId),
+  }
+
+  return DbRepo.find(collections.ACCOUNT, { query })
+}

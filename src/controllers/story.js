@@ -10,11 +10,12 @@ const {
   fileService,
   accountService,
   storageService,
+  notificationService,
 } = require('../services')
 
 exports.getStories = catchAsyncErrors(async (req, res) => {
   const body = req.body
-  
+
   if (body.topicId) {
     await topicService.checkTopicExistById(body.topicId)
   }
@@ -45,7 +46,12 @@ exports.getStories = catchAsyncErrors(async (req, res) => {
     }))
   )
 
-  return sendResponse(res, httpStatus.OK, { stories }, messages.SUCCESS.STORIES_FETCHED)
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { stories },
+    messages.SUCCESS.STORIES_FETCHED
+  )
 })
 
 exports.createStory = catchAsyncErrors(async (req, res) => {
@@ -73,7 +79,26 @@ exports.createStory = catchAsyncErrors(async (req, res) => {
   body.accountId = accountId
   body.coverImageKey = coverImageKey
 
-  await storyService.createStory(body)
+  const { accountId: storyAccountId } = await storyService.createStory(body)
+
+  const { fullName } = await accountService.getAccountById(
+    String(storyAccountId),
+    {
+      fullName,
+    }
+  )
+
+  const followers = await accountService.getFollowers(accountId)
+  console.log('====================================')
+  console.log('followers', followers)
+  console.log('====================================')
+
+  for (let follower of followers) {
+    console.log('follower', follower)
+    await notificationService.createNotification(String(follower._id), {
+      title: `${fullName} published a new story`,
+    })
+  }
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_CREATED)
 })

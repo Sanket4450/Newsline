@@ -6,6 +6,7 @@ const Story = require('./story')
 const Tag = require('./tag')
 const Comment = require('./comment')
 const Reply = require('./reply')
+const Notification = require('./notification')
 
 module.exports = {
   Account,
@@ -16,4 +17,5 @@ module.exports = {
   Tag,
   Comment,
   Reply,
+  Notification,
 }
