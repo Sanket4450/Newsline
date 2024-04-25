@@ -15,6 +15,13 @@ userRouter.post(
   storyController.getStories
 )
 
+userRouter.get(
+  '/:storyId',
+  authChecker,
+  validate(storyValidation.getStory),
+  storyController.getStory
+)
+
 userRouter.post(
   '/',
   authChecker,

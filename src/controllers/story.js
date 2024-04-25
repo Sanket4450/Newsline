@@ -11,6 +11,7 @@ const {
   accountService,
   storageService,
   notificationService,
+  commentService,
 } = require('../services')
 
 exports.getStories = catchAsyncErrors(async (req, res) => {
@@ -54,6 +55,51 @@ exports.getStories = catchAsyncErrors(async (req, res) => {
   )
 })
 
+exports.getStory = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  const { storyId } = req.params
+
+  await storyService.checkStoryExistById(storyId)
+
+  let [story] = await storyService.getFullStory(storyId)
+
+  const comments = await commentService.getComments(storyId, {
+    limit: 3,
+  })
+
+  const stories = await storyService.getStories({
+    accountId: String(story.account.id),
+    limit: 10,
+  })
+
+  story.coverImageUrl = story.coverImageKey
+    ? await storageService.getFileUrl(story.coverImageKey)
+    : null
+  story.account.profileImageUrl = story.account.profileImageKey
+    ? await storageService.getFileUrl(story.account.profileImageKey)
+    : null
+
+  delete story.coverImageKey
+  delete story.account.profileImageUrl
+
+  if (
+    accountId !== String(story.account.id) &&
+    (await accountService.isAccountFollows(accountId, String(story.account.id)))
+  ) {
+    story.account.isFollowed = true
+  } else if (accountId !== String(story.account.id)) {
+    story.account.isFollowed = false
+  } else {
+  }
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { story },
+    messages.SUCCESS.STORY_DATA_FETCHED
+  )
+})
+
 exports.createStory = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
 
@@ -81,24 +127,21 @@ exports.createStory = catchAsyncErrors(async (req, res) => {
 
   const { accountId: storyAccountId } = await storyService.createStory(body)
 
-  const { fullName } = await accountService.getAccountById(
-    String(storyAccountId),
-    {
-      fullName,
-    }
-  )
+  // const { fullName } = await accountService.getAccountById(
+  //   String(storyAccountId),
+  //   {
+  //     fullName,
+  //   }
+  // )
 
-  const followers = await accountService.getFollowers(accountId)
-  console.log('====================================')
-  console.log('followers', followers)
-  console.log('====================================')
+  // const followers = await accountService.getFollowers(accountId)
 
-  for (let follower of followers) {
-    console.log('follower', follower)
-    await notificationService.createNotification(String(follower._id), {
-      title: `${fullName} published a new story`,
-    })
-  }
+  // for (let follower of followers) {
+  //   console.log('follower', follower)
+  //   await notificationService.createNotification(String(follower._id), {
+  //     title: `${fullName} published a new story`,
+  //   })
+  // }
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_CREATED)
 })

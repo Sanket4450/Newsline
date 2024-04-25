@@ -305,3 +305,12 @@ exports.getFollowers = (accountId) => {
 
   return DbRepo.find(collections.ACCOUNT, { query })
 }
+
+exports.isAccountFollows = (followerAccountId, followingAccountId) => {
+  const query = {
+    _id: getObjectId(followerAccountId),
+    followingAccounts: getObjectId(followingAccountId),
+  }
+
+  return DbRepo.findOne(collections.ACCOUNT, { query })
+}

@@ -14,7 +14,13 @@ const getStories = {
     search: stringValidation,
     topicId: idValidation,
     sortBy: stringValidation.valid('trending', 'latest'),
-    ...pageAndLimit
+    ...pageAndLimit,
+  }),
+}
+
+const getStory = {
+  params: joi.object({
+    storyId: idReqValidation,
   }),
 }
 
@@ -29,5 +35,6 @@ const createStory = {
 
 module.exports = {
   getStories,
+  getStory,
   createStory,
 }

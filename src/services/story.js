@@ -119,6 +119,7 @@ exports.getStories = (body) => {
   const search = body.search || ''
   const page = body.page || 1
   const limit = body.limit || 10
+  const accountId = body.accountId ? getObjectId(body.accountId) : null
   const topicId = body.topicId ? getObjectId(body.topicId) : null
 
   let sortQuery = {}
@@ -144,6 +145,7 @@ exports.getStories = (body) => {
           { description: { $regex: search, $options: 'i' } },
           { tags: { $regex: search, $options: 'i' } },
         ],
+        ...(accountId && { accountId }),
         ...(topicId && { topicId }),
       },
     },
@@ -202,6 +204,49 @@ exports.getStories = (body) => {
         account: {
           fullName: 1,
           profileImageKey: 1,
+        },
+        _id: 0,
+        id: '$_id',
+      },
+    },
+  ]
+
+  return DbRepo.aggregate(collections.STORY, pipeline)
+}
+
+exports.getFullStory = (storyId) => {
+  const pipeline = [
+    {
+      $match: {
+        _id: getObjectId(storyId),
+      },
+    },
+    {
+      $lookup: {
+        from: 'accounts',
+        localField: 'accountId',
+        foreignField: '_id',
+        as: 'account',
+      },
+    },
+    {
+      $unwind: {
+        path: '$account',
+      },
+    },
+    {
+      $project: {
+        title: 1,
+        description: 1,
+        coverImageKey: 1,
+        tags: 1,
+        views: 1,
+        createdAt: 1,
+        account: {
+          fullName: 1,
+          bio: 1,
+          profileImageKey: 1,
+          id: '$account._id',
         },
         _id: 0,
         id: '$_id',
