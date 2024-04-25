@@ -55,3 +55,12 @@ exports.incremenPostsCount = (tagId) => {
 
   return DbRepo.updateOne(collections.TAG, { query, data })
 }
+
+exports.getSuggestedTags = () => {
+  const pipeline = [
+    { $sample: { size: 10 } },
+    { $sort: { postsCount: -1, createdAt: -1 } },
+  ]
+
+  return DbRepo.aggregate(collections.TAG, pipeline)
+}

@@ -52,6 +52,7 @@ const messages = {
     INTERESTS_SELECTED: 'Interests selected successfully',
     ACCOUNTS_FETCHED: 'Accounts fetched successfully',
     TOPICS_FETCHED: 'Topics fetched successfully',
+    SUGGESTED_TAGS_FETCHED: 'Suggested tags fetched successfully',
     STORY_CREATED: 'Story created successfully',
     HOME_DATA_FETCHED: 'Home data fetched successfully',
     STORIES_FETCHED: 'Stories fetched successfully',

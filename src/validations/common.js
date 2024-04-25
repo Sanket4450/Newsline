@@ -40,6 +40,13 @@ const mobileValidation = numberValidation
     'number.max': 'Mobile number should be 10 digit',
   })
 
+const tagValidation = stringValidation
+  .pattern(new RegExp('(?:^|s)(?:#)([a-zA-Z0-9_]+)'))
+  .messages({
+    'string.pattern.base':
+      'Invalid tag. Please provide a valid tag without special characters',
+  })
+
 module.exports = {
   stringValidation,
   stringReqValidation,
@@ -60,4 +67,5 @@ module.exports = {
   idReqValidation,
   otpValidation,
   mobileValidation,
+  tagValidation,
 }

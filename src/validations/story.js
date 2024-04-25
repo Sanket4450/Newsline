@@ -7,6 +7,7 @@ const {
   idReqValidation,
   idValidation,
   pageAndLimit,
+  tagValidation,
 } = require('./common')
 
 const getStories = {
@@ -29,7 +30,7 @@ const createStory = {
     title: stringReqValidation.max(100),
     description: stringReqValidation,
     topicId: idReqValidation,
-    tags: arrayReqValidation.items(stringValidation),
+    tags: arrayReqValidation.items(tagValidation),
   }),
 }
 

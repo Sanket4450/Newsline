@@ -156,6 +156,8 @@ exports.createStory = catchAsyncErrors(async (req, res) => {
   await topicService.checkTopicExistById(body.topicId)
 
   for (let tagTitle of body.tags) {
+    tagTitle = tagTitle.toLowerCase()
+
     const tag = await tagService.getTagByTitle(tagTitle)
 
     if (tag) {
@@ -189,4 +191,17 @@ exports.createStory = catchAsyncErrors(async (req, res) => {
   // }
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_CREATED)
+})
+
+exports.getSuggestedTags = catchAsyncErrors(async (_, res) => {
+  let tags = await tagService.getSuggestedTags()
+
+  tags = tags.map((tag) => (tag.title))
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { tags },
+    messages.SUCCESS.SUGGESTED_TAGS_FETCHED
+  )
 })

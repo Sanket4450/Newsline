@@ -15,6 +15,8 @@ userRouter.post(
   storyController.getStories
 )
 
+userRouter.get('/suggested-tags', authChecker, storyController.getSuggestedTags)
+
 userRouter.get(
   '/:storyId',
   authChecker,
