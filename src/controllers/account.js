@@ -2,6 +2,7 @@ const httpStatus = require('http-status')
 const folders = require('../constants/folders')
 const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
 const { sendResponse } = require('../utils/responseHandler')
+const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const { getObjectId } = require('../utils/getObjectId')
 const { removeDuplicates } = require('../utils/removeDuplicates')
@@ -11,6 +12,7 @@ const {
   authService,
   topicService,
   storageService,
+  notificationService,
 } = require('../services')
 
 exports.getAccount = catchAsyncErrors(async (req, res) => {
@@ -216,13 +218,69 @@ exports.toggleFollow = catchAsyncErrors(async (req, res) => {
   const followerAccountId = req.user.accountId
   const { accountId: followingAccountId, isFollowed } = req.body
 
+  if (followerAccountId === followingAccountId) {
+    throw new ApiError(
+      messages.ERROR.CANNOT_FOLLOW_YOURSELF,
+      httpStatus.BAD_REQUEST
+    )
+  }
+
   await accountService.checkAccountExistById(followingAccountId)
+
+  const notification = await notificationService.getNotification({
+    type: 'engage',
+    iconAccountId: getObjectId(followerAccountId),
+  })
+  const existingNotification = await notificationService.getNotification({
+    accountId: getObjectId(followerAccountId),
+    type: 'engage',
+    iconAccountId: getObjectId(followingAccountId),
+  })
 
   await accountService.toggleFollow(
     followerAccountId,
     followingAccountId,
     isFollowed
   )
+
+  const { fullName } = await accountService.getAccountById(followerAccountId, {
+    fullName: 1,
+  })
+
+  if (isFollowed && !notification) {
+    if (existingNotification) {
+      await notificationService.createNotification(followingAccountId, {
+        type: 'engage',
+        title: `${fullName} ${messages.NOTIFICATION.STARTED_FOLLOWING}`,
+        iconAccountId: getObjectId(followerAccountId),
+        isFollowedBack: true,
+      })
+      await notificationService.updateNotification(
+        followerAccountId,
+        String(existingNotification._id),
+        {
+          isFollowedBack: true,
+        }
+      )
+    } else {
+      await notificationService.createNotification(followingAccountId, {
+        type: 'engage',
+        title: `${fullName} ${messages.NOTIFICATION.STARTED_FOLLOWING}`,
+        iconAccountId: getObjectId(followerAccountId),
+        isFollowedBack: false,
+      })
+    }
+  } else if (!isFollowed && notification) {
+    await notificationService.deleteNotification(
+      followingAccountId,
+      String(notification._id)
+    )
+    await notificationService.deleteNotification(
+      followerAccountId,
+      String(existingNotification._id)
+    )
+  } else {
+  }
 
   return sendResponse(
     res,

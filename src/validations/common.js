@@ -41,7 +41,7 @@ const mobileValidation = numberValidation
   })
 
 const tagValidation = stringValidation
-  .pattern(new RegExp('(?:^|s)(?:#)([a-zA-Z0-9_]+)'))
+  .pattern(new RegExp('^[a-zA-Z0-9_]+$'))
   .messages({
     'string.pattern.base':
       'Invalid tag. Please provide a valid tag without special characters',

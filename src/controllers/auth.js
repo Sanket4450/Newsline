@@ -58,9 +58,10 @@ exports.verifyRegisterOtp = catchAsyncErrors(async (req, res) => {
   })
 
   await accountService.updateAccountById(accountId, { isEmailVerified: true })
+
   await notificationService.createNotification(accountId, {
     iconKey: notifications.USER,
-    title: messages.NOTIFICATION.USER_CREATED_SUCCESSFULLY,
+    title: messages.NOTIFICATION.ACCOUNT_SETUP,
   })
 
   const accessToken = tokenService.generateAccessToken(accountId, role)

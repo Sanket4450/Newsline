@@ -21,7 +21,7 @@ userRouter.use('/', userRootRouter)
 userRouter.use('/topics', userTopicRouter)
 userRouter.use('/stories', userStoryRouter)
 userRouter.use('/comments', userCommentRouter)
-userRouter.use('/notification', userNotificationRouter)
+userRouter.use('/notifications', userNotificationRouter)
 
 adminRouter.use('/account', adminAccountRouter)
 adminRouter.use('/topics', adminTopicRouter)

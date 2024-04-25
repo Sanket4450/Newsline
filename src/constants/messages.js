@@ -26,6 +26,7 @@ const messages = {
     FILE_NOT_PROVIDED: 'Upload file is not provided',
     FILE_TYPE_NOT_SUPPORTED: 'File type not supported',
     NOT_ALLOWED: 'Not allowed to do this action',
+    CANNOT_FOLLOW_YOURSELF: 'You cannot follow yourself',
     TOPIC_NOT_FOUND: 'Topic not found',
     ROUTE_NOT_FOUND: 'Route not found',
     TOPIC_EXISTS_WITH_TITLE: 'Topic already exists with this title',
@@ -34,6 +35,7 @@ const messages = {
     NOT_ALLOWED_TO_POST_STORY: 'Your account is not allowed to post a story',
     STORY_NOT_FOUND: 'Story not found',
     COMMENT_NOT_FOUND: 'Comment not found',
+    NOTIFICATION_NOT_FOUND: 'Notification not found',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',
@@ -59,8 +61,9 @@ const messages = {
     STORY_DATA_FETCHED: 'Full Story data fetched successfully',
     COMMENT_POSTED: 'Comment posted successfully',
     COMMENTS_FETCHED: 'Comments fetched successfully',
-    NOTIFICATION_FETCHED: 'Notification fetched successfully',
+    NOTIFICATIONS_FETCHED: 'Notifications fetched successfully',
     NOTIFICATION_DELETED: 'Notification deleted successfully',
+    NOTIFICATIONS_DELETED: 'All Notifications deleted successfully',
     NOTIFICATION_UPDATED: 'Notification updated successfully',
   },
   SUBJECT: {
@@ -68,7 +71,9 @@ const messages = {
     RESET_PASSWORD: 'Reset your password',
   },
   NOTIFICATION: {
-    USER_CREATED_SUCCESSFULLY: 'Your account is ready!',
+    ACCOUNT_SETUP: 'Your account is ready!',
+    STARTED_FOLLOWING: 'started following you',
+    PUBLISHED_NEW_STORY: 'published a new story',
   },
 }
 

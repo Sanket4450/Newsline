@@ -13,6 +13,7 @@ const {
   notificationService,
   commentService,
 } = require('../services')
+const { getObjectId } = require('../utils/getObjectId')
 
 exports.getStories = catchAsyncErrors(async (req, res) => {
   const body = req.body
@@ -169,26 +170,25 @@ exports.createStory = catchAsyncErrors(async (req, res) => {
 
   const coverImageKey = await fileService.handleFile(file, folders.STORY)
 
-  body.accountId = accountId
+  body.accountId = getObjectId(accountId)
   body.coverImageKey = coverImageKey
 
-  const { accountId: storyAccountId } = await storyService.createStory(body)
+  const { _id: storyId } = await storyService.createStory(body)
 
-  // const { fullName } = await accountService.getAccountById(
-  //   String(storyAccountId),
-  //   {
-  //     fullName,
-  //   }
-  // )
+  const { fullName } = await accountService.getAccountById(accountId, {
+    fullName: 1,
+  })
 
-  // const followers = await accountService.getFollowers(accountId)
+  const followers = await accountService.getFollowers(accountId)
 
-  // for (let follower of followers) {
-  //   console.log('follower', follower)
-  //   await notificationService.createNotification(String(follower._id), {
-  //     title: `${fullName} published a new story`,
-  //   })
-  // }
+  for (let follower of followers) {
+    await notificationService.createNotification(String(follower._id), {
+      type: 'publish',
+      title: `${fullName} ${messages.NOTIFICATION.PUBLISHED_NEW_STORY}`,
+      iconAccountId: getObjectId(accountId),
+      storyId,
+    })
+  }
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_CREATED)
 })
@@ -196,7 +196,7 @@ exports.createStory = catchAsyncErrors(async (req, res) => {
 exports.getSuggestedTags = catchAsyncErrors(async (_, res) => {
   let tags = await tagService.getSuggestedTags()
 
-  tags = tags.map((tag) => (tag.title))
+  tags = tags.map((tag) => tag.title)
 
   return sendResponse(
     res,

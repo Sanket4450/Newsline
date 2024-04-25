@@ -1,8 +1,42 @@
+const httpStatus = require('http-status')
 const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
+const ApiError = require('../utils/ApiError')
+const messages = require('../constants/messages')
 const { getObjectId } = require('../utils/getObjectId')
 
-exports.getAllNotification = (accountId) => {
+exports.checkNotificationExistById = async (storyId, data = { _id: 1 }) => {
+  try {
+    const query = {
+      _id: getObjectId(storyId),
+    }
+
+    const notification = await DbRepo.findOne(collections.NOTIFICATION, {
+      query,
+      data,
+    })
+
+    if (!notification) {
+      throw new ApiError(
+        messages.ERROR.NOTIFICATION_NOT_FOUND,
+        httpStatus.NOT_FOUND
+      )
+    }
+
+    return notification
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
+
+exports.getNotification = (query, data = { _id: 1 }) => {
+  return DbRepo.findOne(collections.NOTIFICATION, { query, data })
+}
+
+exports.getAllNotifications = (accountId) => {
   const pipeline = [
     {
       $match: {
@@ -45,8 +79,9 @@ exports.getAllNotification = (accountId) => {
         iconKey: { $first: '$iconKey' },
         profileImageKey: { $first: '$iconAccount.profileImageKey' },
         storyImageKey: { $first: '$story.coverImageKey' },
-        isFollow: { $first: '$isFollow' },
+        isFollowedBack: { $first: '$isFollowedBack' },
         isRead: { $first: '$isRead' },
+        createdAt: { $first: '$createdAt' },
       },
     },
     {
@@ -61,7 +96,7 @@ exports.getAllNotification = (accountId) => {
         iconKey: 1,
         profileImageKey: 1,
         storyImageKey: 1,
-        isFollow: 1,
+        isFollowedBack: 1,
         isRead: 1,
         _id: 0,
         id: '$_id',
@@ -98,21 +133,7 @@ exports.deleteAllNotifications = (accountId) => {
   return DbRepo.deleteMany(collections.NOTIFICATION, { query })
 }
 
-exports.setNotificationsAsRead = (accountId) => {
-  const query = {
-    accountId: getObjectId(accountId),
-  }
-
-  const data = {
-    $set: {
-      isRead: true,
-    },
-  }
-
-  return DbRepo.updateMany(collections.NOTIFICATION, { query, data })
-}
-
-exports.updateNotification = (accountId, notificationId) => {
+exports.updateNotification = (accountId, notificationId, updateData) => {
   const query = {
     accountId: getObjectId(accountId),
     _id: getObjectId(notificationId),
@@ -120,9 +141,23 @@ exports.updateNotification = (accountId, notificationId) => {
 
   const data = {
     $set: {
-      isFollow: true,
+      ...updateData,
     },
   }
 
   return DbRepo.updateOne(collections.NOTIFICATION, { query, data })
+}
+
+exports.updateNotifications = (accountId, updateData) => {
+  const query = {
+    accountId: getObjectId(accountId),
+  }
+
+  const data = {
+    $set: {
+      ...updateData,
+    },
+  }
+
+  return DbRepo.updateMany(collections.NOTIFICATION, { query, data })
 }

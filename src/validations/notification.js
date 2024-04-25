@@ -1,10 +1,10 @@
 const joi = require('joi')
 
-const { idReqValidation } = require('./common')
+const { idValidation } = require('./common')
 
 const deleteNotification = {
-  params: joi.object({
-    notificationId: idReqValidation,
+  body: joi.object({
+    notificationId: idValidation,
   }),
 }
 

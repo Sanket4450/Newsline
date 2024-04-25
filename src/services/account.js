@@ -303,7 +303,7 @@ exports.getFollowers = (accountId) => {
     followingAccounts: getObjectId(accountId),
   }
 
-  return DbRepo.find(collections.ACCOUNT, { query })
+  return exports.getAccounts(query)
 }
 
 exports.isAccountFollows = (followerAccountId, followingAccountId) => {

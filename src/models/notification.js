@@ -7,19 +7,14 @@ const notificationSchema = new Schema(
       ref: 'Account',
       required: true,
     },
+    type: {
+      type: String,
+      enum: ['simple', 'publish', 'engage'],
+      default: 'simple',
+    },
     title: {
       type: String,
       required: true,
-    },
-    type: {
-      type: String,
-      enum: ['publish', 'engage', 'simple'],
-      default: 'simple',
-    },
-    storyId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Story',
-      default: null,
     },
     iconKey: {
       type: String,
@@ -30,8 +25,14 @@ const notificationSchema = new Schema(
       ref: 'Account',
       default: null,
     },
-    isFollow: {
+    storyId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Story',
+      default: null,
+    },
+    isFollowedBack: {
       type: Boolean,
+      default: null,
     },
     isRead: {
       type: Boolean,

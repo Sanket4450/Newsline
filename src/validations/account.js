@@ -10,6 +10,7 @@ const {
   arrayReqValidation,
   idValidation,
   pageAndLimit,
+  booleanValidation,
 } = require('./common')
 
 const setAccount = {
