@@ -2,6 +2,11 @@ const { Schema, model } = require('mongoose')
 
 const commentSchema = new Schema(
   {
+    type: {
+      type: String,
+      enum: ['comment', 'reply'],
+      required: true,
+    },
     accountId: {
       type: Schema.Types.ObjectId,
       ref: 'Account',
@@ -10,7 +15,10 @@ const commentSchema = new Schema(
     storyId: {
       type: Schema.Types.ObjectId,
       ref: 'Story',
-      required: true,
+    },
+    commentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Comment',
     },
     content: {
       type: String,

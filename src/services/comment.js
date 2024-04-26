@@ -26,13 +26,55 @@ exports.checkCommentExistById = async (storyId, data = { _id: 1 }) => {
   }
 }
 
-exports.getComments = (storyId, query) => {
-  const page = parseInt(query.page) || 1
-  const limit = parseInt(query.limit) || 10
+exports.checkCommentExistWithAccountById = async (
+  accountId,
+  storyId,
+  data = { _id: 1 }
+) => {
+  try {
+    const query = {
+      _id: getObjectId(storyId),
+      accountId: getObjectId(accountId),
+    }
+
+    const comment = await DbRepo.findOne(collections.COMMENT, { query, data })
+
+    if (!comment) {
+      throw new ApiError(messages.ERROR.COMMENT_NOT_FOUND, httpStatus.NOT_FOUND)
+    }
+
+    return comment
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
+
+exports.getComments = (body) => {
+  const storyId = body.storyId
+  const sortBy = body.sortBy || 'top'
+  const page = parseInt(body.page) || 1
+  const limit = parseInt(body.limit) || 10
+
+  let sortStage = {}
+
+  if (sortBy === 'newest') {
+    sortStage = {
+      createdAt: -1,
+    }
+  } else {
+    sortStage = {
+      likes: -1,
+      createdAt: -1,
+    }
+  }
 
   const pipeline = [
     {
       $match: {
+        type: 'comment',
         storyId: getObjectId(storyId),
       },
     },
@@ -42,10 +84,7 @@ exports.getComments = (storyId, query) => {
       },
     },
     {
-      $sort: {
-        likes: -1,
-        createdAt: -1,
-      },
+      $sort: sortStage,
     },
     {
       $skip: (page - 1) * limit,
@@ -128,6 +167,7 @@ exports.postComment = (accountId, body) => {
   const data = {
     accountId: getObjectId(accountId),
     storyId: getObjectId(body.storyId),
+    type: 'comment',
     ...body,
   }
 
@@ -140,4 +180,106 @@ exports.validateLikedComments = (accountId, comments) => {
   }
 
   return comments
+}
+
+exports.updateComment = (commentId, updateData) => {
+  const query = {
+    _id: getObjectId(commentId),
+  }
+
+  const data = {
+    $set: { ...updateData },
+  }
+
+  return DbRepo.updateOne(collections.COMMENT, { query, data })
+}
+
+exports.deleteComment = (commentId) => {
+  const query = {
+    _id: getObjectId(commentId),
+  }
+
+  return DbRepo.deleteOne(collections.COMMENT, { query })
+}
+
+exports.toggleLike = (accountId, commentId, isLiked) => {
+  const query = isLiked
+    ? {
+        _id: getObjectId(commentId),
+        likedBy: { $ne: getObjectId(accountId) },
+      }
+    : {
+        _id: getObjectId(commentId),
+        likedBy: { $eq: getObjectId(accountId) },
+      }
+
+  const data = {
+    [isLiked ? '$push' : '$pull']: {
+      likedBy: getObjectId(accountId),
+    },
+  }
+
+  return DbRepo.updateOne(collections.COMMENT, { query, data })
+}
+
+exports.getReplies = (commentId) => {
+  const pipeline = [
+    {
+      $match: {
+        type: 'reply',
+        commentId: getObjectId(commentId),
+      },
+    },
+    {
+      $addFields: {
+        likes: { $size: '$likedBy' },
+      },
+    },
+    {
+      $sort: {
+        likes: -1,
+        createdAt: -1,
+      },
+    },
+    {
+      $lookup: {
+        from: 'accounts',
+        localField: 'accountId',
+        foreignField: '_id',
+        as: 'account',
+      },
+    },
+    {
+      $unwind: {
+        path: '$account',
+      },
+    },
+    {
+      $project: {
+        content: 1,
+        likedBy: 1,
+        likes: 1,
+        createdAt: 1,
+        account: {
+          fullName: 1,
+          profileImageKey: 1,
+        },
+        _id: 0,
+        id: '$_id',
+      },
+    },
+  ]
+
+  return DbRepo.aggregate(collections.COMMENT, pipeline)
+}
+
+exports.postReply = (accountId, body) => {
+  const data = {
+    accountId: getObjectId(accountId),
+    commentId: getObjectId(body.commentId),
+    type: 'reply',
+    ...body,
+  }
+
+  return DbRepo.create(collections.COMMENT, { data })
 }

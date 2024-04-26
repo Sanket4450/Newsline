@@ -8,7 +8,6 @@ const FaqCategory = require('./faqCategory')
 const Faq = require('./faq')
 const Bookmark = require('./bookmark')
 const Comment = require('./comment')
-const Reply = require('./reply')
 const Notification = require('./notification')
 
 module.exports = {
@@ -22,6 +21,5 @@ module.exports = {
   Faq,
   Bookmark,
   Comment,
-  Reply,
   Notification,
 }
