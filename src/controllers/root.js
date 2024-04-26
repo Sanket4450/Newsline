@@ -6,12 +6,18 @@ const {
   storyService,
   topicService,
   storageService,
+  notificationService,
 } = require('../services')
 
-exports.getHomeData = catchAsyncErrors(async (_, res) => {
+exports.getHomeData = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
   let topics = await topicService.getAllTopics({ title: 1 })
 
   let { trendingStories, recentStories } = await storyService.getHomeStories()
+
+  const newNotifications = Boolean(
+    await notificationService.getNotification({ accountId, isRead: false })
+  )
 
   topics = topics.map((topic) => ({
     id: String(topic._id),
@@ -41,10 +47,6 @@ exports.getHomeData = catchAsyncErrors(async (_, res) => {
     }))
   )
 
-  //   body.accountId = accountId
-  //   body.coverImageKey = coverImageKey
-
-  //   await storyService.createStory(body)
   recentStories = await Promise.all(
     recentStories.map(async (story) => ({
       id: String(story.id),
@@ -71,8 +73,7 @@ exports.getHomeData = catchAsyncErrors(async (_, res) => {
   return sendResponse(
     res,
     httpStatus.OK,
-    { trendingStories, recentStories },
-    { topics, trendingStories, recentStories },
+    { topics, trendingStories, recentStories, newNotifications },
     messages.SUCCESS.HOME_DATA_FETCHED
   )
 })

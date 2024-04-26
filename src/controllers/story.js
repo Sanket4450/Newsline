@@ -64,9 +64,7 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
 
   let [story] = await storyService.getFullStory(storyId)
 
-  let comments = await commentService.getComments(storyId, {
-    limit: 3,
-  })
+  let comments = await commentService.getComments({ storyId, limit: 3 })
 
   let moreStories = await storyService.getStories({
     accountId: String(story.account.id),
@@ -81,7 +79,7 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
     : null
 
   delete story.coverImageKey
-  delete story.account.profileImageUrl
+  delete story.account.profileImageKey
 
   if (
     accountId !== String(story.account.id) &&

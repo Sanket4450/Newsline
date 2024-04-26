@@ -185,8 +185,11 @@ exports.getStories = (body) => {
       },
     },
     {
-      $addFields: {
-        commentsCount: 0,
+      $lookup: {
+        from: 'comments',
+        localField: '_id',
+        foreignField: 'storyId',
+        as: 'comments',
       },
     },
     {
@@ -195,7 +198,7 @@ exports.getStories = (body) => {
         description: 1,
         coverImageKey: 1,
         views: 1,
-        commentsCount: 1,
+        commentsCount: { $size: '$comments' },
         createdAt: 1,
         topic: {
           title: 1,

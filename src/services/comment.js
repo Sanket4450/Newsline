@@ -106,10 +106,24 @@ exports.getComments = (body) => {
       },
     },
     {
+      $lookup: {
+        from: 'comments',
+        localField: '_id',
+        foreignField: 'commentId',
+        as: 'replies',
+      },
+    },
+    {
+      $addFields: {
+        replies: { $size: '$replies' },
+      },
+    },
+    {
       $project: {
         content: 1,
         likedBy: 1,
         likes: 1,
+        replies: 1,
         createdAt: 1,
         account: {
           fullName: 1,
