@@ -9,6 +9,22 @@ const { storyValidation } = require('../validations')
 const { storyController } = require('../controllers')
 
 userRouter.post(
+  '/filter',
+  authChecker,
+  validate(storyValidation.getStories),
+  storyController.getStories
+)
+
+userRouter.get('/suggested-tags', authChecker, storyController.getSuggestedTags)
+
+userRouter.get(
+  '/:storyId',
+  authChecker,
+  validate(storyValidation.getStory),
+  storyController.getStory
+)
+
+userRouter.post(
   '/',
   authChecker,
   uploadFile(fields.STORY),

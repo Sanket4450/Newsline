@@ -14,6 +14,8 @@ const {
 const { userRouter: userStoryRouter } = require('./story')
 const { userRouter: userFaqCategoryRouter, adminRouter: adminFaqCategoryRouter } = require('./faqCategory')
 const { userRouter: userFaqRouter, adminRouter: adminFaqRouter } = require('./faq')
+const { userRouter: userCommentRouter } = require('./comment')
+const { userRouter: userNotificationRouter } = require('./notification')
 
 userRouter.use('/auth', userAuthRouter)
 userRouter.use('/account', userAccountRouter)
@@ -22,6 +24,8 @@ userRouter.use('/topics', userTopicRouter)
 userRouter.use('/stories', userStoryRouter)
 userRouter.use('/faqcategory', userFaqCategoryRouter)
 userRouter.use('/faq', userFaqRouter)
+userRouter.use('/comments', userCommentRouter)
+userRouter.use('/notifications', userNotificationRouter)
 
 adminRouter.use('/account', adminAccountRouter)
 adminRouter.use('/topics', adminTopicRouter)

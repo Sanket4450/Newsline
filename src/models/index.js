@@ -7,6 +7,9 @@ const Tag = require('./tag')
 const FaqCategory = require('./faqCategory')
 const Faq = require('./faq')
 const Bookmark = require('./bookmark')
+const Comment = require('./comment')
+const Reply = require('./reply')
+const Notification = require('./notification')
 
 module.exports = {
   Account,
@@ -17,5 +20,8 @@ module.exports = {
   Tag,
   FaqCategory,
   Faq,
-  Bookmark
+  Bookmark,
+  Comment,
+  Reply,
+  Notification,
 }

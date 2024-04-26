@@ -7,7 +7,10 @@ const collections = {
   TAG: 'Tag',
   FAQCATEGORY: 'FaqCategory',
   FAQ: 'Faq',
-  BOOKMARK: 'BookmarkCollection'
+  BOOKMARK: 'BookmarkCollection',
+  COMMENT: 'Comment',
+  REPLY: 'Reply',
+  NOTIFICATION: 'Notification',
 }
 
 module.exports = collections

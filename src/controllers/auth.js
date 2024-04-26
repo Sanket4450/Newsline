@@ -7,7 +7,9 @@ const {
   tokenService,
   sessionService,
   accountService,
+  notificationService,
 } = require('../services')
+const notifications = require('../constants/notifications')
 
 exports.register = catchAsyncErrors(async (req, res) => {
   const body = req.body
@@ -56,6 +58,11 @@ exports.verifyRegisterOtp = catchAsyncErrors(async (req, res) => {
   })
 
   await accountService.updateAccountById(accountId, { isEmailVerified: true })
+
+  await notificationService.createNotification(accountId, {
+    iconKey: notifications.USER,
+    title: messages.NOTIFICATION.ACCOUNT_SETUP,
+  })
 
   const accessToken = tokenService.generateAccessToken(accountId, role)
 
