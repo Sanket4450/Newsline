@@ -29,7 +29,7 @@ exports.getAccount = catchAsyncErrors(async (req, res) => {
     website: 1,
     language: 1,
     isVerified: 1,
-    _id: 0,
+    _id: 1,
   })
 
   account._doc.profileImageUrl = account.profileImageKey

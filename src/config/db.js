@@ -6,7 +6,11 @@ const connectDB = () => {
   console.log(`Inside connectDB => ${DB_URI}`)
 
   mongoose
-    .connect(DB_URI)
+    .connect(DB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      family: 4,
+    })
     .then((data) => {
       console.log(`Database connected successfully: ${data.connection.name}`)
     })

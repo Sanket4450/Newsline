@@ -17,11 +17,7 @@ userRouter.post(
 
 userRouter.post('/login', validate(authValidation.login), authController.login)
 
-userRouter.post(
-  '/forgot-password',
-  validate(authValidation.forgotPassword),
-  authController.forgotPassword
-)
+userRouter.post('/forgot-password',validate(authValidation.forgotPassword),authController.forgotPassword)
 
 userRouter.post(
   '/verify-reset-password-otp',

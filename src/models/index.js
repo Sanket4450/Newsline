@@ -4,6 +4,9 @@ const Language = require('./language')
 const Topic = require('./topic')
 const Story = require('./story')
 const Tag = require('./tag')
+const FaqCategory = require('./faqCategory')
+const Faq = require('./faq')
+const Bookmark = require('./bookmark')
 
 module.exports = {
   Account,
@@ -12,4 +15,7 @@ module.exports = {
   Topic,
   Story,
   Tag,
+  FaqCategory,
+  Faq,
+  Bookmark
 }
