@@ -11,17 +11,21 @@ exports.getNotifications = catchAsyncErrors(async (req, res) => {
 
   notifications = await Promise.all(
     notifications.map(async (notification) => ({
-      title: notification.title,
       type: notification.type,
+      title: notification.title,
       iconUrl: notification.profileImageKey
         ? await storageService.getFileUrl(notification.profileImageKey)
         : notification.iconKey
         ? await storageService.getFileUrl(notification.iconKey)
         : null,
-      storyImageUrl: notification.storyImageKey
-        ? await storageService.getFileUrl(notification.storyImageKey)
-        : null,
-      isFollowedBack: notification.isFollowedBack,
+      ...(notification.storyImageKey && {
+        storyImageUrl: notification.storyImageKey
+          ? await storageService.getFileUrl(notification.storyImageKey)
+          : null,
+      }),
+      ...(notification.isFollowedBack && {
+        isFollowedBack: notification.isFollowedBack,
+      }),
     }))
   )
 

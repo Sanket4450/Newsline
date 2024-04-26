@@ -3,8 +3,6 @@ const joi = require('joi')
 const {
   emailValidation,
   passwordValidation,
-  booleanValidation,
-  stringValidation,
   otpValidation,
   stringReqValidation,
 } = require('./common')
@@ -13,8 +11,6 @@ const register = {
   body: joi.object({
     email: emailValidation,
     password: passwordValidation,
-    isAdmin: booleanValidation,
-    secret: stringValidation,
   }),
 }
 

@@ -3,29 +3,30 @@ const joi = require('joi')
 const {
   stringReqValidation,
   idReqValidation,
+  stringValidation,
 } = require('./common')
 
-const createCategory = {
+const createFaqCategory = {
   body: joi.object({
     title: stringReqValidation,
   }),
 }
 
-const deleteCategory = {
+const updateFaqCategory = {
   body: joi.object({
-    categoryId: idReqValidation,
+    faqCategoryId: idReqValidation,
+    title: stringValidation,
   }),
 }
 
-const updateCategory = {
+const deleteFaqCategory = {
   body: joi.object({
-    categoryId: idReqValidation,
-    title: stringReqValidation
+    faqCategoryId: idReqValidation,
   }),
 }
 
 module.exports = {
-  createCategory,
-  deleteCategory,
-  updateCategory
+  createFaqCategory,
+  updateFaqCategory,
+  deleteFaqCategory
 }

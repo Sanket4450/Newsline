@@ -16,10 +16,6 @@ exports.register = catchAsyncErrors(async (req, res) => {
 
   await authService.checkAccountNotExistWithEmail(body.email)
 
-  if (body.isAdmin && body.isAdmin === true) {
-    authService.checkSecret(body.secret)
-  }
-
   const { otp } = await authService.sendRegisterOtp(body.email)
   body.otp = otp
 

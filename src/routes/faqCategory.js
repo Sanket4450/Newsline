@@ -1,35 +1,34 @@
 const userRouter = require('express').Router()
 const adminRouter = require('express').Router()
-const fields = require('../constants/fields')
 const validate = require('../middlewares/validate')
 const { authChecker, authorizeRole } = require('../middlewares/auth')
 const { faqCategoryValidation } = require('../validations')
 const { faqCategoryController } = require('../controllers')
 
-userRouter.get('/',authChecker,faqCategoryController.findCategory)
+userRouter.get('/', authChecker, faqCategoryController.getFaqCategories)
 
 adminRouter.post(
   '/',
   authChecker,
   authorizeRole('admin'),
-  validate(faqCategoryValidation.createCategory),
-  faqCategoryController.createCategory
-)
-
-adminRouter.delete(
-  '/',
-  authChecker,
-  authorizeRole('admin'),
-  validate(faqCategoryValidation.deleteCategory),
-  faqCategoryController.deleteCategory
+  validate(faqCategoryValidation.createFaqCategory),
+  faqCategoryController.createFaqCategory
 )
 
 adminRouter.put(
   '/',
   authChecker,
   authorizeRole('admin'),
-  validate(faqCategoryValidation.updateCategory),
-  faqCategoryController.updateCategory
+  validate(faqCategoryValidation.updateFaqCategory),
+  faqCategoryController.updateFaqCategory
+)
+
+adminRouter.delete(
+  '/',
+  authChecker,
+  authorizeRole('admin'),
+  validate(faqCategoryValidation.deleteFaqCategory),
+  faqCategoryController.deleteFaqCategory
 )
 
 module.exports = { userRouter, adminRouter }

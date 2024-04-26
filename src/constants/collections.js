@@ -5,12 +5,12 @@ const collections = {
   TOPIC: 'Topic',
   STORY: 'Story',
   TAG: 'Tag',
-  FAQCATEGORY: 'FaqCategory',
-  FAQ: 'Faq',
-  BOOKMARK: 'BookmarkCollection',
   COMMENT: 'Comment',
   REPLY: 'Reply',
   NOTIFICATION: 'Notification',
+  FAQCATEGORY: 'FaqCategory',
+  FAQ: 'Faq',
+  BOOKMARK: 'BookmarkCollection',
 }
 
 module.exports = collections

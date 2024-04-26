@@ -92,12 +92,6 @@ exports.checkEmailVerified = async (accountId) => {
   }
 }
 
-exports.checkSecret = (secret) => {
-  if (secret !== process.env.ADMIN_SECRET) {
-    throw new ApiError(messages.ERROR.INVALID_SECRET, httpStatus.UNAUTHORIZED)
-  }
-}
-
 exports.sendRegisterOtp = async (email) => {
   Logger.info(`Inside sendRegisterOtp => email = ${email}`)
 
@@ -122,7 +116,7 @@ exports.createAccount = async (body) => {
     email: body.email,
     password: hashedPassword,
     registerOtp: body.otp,
-    role: body.isAdmin && body.isAdmin === true ? 'admin' : 'user',
+    role: 'user',
   })
 
   return { accountId: String(account._id) }
@@ -195,7 +189,7 @@ exports.resetNewPassword = async (accountId, password) => {
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  console.log('---------------------',password);
+  console.log('---------------------', password)
   return accountService.updateAccountById(accountId, {
     password: hashedPassword,
   })
