@@ -9,6 +9,8 @@ const { topicController } = require('../controllers')
 
 userRouter.get('/', authChecker, topicController.getTopics)
 
+adminRouter.get('/', authChecker, topicController.getAdminTopics)
+
 adminRouter.post(
   '/',
   authChecker,

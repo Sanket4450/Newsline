@@ -6,7 +6,10 @@ const collections = require('../constants/collections')
 const { getObjectId } = require('../utils/getObjectId')
 const { BookmarkCollection } = require('../models')
 
-exports.checkBookmarkCollectionExistById = async (bookmarkId, data = { _id: 1 }) => {
+exports.checkBookmarkCollectionExistById = async (
+  bookmarkId,
+  data = { _id: 1 }
+) => {
   try {
     const query = {
       _id: getObjectId(bookmarkId),
@@ -15,7 +18,10 @@ exports.checkBookmarkCollectionExistById = async (bookmarkId, data = { _id: 1 })
     const category = await DbRepo.findOne(collections.BOOKMARK, { query, data })
 
     if (!category) {
-      throw new ApiError(messages.ERROR.BOOKMARK_COLLECTION_NOT_FOUND, httpStatus.NOT_FOUND)
+      throw new ApiError(
+        messages.ERROR.BOOKMARK_COLLECTION_NOT_FOUND,
+        httpStatus.NOT_FOUND
+      )
     }
 
     return category
@@ -38,13 +44,12 @@ exports.getBookmarkCollection = (query = {}, data = { _id: 1 }) => {
   return DbRepo.findOne(collections.BOOKMARK, { query, data })
 }
 
-exports.getBookmarkCollectionByTitle = (title, data = {_id: 1})=> {
+exports.getBookmarkCollectionByTitle = (title, data = { _id: 1 }) => {
   const query = {
-    title: {$regex: title, $options: 'i'}
+    title: { $regex: title, $options: 'i' },
   }
   return exports.getBookmarkCollection(query, data)
 }
-
 
 exports.deleteTitleDescription = (faqId = {}) => {
   const query = {
@@ -54,20 +59,20 @@ exports.deleteTitleDescription = (faqId = {}) => {
   return DbRepo.deleteOne(collections.BOOKMARK, { query })
 }
 
-exports.getAllBookmark = (data = { title: 1,}) => {
+exports.getAllBookmark = (data = { title: 1 }) => {
   return DbRepo.find(collections.BOOKMARK, { data })
 }
 
-exports.getStoryBookmark = (data = { title: 1,}) => {
+exports.getStoryBookmark = (data = { title: 1 }) => {
   const pipline = [
     {
-      $project:{
+      $project: {
         title: 1,
         stories: 1,
-        _id : 0,
-        id : '$_id'
-      }
-    }
+        _id: 0,
+        id: '$_id',
+      },
+    },
   ]
   return DbRepo.aggregate(collections.BOOKMARK, pipline)
 }
@@ -80,17 +85,16 @@ exports.deleteBookmark = (bookmarkId = {}) => {
   return DbRepo.deleteOne(collections.BOOKMARK, { query })
 }
 
-exports.addStoryBookmark = (collectionId, storyId) =>{
-
+exports.addStoryBookmark = (collectionId, storyId) => {
   const query = {
     _id: getObjectId(collectionId),
-    stories: {$ne: getObjectId(storyId)}
+    stories: { $ne: getObjectId(storyId) },
   }
 
   const data = {
-    $push: {  
-      stories: getObjectId(storyId), 
-    }
+    $push: {
+      stories: getObjectId(storyId),
+    },
   }
   return DbRepo.updateOne(collections.BOOKMARK, { query, data })
 }

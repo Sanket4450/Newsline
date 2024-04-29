@@ -6,9 +6,9 @@ const collections = {
   STORY: 'Story',
   TAG: 'Tag',
   COMMENT: 'Comment',
-  NOTIFICATION: 'Notification',
   FAQCATEGORY: 'FaqCategory',
   FAQ: 'Faq',
+  NOTIFICATION: 'Notification',
   BOOKMARK: 'BookmarkCollection',
 }
 

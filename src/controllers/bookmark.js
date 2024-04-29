@@ -1,5 +1,4 @@
 const httpStatus = require('http-status')
-const folders = require('../constants/folders')
 const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
 const ApiError = require('../utils/ApiError')
 const { sendResponse } = require('../utils/responseHandler')
@@ -11,16 +10,21 @@ exports.createBookmarkCollection = catchAsyncErrors(async (req, res) => {
 
   if (await bookmarkService.getBookmarkCollectionByTitle(body.title)) {
     throw new ApiError(
-      messages.ERROR.BOOKMARK_EXISTS_WITH_BOOKMARKTITLE,
-      httpStatus.BAD_REQUEST
+      messages.ERROR.BOOKMARK_EXISTS_WITH_TITLE,
+      httpStatus.CONFLICT
     )
-  }  
+  }
   await bookmarkService.createBookmark(body)
 
-  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.BOOKMARK_COLLECTION_CREATED)
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    {},
+    messages.SUCCESS.BOOKMARK_COLLECTION_CREATED
+  )
 })
 
-exports.findBookmarkCollection = catchAsyncErrors(async(req,res)=>{
+exports.findBookmarkCollection = catchAsyncErrors(async (req, res) => {
   const data = await bookmarkService.getAllBookmark()
   return sendResponse(
     res,
@@ -30,7 +34,7 @@ exports.findBookmarkCollection = catchAsyncErrors(async(req,res)=>{
   )
 })
 
-exports.getStoryBookmarkCollection = catchAsyncErrors(async(req,res)=>{
+exports.getStoryBookmarkCollection = catchAsyncErrors(async (req, res) => {
   const data = await bookmarkService.getStoryBookmark()
   return sendResponse(
     res,
@@ -40,19 +44,22 @@ exports.getStoryBookmarkCollection = catchAsyncErrors(async(req,res)=>{
   )
 })
 
-
-
 exports.deleteBookmarkCollection = catchAsyncErrors(async (req, res) => {
   const { bookmarkId } = req.body
 
   await bookmarkService.checkBookmarkCollectionExistById(bookmarkId)
 
   await bookmarkService.deleteBookmark(bookmarkId)
-  
-  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.BOOKMARK_COLLECTION_DELETED)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    {},
+    messages.SUCCESS.BOOKMARK_COLLECTION_DELETED
+  )
 })
 
-exports.addStoryBookmarkCollection = catchAsyncErrors(async(req,res)=>{
+exports.addStoryBookmarkCollection = catchAsyncErrors(async (req, res) => {
   const { bookmarkCollections, storyId } = req.body
 
   await storyService.checkStoryExistById(storyId)
@@ -63,6 +70,10 @@ exports.addStoryBookmarkCollection = catchAsyncErrors(async(req,res)=>{
     await bookmarkService.addStoryBookmark(collectionId, storyId)
   }
 
-  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_ADD_BOOKMARK_COLLECTION)
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    {},
+    messages.SUCCESS.STORY_ADD_BOOKMARK_COLLECTION
+  )
 })
-

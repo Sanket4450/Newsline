@@ -1,34 +1,37 @@
 const userRouter = require('express').Router()
 const adminRouter = require('express').Router()
-const fields = require('../constants/fields')
 const validate = require('../middlewares/validate')
 const { authChecker, authorizeRole } = require('../middlewares/auth')
-const { bookmarkCollectionValidation } = require('../validations')
-const { bookmarkCollectionController } = require('../controllers')
+const { bookmarkValidation } = require('../validations')
+const { bookmarkController } = require('../controllers')
 
-userRouter.get('/',authChecker,bookmarkCollectionController.findBookmarkCollection)
+userRouter.get('/', authChecker, bookmarkController.findBookmarkCollection)
 
 userRouter.post(
   '/',
   authChecker,
-  validate(bookmarkCollectionValidation.createBookmarkCollection),
-  bookmarkCollectionController.createBookmarkCollection
+  validate(bookmarkValidation.createBookmarkCollection),
+  bookmarkController.createBookmarkCollection
 )
 
 userRouter.delete(
   '/',
   authChecker,
-  validate(bookmarkCollectionValidation.deleteBookmarkCollection),
-  bookmarkCollectionController.deleteBookmarkCollection
+  validate(bookmarkValidation.deleteBookmarkCollection),
+  bookmarkController.deleteBookmarkCollection
 )
 
 userRouter.patch(
   '/addstory',
   authChecker,
-  validate(bookmarkCollectionValidation.addStoryBookmarkCollection),
-  bookmarkCollectionController.addStoryBookmarkCollection
+  validate(bookmarkValidation.addStoryBookmarkCollection),
+  bookmarkController.addStoryBookmarkCollection
 )
 
-userRouter.get('/story',authChecker,bookmarkCollectionController.getStoryBookmarkCollection) // didn't complite
+userRouter.get(
+  '/story',
+  authChecker,
+  bookmarkController.getStoryBookmarkCollection
+)
 
 module.exports = { userRouter, adminRouter }

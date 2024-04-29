@@ -1,23 +1,21 @@
 const { Schema, model } = require('mongoose')
 
-const bookmarkSchema = new Schema(
-  {
-    title: {
-      type: String,
-      required: true,
+const bookmarkCollectionSchema = new Schema({
+  accountId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Account',
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  stories: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Story',
     },
-    accountId: 
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Account',
-      },
-    stories: [
-      {
-         type: Schema.Types.ObjectId,
-         ref: 'Story'
-      }
-   ],
-  }
-)
+  ],
+})
 
-module.exports = model('BookmarkCollection', bookmarkSchema)
+module.exports = model('BookmarkCollection', bookmarkCollectionSchema)

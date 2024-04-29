@@ -39,8 +39,9 @@ const messages = {
     STORY_NOT_FOUND: 'Story not found',
     COMMENT_NOT_FOUND: 'Comment not found',
     NOTIFICATION_NOT_FOUND: 'Notification not found',
-    BOOKMARK_EXISTS_WITH_BOOKMARKTITLE: 'Bookmarkcollection already exists with this Bookmarkcollectiontitle',
-    BOOKMARK_COLLECTION_NOT_FOUND: 'Bookmarkcollection not found',
+    BOOKMARK_EXISTS_WITH_TITLE:
+      'Bookmark collection already exists with this Bookmarkcollectiontitle',
+    BOOKMARK_COLLECTION_NOT_FOUND: 'Bookmark collection not found',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',
@@ -83,7 +84,7 @@ const messages = {
     NOTIFICATION_DELETED: 'Notification deleted successfully',
     NOTIFICATIONS_DELETED: 'All Notifications deleted successfully',
     NOTIFICATION_UPDATED: 'Notification updated successfully',
-    BOOKMARK_COLLECTION_CREATED : 'Bookmark collection created successfully',
+    BOOKMARK_COLLECTION_CREATED: 'Bookmark collection created successfully',
     BOOKMARK_COLLECTION_FETCHED: 'Bookmark collection fetched successfully',
     BOOKMARK_COLLECTION_DELETED: 'Bookmark collection deleted successfully',
     STORY_ADD_BOOKMARK_COLLECTION: 'Story add bookmark collection successfully',
