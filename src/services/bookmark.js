@@ -118,19 +118,15 @@ exports.getBookmarkStories = (collectionId, data) => {
     },
     {
       $project: {
-        title: 1,
-        description: 1,
-        coverImageKey: 1,
-        views: 1,
+        title: '$story.title',
+        description: '$story.description',
+        coverImageKey: '$story.coverImageKey',
+        views: '$story.views',
         commentsCount: { $size: '$comments' },
-        createdAt: 1,
-        topic: {
-          title: 1,
-          id: '$topic._id',
-        },
+        createdAt: '$story.createdAt',
         account: {
-          fullName: 1,
-          profileImageKey: 1,
+          fullName: '$account.fullName',
+          profileImageKey: '$account.profileImageKey',
         },
         _id: 0,
         id: '$_id',

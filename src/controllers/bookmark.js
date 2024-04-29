@@ -3,8 +3,7 @@ const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
 const ApiError = require('../utils/ApiError')
 const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
-const { bookmarkService, storyService } = require('../services')
-const { getObjectId } = require('../utils/getObjectId')
+const { bookmarkService, storyService, storageService } = require('../services')
 
 exports.getBookmarkCollectionsData = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
@@ -12,23 +11,41 @@ exports.getBookmarkCollectionsData = catchAsyncErrors(async (req, res) => {
     accountId
   )
 
-  !!bookmarkCollections.length &&
-    bookmarkCollections.map((collection, idx) => ({
-      id: collection._id,
-      title: collection.title,
-      isSelected: idx === 0,
-    }))
+  bookmarkCollections = !!bookmarkCollections.length
+    ? bookmarkCollections.map((collection, idx) => ({
+        id: collection._id,
+        title: collection.title,
+        isSelected: idx === 0,
+      }))
+    : []
 
   const selectedCollection = bookmarkCollections.find(
     (collection) => collection.isSelected === true
   )
 
   let stories = selectedCollection
-    ? await bookmarkService.getBookmarkStories(selectedCollection.id, {
+    ? await bookmarkService.getBookmarkStories(String(selectedCollection.id), {
         page: 1,
         limit: 10,
       })
     : []
+
+  stories = await Promise.all(
+    stories.map(async (story) => {
+      story.coverImageUrl = story.coverImageKey
+        ? await storageService.getFileUrl(story.coverImageKey)
+        : null
+
+      story.account.profileImageUrl = story.account.profileImageKey
+        ? await storageService.getFileUrl(story.account.profileImageKey)
+        : null
+
+      delete story.coverImageKey
+      delete story.account.profileImageKey
+
+      return story
+    })
+  )
 
   return sendResponse(
     res,
@@ -44,7 +61,7 @@ exports.getBookmarkCollections = catchAsyncErrors(async (req, res) => {
 
   await storyService.checkStoryExistById(storyId)
 
-  let bookmarkCollections = bookmarkService.getAllBookmarkCollections(
+  let bookmarkCollections = await bookmarkService.getAllBookmarkCollections(
     accountId,
     {
       title: 1,
@@ -52,13 +69,13 @@ exports.getBookmarkCollections = catchAsyncErrors(async (req, res) => {
     }
   )
 
-  bookmarkCollections = bookmarkCollections.map((collection) => {
-    collection.isSaved = collection?.stories?.some((storyObjectId) =>
+  bookmarkCollections = bookmarkCollections.map((collection) => ({
+    id: String(collection._id),
+    title: collection.title,
+    isSaved: collection?.stories?.some((storyObjectId) =>
       storyObjectId.equals(storyId)
-    )
-
-    return collection
-  })
+    ),
+  }))
 
   return sendResponse(
     res,
@@ -68,15 +85,36 @@ exports.getBookmarkCollections = catchAsyncErrors(async (req, res) => {
   )
 })
 
-exports.getBookmarkStories = catchAsyncErrors(async (_, res) => {
+exports.getBookmarkStories = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
   const { bookmarkCollectionId } = req.params
 
-  let stories = selectedCollection
-    ? await bookmarkService.getBookmarkStories(bookmarkCollectionId, {
-        page: 1,
-        limit: 10,
-      })
-    : []
+  await bookmarkService.checkBookmarkCollectionExistByAccountAndId(
+    accountId,
+    bookmarkCollectionId
+  )
+
+  let stories = await bookmarkService.getBookmarkStories(bookmarkCollectionId, {
+    page: 1,
+    limit: 10,
+  })
+
+  stories = await Promise.all(
+    stories.map(async (story) => {
+      story.coverImageUrl = story.coverImageKey
+        ? await storageService.getFileUrl(story.coverImageKey)
+        : null
+
+      story.account.profileImageUrl = story.account.profileImageKey
+        ? await storageService.getFileUrl(story.account.profileImageKey)
+        : null
+
+      delete story.coverImageKey
+      delete story.account.profileImageKey
+
+      return story
+    })
+  )
 
   return sendResponse(
     res,

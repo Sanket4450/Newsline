@@ -68,7 +68,6 @@ exports.getSuggestedTags = () => {
 
 
 exports.gatTagFullSearch= (find) =>{
-  console.log(find)
   const search = find.search || ''
   const page = find.page || 1
   const limit = find.limit || 10

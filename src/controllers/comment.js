@@ -11,7 +11,8 @@ exports.getComments = catchAsyncErrors(async (req, res) => {
   await storyService.checkStoryExistById(body.storyId)
 
   let comments = await commentService.getComments(body)
-  console.log(comments)
+
+  const commentsCount = await commentService.getTotalCommentsCount(body.storyId)
 
   comments = await commentService.validateLikedComments(accountId, comments)
 
@@ -31,7 +32,7 @@ exports.getComments = catchAsyncErrors(async (req, res) => {
   return sendResponse(
     res,
     httpStatus.OK,
-    { comments },
+    { comments, commentsCount },
     messages.SUCCESS.COMMENTS_FETCHED
   )
 })

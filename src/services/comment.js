@@ -177,6 +177,13 @@ exports.getComment = (commentId) => {
   return DbRepo.aggregate(collections.COMMENT, pipeline)
 }
 
+exports.getTotalCommentsCount = (storyId) => {
+  const query = {
+    storyId: getObjectId(storyId),
+  }
+  return DbRepo.count(collections.COMMENT, { query })
+}
+
 exports.postComment = (accountId, body) => {
   const data = {
     accountId: getObjectId(accountId),

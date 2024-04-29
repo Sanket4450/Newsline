@@ -189,7 +189,6 @@ exports.resetNewPassword = async (accountId, password) => {
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  console.log('---------------------', password)
   return accountService.updateAccountById(accountId, {
     password: hashedPassword,
   })
