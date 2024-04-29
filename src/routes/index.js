@@ -22,6 +22,9 @@ const {
   adminRouter: adminFaqRouter,
 } = require('./faq')
 const { userRouter: userCommentRouter } = require('./comment')
+const { userRouter: userNotificationRouter } = require('./notification')
+const { userRouter: userbookmarkCollectionRouter} = require('./bookmark')
+const { userRouter: userTagRouter} = require('./tag')
 
 userRouter.use('/auth', userAuthRouter)
 userRouter.use('/account', userAccountRouter)
@@ -32,6 +35,9 @@ userRouter.use('/stories', userStoryRouter)
 userRouter.use('/faq-categories', userFaqCategoryRouter)
 userRouter.use('/faqs', userFaqRouter)
 userRouter.use('/comments', userCommentRouter)
+userRouter.use('/notifications', userNotificationRouter)
+userRouter.use('/bookmarkCollection', userbookmarkCollectionRouter)
+userRouter.use('/tag', userTagRouter)
 
 adminRouter.use('/account', adminAccountRouter)
 adminRouter.use('/topics', adminTopicRouter)

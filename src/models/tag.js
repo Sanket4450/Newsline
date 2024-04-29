@@ -15,6 +15,6 @@ const tagSchema = new Schema(
     autoIndex: false,
     timestamps: true,
   }
-)
+) 
 
 module.exports = model('Tag', tagSchema)

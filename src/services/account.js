@@ -314,3 +314,48 @@ exports.isAccountFollows = (followerAccountId, followingAccountId) => {
 
   return DbRepo.findOne(collections.ACCOUNT, { query })
 }
+
+exports.getSearchFullAccount = (find) =>{
+  const search = find.search || ''
+  const page = find.page || 1
+  const limit = find.limit || 10
+
+  const pipeline = []
+
+  pipeline.push({
+    $match: {
+      type: { $ne: "reader" }
+    },
+  })
+
+  pipeline.push(
+  {
+    $match: {
+      $or: [
+        { fullName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { userName: { $regex: search, $options: 'i' } },
+        { bio: { $regex: search, $options: 'i' } }
+      ],
+    },
+  },
+  {
+    $skip: (page - 1) * limit,
+  },
+  {
+    $limit: limit,
+  },
+  {
+    $project: {
+      fullName: 1,
+      email:1,
+      userName: 1,
+      bio : 1,
+      _id: 0,
+      id: '$_id',
+    }
+  }
+)
+   
+  return DbRepo.aggregate(collections.ACCOUNT , pipeline)
+}

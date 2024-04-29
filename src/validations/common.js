@@ -67,5 +67,5 @@ module.exports = {
   idReqValidation,
   otpValidation,
   mobileValidation,
-  tagValidation,
+  tagValidation
 }

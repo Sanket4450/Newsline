@@ -45,6 +45,12 @@ const setInterests = {
   }),
 }
 
+const getSearchAccounts = {
+  body: joi.object({
+    search: stringReqValidation
+  })
+}
+
 const toggleFollow = {
   body: joi.object({
     accountId: idReqValidation,
@@ -82,4 +88,5 @@ module.exports = {
   toggleFollow,
   getAdminAccounts,
   updateUserType,
+  getSearchAccounts
 }

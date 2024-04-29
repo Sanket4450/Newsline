@@ -26,6 +26,7 @@ exports.checkTagExistById = async (tagId, data = { _id: 1 }) => {
   }
 }
 
+
 exports.getTagByTitle = (title, data = { _id: 1 }) => {
   const query = {
     title,
@@ -63,4 +64,43 @@ exports.getSuggestedTags = () => {
   ]
 
   return DbRepo.aggregate(collections.TAG, pipeline)
+}
+
+
+exports.gatTagFullSearch= (find) =>{
+  console.log(find)
+  const search = find.search || ''
+  const page = find.page || 1
+  const limit = find.limit || 10
+
+  const pipeline = []
+
+  pipeline.push({ 
+    $match: {
+      type: { $ne: "reader" }
+    },
+  })
+
+  pipeline.push(
+  {
+    $match: {
+         title: { $regex: search, $options: 'i' } 
+    },
+  },
+  // {  
+  //   $skip: (page - 1) * limit,
+  // },
+  // {
+  //   $limit: limit,
+  // },
+  {
+    $project: {
+      title: 1,
+      _id: 0,
+      id: '$_id',
+    }
+  }
+)
+   
+  return DbRepo.aggregate(collections.TAG , pipeline)
 }

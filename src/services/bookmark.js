@@ -4,105 +4,93 @@ const messages = require('../constants/messages')
 const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
 const { getObjectId } = require('../utils/getObjectId')
-const storageService = require('./storage')
+const { BookmarkCollection } = require('../models')
 
-// exports.getFaqs = (body) => {
-//   const search = body.search || ''
+exports.checkBookmarkCollectionExistById = async (bookmarkId, data = { _id: 1 }) => {
+  try {
+    const query = {
+      _id: getObjectId(bookmarkId),
+    }
 
-//   const pipeline = [
-//     {
-//       $match: {
-//         $or: [
-//           {title: {$regex: search, $options: 'i'}},
-//           {description: {$regex: search, $options: 'i'}}
-//         ],
-//         ...(body.faqCategoryId && {faqCategoryId: getObjectId(body.faqCategoryId)})
-//       }
-//     },
-//     {
-//       $sort: {
-//         createdAt: -1
-//       }
-//     },
-//     {
-//       $project: {
-//         title: 1,
-//         description: 1,
-//         _id: 0,
-//         id: '$_id'
-//       }
-//     }
-//   ]
+    const category = await DbRepo.findOne(collections.BOOKMARK, { query, data })
 
-//   return DbRepo.aggregate(collections.FAQ, pipeline)
-// }
+    if (!category) {
+      throw new ApiError(messages.ERROR.BOOKMARK_COLLECTION_NOT_FOUND, httpStatus.NOT_FOUND)
+    }
+
+    return category
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
 
 exports.createBookmark = (body) => {
   const data = {
     ...body,
   }
-  return DbRepo.create(collections.FAQ, { data })
+  return DbRepo.create(collections.BOOKMARK, { data })
 }
 
-exports.getTitle = (query = {}, data = { _id: 1 }) => {
-  return DbRepo.findOne(collections.FAQ, { query, data })
+exports.getBookmarkCollection = (query = {}, data = { _id: 1 }) => {
+  return DbRepo.findOne(collections.BOOKMARK, { query, data })
 }
 
-// exports.getCategoryByTitle = (title, data = {_id: 1})=> {
-//   const query = {
-//     title: {$regex: title, $options: 'i'}
-//   }
+exports.getBookmarkCollectionByTitle = (title, data = {_id: 1})=> {
+  const query = {
+    title: {$regex: title, $options: 'i'}
+  }
+  return exports.getBookmarkCollection(query, data)
+}
 
-//   return exports.getTitle(query, data)
-// }
 
-// exports.updateTitleDescriptionById = (faqId, updateData = {}) => {
-//   const query = {
-//     _id: getObjectId(faqId),
-//   }
+exports.deleteTitleDescription = (faqId = {}) => {
+  const query = {
+    _id: getObjectId(faqId),
+  }
 
-//   const data = {
-//     $set: {
-//       ...updateData,
-//     },
-//   }
+  return DbRepo.deleteOne(collections.BOOKMARK, { query })
+}
 
-//   return DbRepo.updateOne(collections.FAQ, { query, data })
-// }
+exports.getAllBookmark = (data = { title: 1,}) => {
+  return DbRepo.find(collections.BOOKMARK, { data })
+}
 
-// exports.deleteTitleDescription = (faqId = {}) => {
-//   const query = {
-//     _id: getObjectId(faqId),
-//   }
+exports.getStoryBookmark = (data = { title: 1,}) => {
+  const pipline = [
+    {
+      $project:{
+        title: 1,
+        stories: 1,
+        _id : 0,
+        id : '$_id'
+      }
+    }
+  ]
+  return DbRepo.aggregate(collections.BOOKMARK, pipline)
+}
 
-//   return DbRepo.deleteOne(collections.FAQ, { query })
-// }
+exports.deleteBookmark = (bookmarkId = {}) => {
+  const query = {
+    _id: getObjectId(bookmarkId),
+  }
 
-// exports.checkCategoryExistById = async (faqId, data = { _id: 1 }) => {
-//   try {
-//     const query = {
-//       _id: getObjectId(faqId),
-//     }
+  return DbRepo.deleteOne(collections.BOOKMARK, { query })
+}
 
-//     const category = await DbRepo.findOne(collections.FAQ, { query, data })
+exports.addStoryBookmark = (collectionId, storyId) =>{
 
-//     if (!category) {
-//       throw new ApiError(messages.ERROR.CATEGORY_NOT_FOUND, httpStatus.NOT_FOUND)
-//     }
+  const query = {
+    _id: getObjectId(collectionId),
+    stories: {$ne: getObjectId(storyId)}
+  }
 
-//     return category
-//   } catch (error) {
-//     throw new ApiError(
-//       error.message,
-//       error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
-//     )
-//   }
-// }
-
-// exports.deleteFaqsByCategory = (faqCategoryId) => {
-//   const query = {
-//     faqCategoryId: getObjectId(faqCategoryId),
-//   }
-
-//   return DbRepo.deleteMany(collections.FAQ, { query })
-// }
+  const data = {
+    $push: {  
+      stories: getObjectId(storyId), 
+    }
+  }
+  return DbRepo.updateOne(collections.BOOKMARK, { query, data })
+}

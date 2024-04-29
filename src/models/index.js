@@ -9,6 +9,7 @@ const Faq = require('./faq')
 const Bookmark = require('./bookmark')
 const Comment = require('./comment')
 const Notification = require('./notification')
+const BookmarkCollection = require('./bookmark')
 
 module.exports = {
   Account,
@@ -22,4 +23,5 @@ module.exports = {
   Bookmark,
   Comment,
   Notification,
+  BookmarkCollection
 }

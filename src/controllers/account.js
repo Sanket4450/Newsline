@@ -191,6 +191,16 @@ exports.setInterests = catchAsyncErrors(async (req, res) => {
   )
 })
 
+exports.getSearchAccount = catchAsyncErrors(async(req,res) =>{
+  const account = await accountService.getSearchFullAccount(req.body)
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { account },
+    messages.SUCCESS.ACCOUNTS_FETCHED
+  )
+})
+
 exports.getPublishers = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
 

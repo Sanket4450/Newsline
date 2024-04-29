@@ -39,6 +39,8 @@ const messages = {
     STORY_NOT_FOUND: 'Story not found',
     COMMENT_NOT_FOUND: 'Comment not found',
     NOTIFICATION_NOT_FOUND: 'Notification not found',
+    BOOKMARK_EXISTS_WITH_BOOKMARKTITLE: 'Bookmarkcollection already exists with this Bookmarkcollectiontitle',
+    BOOKMARK_COLLECTION_NOT_FOUND: 'Bookmarkcollection not found',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',
@@ -57,6 +59,7 @@ const messages = {
     INTERESTS_SELECTED: 'Interests selected successfully',
     ACCOUNTS_FETCHED: 'Accounts fetched successfully',
     TOPICS_FETCHED: 'Topics fetched successfully',
+    TAG_FETCHED: 'TAG fetched successfully',
     SUGGESTED_TAGS_FETCHED: 'Suggested tags fetched successfully',
     STORY_CREATED: 'Story created successfully',
     HOME_DATA_FETCHED: 'Home data fetched successfully',
@@ -80,6 +83,10 @@ const messages = {
     NOTIFICATION_DELETED: 'Notification deleted successfully',
     NOTIFICATIONS_DELETED: 'All Notifications deleted successfully',
     NOTIFICATION_UPDATED: 'Notification updated successfully',
+    BOOKMARK_COLLECTION_CREATED : 'Bookmark collection created successfully',
+    BOOKMARK_COLLECTION_FETCHED: 'Bookmark collection fetched successfully',
+    BOOKMARK_COLLECTION_DELETED: 'Bookmark collection deleted successfully',
+    STORY_ADD_BOOKMARK_COLLECTION: 'Story add bookmark collection successfully',
   },
   SUBJECT: {
     REGISTER_ACCOUNT: 'Register your account',
