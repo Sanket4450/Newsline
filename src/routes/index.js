@@ -34,7 +34,7 @@ userRouter.use('/stories', userStoryRouter)
 userRouter.use('/faq-categories', userFaqCategoryRouter)
 userRouter.use('/faqs', userFaqRouter)
 userRouter.use('/comments', userCommentRouter)
-userRouter.use('/bookmarkCollection', userbookmarkCollectionRouter)
+userRouter.use('/bookmark-collections', userbookmarkCollectionRouter)
 userRouter.use('/tag', userTagRouter)
 
 adminRouter.use('/account', adminAccountRouter)

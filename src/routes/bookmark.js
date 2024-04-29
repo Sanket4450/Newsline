@@ -1,11 +1,29 @@
 const userRouter = require('express').Router()
 const adminRouter = require('express').Router()
 const validate = require('../middlewares/validate')
-const { authChecker, authorizeRole } = require('../middlewares/auth')
+const { authChecker } = require('../middlewares/auth')
 const { bookmarkValidation } = require('../validations')
 const { bookmarkController } = require('../controllers')
 
-userRouter.get('/', authChecker, bookmarkController.findBookmarkCollection)
+userRouter.get(
+  '/home',
+  authChecker,
+  bookmarkController.getBookmarkCollectionsData
+)
+
+userRouter.get(
+  '/:storyId',
+  authChecker,
+  validate(bookmarkValidation.getBookmarkCollections),
+  bookmarkController.getBookmarkCollections
+)
+
+userRouter.get(
+  '/stories/:bookmarkCollectionId',
+  authChecker,
+  validate(bookmarkValidation.getBookmarkStories),
+  bookmarkController.getBookmarkStories
+)
 
 userRouter.post(
   '/',
@@ -26,12 +44,6 @@ userRouter.patch(
   authChecker,
   validate(bookmarkValidation.addStoryBookmarkCollection),
   bookmarkController.addStoryBookmarkCollection
-)
-
-userRouter.get(
-  '/story',
-  authChecker,
-  bookmarkController.getStoryBookmarkCollection
 )
 
 module.exports = { userRouter, adminRouter }

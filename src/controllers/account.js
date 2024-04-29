@@ -285,10 +285,11 @@ exports.toggleFollow = catchAsyncErrors(async (req, res) => {
       followingAccountId,
       String(notification._id)
     )
-    await notificationService.deleteNotification(
-      followerAccountId,
-      String(existingNotification._id)
-    )
+    existingNotification &&
+      (await notificationService.deleteNotification(
+        followerAccountId,
+        String(existingNotification._id)
+      ))
   } else {
   }
 

@@ -40,7 +40,7 @@ const messages = {
     COMMENT_NOT_FOUND: 'Comment not found',
     NOTIFICATION_NOT_FOUND: 'Notification not found',
     BOOKMARK_EXISTS_WITH_TITLE:
-      'Bookmark collection already exists with this Bookmarkcollectiontitle',
+      'Bookmark collection already exists with this title',
     BOOKMARK_COLLECTION_NOT_FOUND: 'Bookmark collection not found',
   },
   SUCCESS: {
@@ -84,10 +84,11 @@ const messages = {
     NOTIFICATION_DELETED: 'Notification deleted successfully',
     NOTIFICATIONS_DELETED: 'All Notifications deleted successfully',
     NOTIFICATION_UPDATED: 'Notification updated successfully',
+    BOOKMARK_COLLECTIONS_FETCHED: 'Bookmark collections fetched successfully',
     BOOKMARK_COLLECTION_CREATED: 'Bookmark collection created successfully',
-    BOOKMARK_COLLECTION_FETCHED: 'Bookmark collection fetched successfully',
     BOOKMARK_COLLECTION_DELETED: 'Bookmark collection deleted successfully',
     STORY_ADD_BOOKMARK_COLLECTION: 'Story add bookmark collection successfully',
+    BOOKMARKED_STORIES_FETCHED: 'Bookmarked stories fetched successfully',
   },
   SUBJECT: {
     REGISTER_ACCOUNT: 'Register your account',
