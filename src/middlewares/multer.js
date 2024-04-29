@@ -5,6 +5,7 @@ const httpStatus = require('http-status')
 const osTempDir = fs.realpathSync(os.tmpdir())
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
+const variables = require('../constants/variables')
 
 exports.uploadFile =
   (fieldName = 'file') =>
@@ -16,7 +17,7 @@ exports.uploadFile =
         },
       })
 
-      const maxFileSize = parseInt(process.env.MAX_FILE_SIZE)
+      const maxFileSize = variables.maxFileSize
 
       const upload = multer({
         storage,

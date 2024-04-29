@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
+const variables = require('../constants/variables')
 
 const generateToken = ({ payload, secret, options }) => {
   return jwt.sign(payload, secret, options)
@@ -40,7 +41,7 @@ exports.generateRegisterToken = (accountId) => {
     payload,
     secret: process.env.REGISTER_TOKEN_SECRET,
     options: {
-      expiresIn: process.env.REGISTER_TOKEN_EXPIRY,
+      expiresIn: variables.registerTokenExpiry,
     },
   })
 }
@@ -72,7 +73,7 @@ exports.generateResetToken = (accountId) => {
     payload,
     secret: process.env.RESET_TOKEN_SECRET,
     options: {
-      expiresIn: process.env.RESET_TOKEN_EXPIRY,
+      expiresIn: variables.resetTokenExpiry,
     },
   })
 }

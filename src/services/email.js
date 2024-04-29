@@ -6,6 +6,7 @@ const fs = require('fs')
 const util = require('util')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
+const variables = require('../constants/variables')
 
 const sendMail = async ({ email, subject, templateFile, data }) => {
   try {
@@ -16,7 +17,7 @@ const sendMail = async ({ email, subject, templateFile, data }) => {
     const renderedHtml = ejs.render(htmlContent, data)
 
     const mailOptions = {
-      from: `${process.env.EMAIL_HOST} <${process.env.EMAIL_USER}>`,
+      from: `${variables.emailHost} <${variables.emailUser}>`,
       to: email,
       subject,
       html: renderedHtml,

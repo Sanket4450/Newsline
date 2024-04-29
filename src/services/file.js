@@ -4,11 +4,12 @@ const httpStatus = require('http-status')
 const messages = require('../constants/messages')
 const ApiError = require('../utils/ApiError')
 const storageService = require('./storage')
+const variables = require('../constants/variables')
 
 const validateFileType = (fileName) => {
   const extname = path.extname(fileName).slice(1)
 
-  const supportedFiles = process.env.SUPPORTED_FILE_TYPES?.split(' ')
+  const supportedFiles = variables.supportedFileTypes?.split(' ')
 
   if (!supportedFiles.includes(extname?.toLowerCase())) {
     throw new ApiError(messages.ERROR.FILE_TYPE_NOT_SUPPORTED, httpStatus.BAD_REQUEST)

@@ -4,11 +4,12 @@ const { s3Client } = require('../config/aws')
 const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
+const variables = require('../constants/variables')
 
 exports.uploadFile = async (folderName, fileName, file) => {
   try {
     const params = {
-      Bucket: process.env.BUCKET_NAME,
+      Bucket: variables.s3bucketName,
       Key: `${folderName}/${fileName}`,
       Body: file,
     }
@@ -27,12 +28,12 @@ exports.uploadFile = async (folderName, fileName, file) => {
 exports.getFileUrl = async (Key) => {
   try {
     const command = new GetObjectCommand({
-      Bucket: process.env.BUCKET_NAME,
+      Bucket: variables.s3bucketName,
       Key,
     })
 
     const signedUrl = await getSignedUrl(s3Client, command, {
-      expiresIn: parseInt(process.env.S3_URL_EXPIRY),
+      expiresIn: parseInt(variables.s3UrlExpiry),
     })
 
     return signedUrl
