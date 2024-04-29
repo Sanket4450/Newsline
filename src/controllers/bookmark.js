@@ -6,38 +6,11 @@ const messages = require('../constants/messages')
 const { bookmarkService, storyService } = require('../services')
 const { getObjectId } = require('../utils/getObjectId')
 
-exports.getBookmarkCollections = catchAsyncErrors(async (req, res) => {
-  const accountId = req.user.accountId
-  const { storyId } = req.params
-
-  await storyService.checkStoryExistById(storyId)
-
-  let bookmarkCollections = bookmarkService.getAllBookmarkCollections({
-    title: 1,
-    stories: 1,
-  })
-
-  bookmarkCollections = bookmarkCollections.map((collection) => {
-    if (collection?.stories?.includes(getObjectId(storyId))) {
-      collection.isSaved = true
-    } else {
-      collection.isSaved = false
-    }
-
-    return collection
-  })
-
-  return sendResponse(
-    res,
-    httpStatus.OK,
-    { bookmarkCollections },
-    messages.SUCCESS.BOOKMARK_COLLECTIONS_FETCHED
-  )
-})
-
 exports.getBookmarkCollectionsData = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
-  let bookmarkCollections = await bookmarkService.getAllBookmarkCollections()
+  let bookmarkCollections = await bookmarkService.getAllBookmarkCollections(
+    accountId
+  )
 
   !!bookmarkCollections.length &&
     bookmarkCollections.map((collection, idx) => ({
@@ -61,6 +34,36 @@ exports.getBookmarkCollectionsData = catchAsyncErrors(async (req, res) => {
     res,
     httpStatus.OK,
     { bookmarkCollections, stories },
+    messages.SUCCESS.BOOKMARK_COLLECTIONS_FETCHED
+  )
+})
+
+exports.getBookmarkCollections = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  const { storyId } = req.params
+
+  await storyService.checkStoryExistById(storyId)
+
+  let bookmarkCollections = bookmarkService.getAllBookmarkCollections(
+    accountId,
+    {
+      title: 1,
+      stories: 1,
+    }
+  )
+
+  bookmarkCollections = bookmarkCollections.map((collection) => {
+    collection.isSaved = collection?.stories?.some((storyObjectId) =>
+      storyObjectId.equals(storyId)
+    )
+
+    return collection
+  })
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { bookmarkCollections },
     messages.SUCCESS.BOOKMARK_COLLECTIONS_FETCHED
   )
 })
@@ -115,7 +118,10 @@ exports.deleteBookmarkCollection = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
   const { bookmarkCollectionId } = req.body
 
-  await bookmarkService.checkBookmarkCollectionExistById(bookmarkCollectionId)
+  await bookmarkService.checkBookmarkCollectionExistByAccountAndId(
+    accountId,
+    bookmarkCollectionId
+  )
 
   await bookmarkService.deleteBookmarkCollection(bookmarkCollectionId)
 
@@ -127,22 +133,24 @@ exports.deleteBookmarkCollection = catchAsyncErrors(async (req, res) => {
   )
 })
 
-exports.addStoryBookmarkCollection = catchAsyncErrors(async (req, res) => {
+exports.toggleSave = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
-  const { bookmarkCollections, storyId } = req.body
+  const { storyId, bookmarkCollections } = req.body
 
   await storyService.checkStoryExistById(storyId)
 
   for (let collectionId of bookmarkCollections) {
-    await bookmarkService.checkBookmarkCollectionExistById(collectionId)
-
-    await bookmarkService.addStoryBookmark(collectionId, storyId)
+    await bookmarkService.checkBookmarkCollectionExistByAccountAndId(
+      accountId,
+      collectionId
+    )
   }
 
-  return sendResponse(
-    res,
-    httpStatus.OK,
-    {},
-    messages.SUCCESS.STORY_ADD_BOOKMARK_COLLECTION
-  )
+  await bookmarkService.removeStoryFromAllBookmarks(accountId, storyId)
+
+  for (let collectionId of bookmarkCollections) {
+    await bookmarkService.addBookmarkStory(collectionId, storyId)
+  }
+
+  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_SAVED)
 })

@@ -45,11 +45,9 @@ exports.validateSelectedInterests = async (accountId) => {
     })
 
     for (let topic of topics) {
-      if (interests.includes(topic._id)) {
-        topic.isSelected = true
-      } else {
-        topic.isSelected = false
-      }
+      topic.isSelected = interests.some((interestObjectId) =>
+        interestObjectId.equals(topic._id)
+      )
     }
 
     return topics

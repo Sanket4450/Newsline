@@ -11,6 +11,7 @@ exports.getComments = catchAsyncErrors(async (req, res) => {
   await storyService.checkStoryExistById(body.storyId)
 
   let comments = await commentService.getComments(body)
+  console.log(comments)
 
   comments = await commentService.validateLikedComments(accountId, comments)
 

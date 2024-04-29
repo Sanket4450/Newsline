@@ -117,11 +117,9 @@ exports.validateFollowedAccounts = async (accountId, accounts) => {
     })
 
     for (let account of accounts) {
-      if (followingAccounts.includes(account._id)) {
-        account.isFollowed = true
-      } else {
-        account.isFollowed = false
-      }
+      account.isFollowed = followingAccounts.some(
+        (accountObjectId) => accountObjectId.equals(account._id)
+      )
     }
 
     return accounts

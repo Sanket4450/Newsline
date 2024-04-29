@@ -190,7 +190,9 @@ exports.postComment = (accountId, body) => {
 
 exports.validateLikedComments = (accountId, comments) => {
   for (let comment of comments) {
-    comment.isLiked = comment.likedBy.includes(getObjectId(accountId))
+    comment.isLiked = comment.likedBy?.some((likedById) =>
+      likedById.equals(accountId)
+    )
   }
 
   return comments

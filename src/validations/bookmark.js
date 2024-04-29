@@ -31,10 +31,10 @@ const deleteBookmarkCollection = {
   }),
 }
 
-const addStoryBookmarkCollection = {
+const toggleSave = {
   body: joi.object({
-    bookmarkCollections: arrayReqValidation.items(idValidation),
     storyId: idReqValidation,
+    bookmarkCollections: arrayReqValidation.items(idValidation),
   }),
 }
 
@@ -43,5 +43,5 @@ module.exports = {
   getBookmarkStories,
   createBookmarkCollection,
   deleteBookmarkCollection,
-  addStoryBookmarkCollection,
+  toggleSave,
 }

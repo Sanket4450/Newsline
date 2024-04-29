@@ -5,13 +5,15 @@ const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
 const { getObjectId } = require('../utils/getObjectId')
 
-exports.checkBookmarkCollectionExistById = async (
+exports.checkBookmarkCollectionExistByAccountAndId = async (
+  accountId,
   bookmarkCollectionId,
   data = { _id: 1 }
 ) => {
   try {
     const query = {
       _id: getObjectId(bookmarkCollectionId),
+      accountId: getObjectId(accountId),
     }
 
     const bookmarkCollection = await DbRepo.findOne(collections.BOOKMARK, {
@@ -35,8 +37,11 @@ exports.checkBookmarkCollectionExistById = async (
   }
 }
 
-exports.getAllBookmarkCollections = (data = { title: 1 }) => {
-  return DbRepo.find(collections.BOOKMARK, { data })
+exports.getAllBookmarkCollections = (accountId, data = { title: 1 }) => {
+  const query = {
+    accountId: getObjectId(accountId),
+  }
+  return DbRepo.find(collections.BOOKMARK, { query, data })
 }
 
 const getBookmarkCollection = (query, data = { title: 1 }) => {
@@ -159,7 +164,7 @@ exports.deleteBookmarkCollection = (bookmarkCollectionId) => {
   return DbRepo.deleteOne(collections.BOOKMARK, { query })
 }
 
-exports.addStoryBookmark = (collectionId, storyId) => {
+exports.addBookmarkStory = (collectionId, storyId) => {
   const query = {
     _id: getObjectId(collectionId),
     stories: { $ne: getObjectId(storyId) },
@@ -171,4 +176,18 @@ exports.addStoryBookmark = (collectionId, storyId) => {
     },
   }
   return DbRepo.updateOne(collections.BOOKMARK, { query, data })
+}
+
+exports.removeStoryFromAllBookmarks = (accountId, storyId) => {
+  const query = {
+    accountId: getObjectId(accountId),
+    stories: getObjectId(storyId),
+  }
+
+  const data = {
+    $pull: {
+      stories: getObjectId(storyId),
+    },
+  }
+  return DbRepo.updateMany(collections.BOOKMARK, { query, data })
 }

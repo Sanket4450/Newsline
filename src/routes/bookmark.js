@@ -40,10 +40,10 @@ userRouter.delete(
 )
 
 userRouter.patch(
-  '/addstory',
+  '/toggle-save',
   authChecker,
-  validate(bookmarkValidation.addStoryBookmarkCollection),
-  bookmarkController.addStoryBookmarkCollection
+  validate(bookmarkValidation.toggleSave),
+  bookmarkController.toggleSave
 )
 
 module.exports = { userRouter, adminRouter }

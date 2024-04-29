@@ -87,7 +87,7 @@ const messages = {
     BOOKMARK_COLLECTIONS_FETCHED: 'Bookmark collections fetched successfully',
     BOOKMARK_COLLECTION_CREATED: 'Bookmark collection created successfully',
     BOOKMARK_COLLECTION_DELETED: 'Bookmark collection deleted successfully',
-    STORY_ADD_BOOKMARK_COLLECTION: 'Story add bookmark collection successfully',
+    STORY_SAVED: 'Story saved successfully',
     BOOKMARKED_STORIES_FETCHED: 'Bookmarked stories fetched successfully',
   },
   SUBJECT: {
