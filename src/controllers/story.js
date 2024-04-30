@@ -209,3 +209,50 @@ exports.getSuggestedTags = catchAsyncErrors(async (_, res) => {
     messages.SUCCESS.SUGGESTED_TAGS_FETCHED
   )
 })
+
+exports.updateStory = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+
+  const file = req.file
+  const { storyId, ...body } = req.body
+
+  await storyService.checkStoryExistByAccountAndId(accountId, storyId)
+
+  if (body.topicId) {
+    await topicService.checkTopicExistById(body.topicId)
+  }
+
+  if (body.tags) {
+    for (let tagTitle of body.tags) {
+      tagTitle = tagTitle.toLowerCase()
+
+      const tag = await tagService.getTagByTitle(tagTitle)
+
+      if (tag) {
+        await tagService.incremenPostsCount(String(tag._id))
+      } else {
+        await tagService.createTag({ title: tagTitle, postsCount: 1 })
+      }
+    }
+  }
+
+  if (file) {
+    const coverImageKey = await fileService.handleFile(file, folders.STORY)
+    body.coverImageKey = coverImageKey
+  }
+
+  await storyService.updateStory(storyId, body)
+
+  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_UPDATED)
+})
+
+exports.deleteStory = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  const { storyId } = req.body
+
+  await storyService.checkStoryExistByAccountAndId(accountId, storyId)
+
+  await storyService.deleteStory(storyId)
+
+  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_DELETED)
+})

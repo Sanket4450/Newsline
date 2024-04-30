@@ -33,4 +33,20 @@ userRouter.post(
   storyController.createStory
 )
 
+userRouter.put(
+  '/',
+  authChecker,
+  uploadFile(fields.STORY),
+  formatter.updateStory,
+  validate(storyValidation.updateStory),
+  storyController.updateStory
+)
+
+userRouter.delete(
+  '/',
+  authChecker,
+  validate(storyValidation.deleteStory),
+  storyController.deleteStory
+)
+
 module.exports = { userRouter }

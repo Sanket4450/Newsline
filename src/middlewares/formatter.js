@@ -10,3 +10,14 @@ exports.createStory = async (req, _, next) => {
     next(new ApiError(messages.ERROR.INVALID_JSON, httpStatus.BAD_REQUEST))
   }
 }
+
+exports.updateStory = async (req, _, next) => {
+  try {
+    if (req.body.tags) {
+      req.body.tags = JSON.parse(req.body.tags)
+    }
+    next()
+  } catch (error) {
+    next(new ApiError(messages.ERROR.INVALID_JSON, httpStatus.BAD_REQUEST))
+  }
+}

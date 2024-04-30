@@ -63,6 +63,8 @@ const messages = {
     TAG_FETCHED: 'TAG fetched successfully',
     SUGGESTED_TAGS_FETCHED: 'Suggested tags fetched successfully',
     STORY_CREATED: 'Story created successfully',
+    STORY_UPDATED: 'Story updated successfully',
+    STORY_DELETED: 'Story deleted successfully',
     HOME_DATA_FETCHED: 'Home data fetched successfully',
     FAQ_CATEGORIES_FETCHED: 'FAQ Categories fetched successfully',
     FAQ_CATEGORY_CREATED: 'FAQ Category created successfully',

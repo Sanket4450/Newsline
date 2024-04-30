@@ -26,12 +26,60 @@ exports.checkStoryExistById = async (storyId, data = { _id: 1 }) => {
   }
 }
 
+exports.checkStoryExistByAccountAndId = async (
+  accountId,
+  storyId,
+  data = { _id: 1 }
+) => {
+  try {
+    const query = {
+      _id: getObjectId(storyId),
+      accountId: getObjectId(accountId),
+    }
+
+    const story = await DbRepo.findOne(collections.STORY, { query, data })
+
+    if (!story) {
+      throw new ApiError(messages.ERROR.STORY_NOT_FOUND, httpStatus.NOT_FOUND)
+    }
+
+    return story
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
+
 exports.createStory = (body) => {
   const data = {
     ...body,
   }
 
   return DbRepo.create(collections.STORY, { data })
+}
+
+exports.updateStory = (storyId, updateBody) => {
+  const query = {
+    _id: getObjectId(storyId),
+  }
+
+  const data = {
+    $set: {
+      ...updateBody,
+    },
+  }
+
+  return DbRepo.updateOne(collections.STORY, { query, data })
+}
+
+exports.deleteStory = (storyId) => {
+  const query = {
+    _id: getObjectId(storyId),
+  }
+
+  return DbRepo.deleteOne(collections.STORY, { query })
 }
 
 exports.getHomeStories = async () => {

@@ -8,6 +8,7 @@ const {
   idValidation,
   pageAndLimit,
   tagValidation,
+  arrayValidation,
 } = require('./common')
 
 const getStories = {
@@ -34,8 +35,26 @@ const createStory = {
   }),
 }
 
+const updateStory = {
+  body: joi.object({
+    storyId: idReqValidation,
+    title: stringValidation.max(100),
+    description: stringValidation,
+    topicId: idValidation,
+    tags: arrayValidation.items(tagValidation),
+  }),
+}
+
+const deleteStory = {
+  body: joi.object({
+    storyId: idReqValidation,
+  }),
+}
+
 module.exports = {
   getStories,
   getStory,
   createStory,
+  updateStory,
+  deleteStory,
 }
