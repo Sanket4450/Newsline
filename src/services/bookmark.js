@@ -129,7 +129,7 @@ exports.getBookmarkStories = (collectionId, data) => {
           profileImageKey: '$account.profileImageKey',
         },
         _id: 0,
-        id: '$_id',
+        id: '$story._id',
       },
     },
   ]
@@ -186,4 +186,27 @@ exports.removeStoryFromAllBookmarks = (accountId, storyId) => {
     },
   }
   return DbRepo.updateMany(collections.BOOKMARK, { query, data })
+}
+
+exports.isStorySaved = (accountId, storyId) => {
+  const query = {
+    accountId: getObjectId(accountId),
+    stories: getObjectId(storyId),
+  }
+
+  return DbRepo.findOne(collections.BOOKMARK, { query })
+}
+
+exports.removeBookmarkStory = (bookmarkCollectionId, storyId) => {
+  const query = {
+    _id: getObjectId(bookmarkCollectionId),
+    stories: getObjectId(storyId),
+  }
+
+  const data = {
+    $pull: {
+      stories: getObjectId(storyId),
+    },
+  }
+  return DbRepo.updateOne(collections.BOOKMARK, { query, data })
 }

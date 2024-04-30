@@ -4,7 +4,7 @@ const { authChecker } = require('../middlewares/auth')
 const { rootController } = require('../controllers')
 
 userRouter.get(
-  '/',
+  '/home',
   authChecker,
   rootController.getHomeData
 )

@@ -89,6 +89,8 @@ const messages = {
     BOOKMARK_COLLECTION_DELETED: 'Bookmark collection deleted successfully',
     STORY_SAVED: 'Story saved successfully',
     BOOKMARKED_STORIES_FETCHED: 'Bookmarked stories fetched successfully',
+    BOOKMARK_STORY_REMOVED: 'Story removed from bookmark collection',
+    TAGS_FETCHED: 'Tags fetched successfully',
   },
   SUBJECT: {
     REGISTER_ACCOUNT: 'Register your account',

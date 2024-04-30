@@ -12,6 +12,7 @@ const {
   storageService,
   notificationService,
   commentService,
+  bookmarkService,
 } = require('../services')
 const { getObjectId } = require('../utils/getObjectId')
 
@@ -63,6 +64,10 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
   await storyService.checkStoryExistById(storyId)
 
   let [story] = await storyService.getFullStory(storyId)
+
+  const isSaved = Boolean(
+    await bookmarkService.isStorySaved(accountId, storyId)
+  )
 
   let comments = await commentService.getComments({ storyId, limit: 3 })
 
@@ -134,6 +139,7 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
     ...story,
     comments,
     moreStories,
+    isSaved,
   }
 
   return sendResponse(

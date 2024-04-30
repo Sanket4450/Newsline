@@ -117,8 +117,8 @@ exports.validateFollowedAccounts = async (accountId, accounts) => {
     })
 
     for (let account of accounts) {
-      account.isFollowed = followingAccounts.some(
-        (accountObjectId) => accountObjectId.equals(account._id)
+      account.isFollowed = followingAccounts.some((accountObjectId) =>
+        accountObjectId.equals(account.id)
       )
     }
 
@@ -131,24 +131,19 @@ exports.validateFollowedAccounts = async (accountId, accounts) => {
   }
 }
 
-exports.addPublishersFileUrls = async (accounts) => {
+exports.validateFollowedTags = async (accountId, tags) => {
   try {
-    const updatedAccounts = await Promise.all(
-      accounts.map(async (account) => {
-        const profileImageUrl = account.profileImageKey
-          ? await storageService.getFileUrl(account.profileImageKey)
-          : null
+    const { followingTags } = await exports.getAccountById(accountId, {
+      followingTags: 1,
+    })
 
-        return {
-          id: account._id,
-          fullName: account.fullName,
-          profileImageUrl,
-          isFollowed: account.isFollowed,
-        }
-      })
-    )
+    for (let tag of tags) {
+      tag.isFollowed = followingTags.some((tagObjectId) =>
+        tagObjectId.equals(tag.id)
+      )
+    }
 
-    return updatedAccounts
+    return tags
   } catch (error) {
     throw new ApiError(
       error.message,
@@ -201,7 +196,7 @@ exports.toggleFollow = (followerAccountId, followingAccountId, isFollowed) => {
   return DbRepo.updateOne(collections.ACCOUNT, { query, data })
 }
 
-exports.getAccountsWithFilter = (filter) => {
+exports.getAccountsWithFilter = (filter, matchQuery) => {
   const search = filter.search || ''
   const sortBy = filter.sortBy || 'newest_first'
   const page = filter.page || 1
@@ -212,6 +207,7 @@ exports.getAccountsWithFilter = (filter) => {
   pipeline.push({
     $match: {
       role: { $ne: 'admin' },
+      ...(matchQuery || {}),
     },
   })
 

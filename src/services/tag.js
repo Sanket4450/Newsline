@@ -26,7 +26,6 @@ exports.checkTagExistById = async (tagId, data = { _id: 1 }) => {
   }
 }
 
-
 exports.getTagByTitle = (title, data = { _id: 1 }) => {
   const query = {
     title,
@@ -66,40 +65,50 @@ exports.getSuggestedTags = () => {
   return DbRepo.aggregate(collections.TAG, pipeline)
 }
 
+exports.getTags = (body) => {
+  const search = body.search || ''
+  const page = body.page || 1
+  const limit = body.limit || 10
 
-exports.gatTagFullSearch= (find) =>{
-  const search = find.search || ''
-  const page = find.page || 1
-  const limit = find.limit || 10
-
-  const pipeline = []
-
-  pipeline.push({ 
-    $match: {
-      type: { $ne: "reader" }
-    },
-  })
-
-  pipeline.push(
-  {
-    $match: {
-         title: { $regex: search, $options: 'i' } 
-    },
-  },
-  // {  
-  //   $skip: (page - 1) * limit,
-  // },
-  // {
-  //   $limit: limit,
-  // },
-  {
-    $project: {
-      title: 1,
-      _id: 0,
-      id: '$_id',
-    }
+  const query = {
+    title: { $regex: search, $options: 'i' },
   }
-)
-   
-  return DbRepo.aggregate(collections.TAG , pipeline)
+
+  const data = {
+    title: 1,
+    postsCount: 1,
+  }
+
+  const sortQuery = {
+    postsCount: -1,
+    createdAt: -1,
+  }
+
+  return DbRepo.findPage(
+    collections.TAG,
+    { query, data },
+    sortQuery,
+    page,
+    limit
+  )
+}
+
+exports.toggleFollow = (accountId, tagId, isFollowed) => {
+  const query = isFollowed
+    ? {
+        _id: getObjectId(accountId),
+        followingTags: { $ne: getObjectId(tagId) },
+      }
+    : {
+        _id: getObjectId(accountId),
+        followingTags: { $eq: getObjectId(tagId) },
+      }
+
+  const data = {
+    [isFollowed ? '$push' : '$pull']: {
+      followingTags: getObjectId(tagId),
+    },
+  }
+
+  return DbRepo.updateOne(collections.ACCOUNT, { query, data })
 }

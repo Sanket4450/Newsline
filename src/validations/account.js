@@ -10,7 +10,6 @@ const {
   arrayReqValidation,
   idValidation,
   pageAndLimit,
-  booleanValidation,
 } = require('./common')
 
 const setAccount = {
@@ -45,16 +44,17 @@ const setInterests = {
   }),
 }
 
-const getSearchAccounts = {
-  body: joi.object({
-    search: stringReqValidation
-  })
-}
-
 const toggleFollow = {
   body: joi.object({
     accountId: idReqValidation,
     isFollowed: booleanReqValidation,
+  }),
+}
+
+const getSearchAccounts = {
+  body: joi.object({
+    search: stringValidation,
+    ...pageAndLimit,
   }),
 }
 
@@ -88,5 +88,5 @@ module.exports = {
   toggleFollow,
   getAdminAccounts,
   updateUserType,
-  getSearchAccounts
+  getSearchAccounts,
 }

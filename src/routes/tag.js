@@ -1,11 +1,22 @@
 const userRouter = require('express').Router()
 const adminRouter = require('express').Router()
-const fields = require('../constants/fields')
 const validate = require('../middlewares/validate')
-const { authChecker, authorizeRole } = require('../middlewares/auth')
-const { faqValidation } = require('../validations')
+const { authChecker } = require('../middlewares/auth')
+const { tagValidation } = require('../validations')
 const { tagController } = require('../controllers')
 
-userRouter.get('/searchTags', authChecker, validate(faqValidation.getTagsearch), tagController.getTagSearch)
+userRouter.post(
+  '/filter',
+  authChecker,
+  validate(tagValidation.getSearchTags),
+  tagController.getSearchTags
+)
+
+userRouter.patch(
+  '/toggle-follow',
+  authChecker,
+  validate(tagValidation.toggleFollow),
+  tagController.toggleFollow
+)
 
 module.exports = { userRouter, adminRouter }

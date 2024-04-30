@@ -192,3 +192,24 @@ exports.toggleSave = catchAsyncErrors(async (req, res) => {
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_SAVED)
 })
+
+exports.removeBookmarkStory = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  const { storyId, bookmarkCollectionId } = req.body
+
+  await storyService.checkStoryExistById(storyId)
+
+  await bookmarkService.checkBookmarkCollectionExistByAccountAndId(
+    accountId,
+    bookmarkCollectionId
+  )
+
+  await bookmarkService.removeBookmarkStory(bookmarkCollectionId, storyId)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    {},
+    messages.SUCCESS.BOOKMARK_STORY_REMOVED
+  )
+})

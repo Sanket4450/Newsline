@@ -46,4 +46,11 @@ userRouter.patch(
   bookmarkController.toggleSave
 )
 
+userRouter.delete(
+  '/stories',
+  authChecker,
+  validate(bookmarkValidation.removeBookmarkStory),
+  bookmarkController.removeBookmarkStory
+)
+
 module.exports = { userRouter, adminRouter }

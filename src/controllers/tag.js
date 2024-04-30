@@ -1,18 +1,45 @@
 const httpStatus = require('http-status')
-const folders = require('../constants/folders')
 const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
-const ApiError = require('../utils/ApiError')
 const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
-const { tagService } = require('../services')
+const { tagService, accountService } = require('../services')
 
-exports.getTagSearch = catchAsyncErrors(async(req,res) =>{
-  const tags = await tagService.gatTagFullSearch(req.body)
+exports.getSearchTags = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  const body = req.body
+
+  let tags = await tagService.getTags(body)
+
+  tags = await Promise.all(
+    tags.map(async (tag) => ({
+      id: String(tag._id),
+      title: tag.title,
+      postsCount: tag.postsCount,
+    }))
+  )
+
+  tags = await accountService.validateFollowedTags(accountId, tags)
+
   return sendResponse(
     res,
     httpStatus.OK,
     { tags },
-    messages.SUCCESS.TAG_FETCHED
+    messages.SUCCESS.TAGS_FETCHED
   )
 })
-  
+
+exports.toggleFollow = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  const { tagId, isFollowed } = req.body
+
+  await tagService.checkTagExistById(tagId)
+
+  await tagService.toggleFollow(accountId, tagId, isFollowed)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { isFollowed },
+    `Tag ${isFollowed ? 'Followed' : 'Unfollowed'} successfully`
+  )
+})

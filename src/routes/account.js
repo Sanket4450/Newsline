@@ -43,7 +43,12 @@ userRouter.patch(
   accountController.toggleFollow
 )
 
-userRouter.get('/searchAccounts', authChecker, validate(accountValidation.getSearchAccounts), accountController.getSearchAccount)
+userRouter.post(
+  '/filter',
+  authChecker,
+  validate(accountValidation.getSearchAccounts),
+  accountController.getSearchAccounts
+)
 
 adminRouter.post(
   '/users',

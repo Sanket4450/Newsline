@@ -39,6 +39,7 @@ exports.getAccount = catchAsyncErrors(async (req, res) => {
     : null
 
   delete account._doc.profileImageKey
+  delete account._doc._id
 
   return sendResponse(
     res,
@@ -191,12 +192,39 @@ exports.setInterests = catchAsyncErrors(async (req, res) => {
   )
 })
 
-exports.getSearchAccount = catchAsyncErrors(async(req,res) =>{
-  const account = await accountService.getSearchFullAccount(req.body)
+exports.getSearchAccounts = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  const search = req.body.search || ''
+  const { page, limit } = req.body
+
+  let accounts = await accountService.getAccountsWithFilter(
+    { search, page, limit },
+    {
+      type: {
+        $in: ['publisher', 'author'],
+      },
+      _id: { $ne: getObjectId(accountId) },
+    }
+  )
+
+  accounts = await Promise.all(
+    accounts.map(async (account) => ({
+      id: String(account.id),
+      fullName: account.fullName,
+      userName: account.userName,
+      isVerified: account.isVerified,
+      profileImageUrl: account.profileImageKey
+        ? await storageService.getFileUrl(account.profileImageKey)
+        : null,
+    }))
+  )
+
+  accounts = await accountService.validateFollowedAccounts(accountId, accounts)
+
   return sendResponse(
     res,
     httpStatus.OK,
-    { account },
+    { accounts },
     messages.SUCCESS.ACCOUNTS_FETCHED
   )
 })
@@ -209,12 +237,20 @@ exports.getPublishers = catchAsyncErrors(async (req, res) => {
     { profileImageKey: 1, fullName: 1 }
   )
 
+  publishers = await Promise.all(
+    publishers.map(async (account) => ({
+      id: String(account._id),
+      fullName: account.fullName,
+      profileImageUrl: account.profileImageKey
+        ? await storageService.getFileUrl(account.profileImageKey)
+        : null,
+    }))
+  )
+
   publishers = await accountService.validateFollowedAccounts(
     accountId,
     publishers
   )
-
-  publishers = await accountService.addPublishersFileUrls(publishers)
 
   return sendResponse(
     res,
