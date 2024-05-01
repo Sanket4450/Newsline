@@ -28,7 +28,7 @@ exports.getStories = catchAsyncErrors(async (req, res) => {
   }
 
   if (body.tagId) {
-    const { title } = await accountService.checkAccountExistById(body.accountId)
+    const { title } = await tagService.checkTagExistById(body.tagId)
     body.tagTitle = title
   }
 
@@ -114,27 +114,20 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
   )
 
   moreStories = await Promise.all(
-    moreStories.map(async (story) => ({
-      id: String(story.id),
-      title: story.title,
-      description: story.description,
-      coverImageUrl: story.coverImageKey
+    stories.map(async (story) => {
+      story.coverImageUrl = story.coverImageKey
         ? await storageService.getFileUrl(story.coverImageKey)
-        : null,
-      views: story.views,
-      commentsCount: story.commentsCount,
-      createdAt: story.createdAt,
-      topic: {
-        id: String(story.topic.id),
-        title: story.topic.title,
-      },
-      account: {
-        fullName: story.account.fullName,
-        profileImageUrl: story.account.profileImageKey
-          ? await storageService.getFileUrl(story.account.profileImageKey)
-          : null,
-      },
-    }))
+        : null
+
+      story.account.profileImageUrl = story.account.profileImageKey
+        ? await storageService.getFileUrl(story.account.profileImageKey)
+        : null
+
+      delete story.coverImageKey
+      delete story.account.profileImageKey
+
+      return story
+    })
   )
 
   await storyService.incrementViewsCount(storyId)
