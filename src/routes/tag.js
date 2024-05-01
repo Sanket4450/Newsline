@@ -19,4 +19,11 @@ userRouter.patch(
   tagController.toggleFollow
 )
 
+userRouter.get(
+  '/:tagId',
+  authChecker,
+  validate(tagValidation.getTagInfo),
+  tagController.getTagInfo
+)
+
 module.exports = { userRouter, adminRouter }

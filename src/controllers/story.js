@@ -19,8 +19,17 @@ const { getObjectId } = require('../utils/getObjectId')
 exports.getStories = catchAsyncErrors(async (req, res) => {
   const body = req.body
 
+  if (body.accountId) {
+    await accountService.checkAccountExistById(body.accountId)
+  }
+
   if (body.topicId) {
     await topicService.checkTopicExistById(body.topicId)
+  }
+
+  if (body.tagId) {
+    const { title } = await accountService.checkAccountExistById(body.accountId)
+    body.tagTitle = title
   }
 
   let stories = await storyService.getStories(body)

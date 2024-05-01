@@ -21,7 +21,14 @@ const toggleFollow = {
   }),
 }
 
+const getTagInfo = {
+  params: joi.object({
+    tagId: idReqValidation,
+  }),
+}
+
 module.exports = {
   getSearchTags,
   toggleFollow,
+  getTagInfo,
 }

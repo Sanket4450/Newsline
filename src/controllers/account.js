@@ -338,7 +338,7 @@ exports.toggleFollow = catchAsyncErrors(async (req, res) => {
   )
 })
 
-exports.getAccountProfile = catchAsyncErrors(async (req, res) => {
+exports.getAccountInfo = catchAsyncErrors(async (req, res) => {
   const readerId = req.user.accountId
   const { accountId } = req.params
 
@@ -403,7 +403,7 @@ exports.getAccountProfile = catchAsyncErrors(async (req, res) => {
     })
   )
 
-  const profile = {
+  const accountInfo = {
     ...account._doc,
     stories,
   }
@@ -411,8 +411,8 @@ exports.getAccountProfile = catchAsyncErrors(async (req, res) => {
   return sendResponse(
     res,
     httpStatus.OK,
-    { profile },
-    messages.SUCCESS.ACCOUNTS_FETCHED
+    { accountInfo },
+    messages.SUCCESS.ACCOUNT_INFO_FETCHED
   )
 })
 

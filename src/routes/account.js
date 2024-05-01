@@ -53,8 +53,8 @@ userRouter.post(
 userRouter.get(
   '/profile/:accountId',
   authChecker,
-  validate(accountValidation.getAccountProfile),
-  accountController.getAccountProfile
+  validate(accountValidation.getAccountInfo),
+  accountController.getAccountInfo
 )
 
 adminRouter.post(

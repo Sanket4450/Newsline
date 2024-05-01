@@ -359,5 +359,5 @@ exports.getFollowersCount = (accountId) => {
     followingAccounts: getObjectId(accountId),
   }
 
-  return DbRepo.count(collections.ACCOUNT, query)
+  return DbRepo.count(collections.ACCOUNT, { query })
 }

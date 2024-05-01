@@ -14,7 +14,9 @@ const {
 const getStories = {
   body: joi.object({
     search: stringValidation,
+    accountId: idValidation,
     topicId: idValidation,
+    tagId: idValidation,
     sortBy: stringValidation.valid('trending', 'latest'),
     ...pageAndLimit,
   }),

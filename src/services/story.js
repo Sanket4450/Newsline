@@ -169,12 +169,13 @@ exports.getStories = (body) => {
   const limit = body.limit || 10
   const accountId = body.accountId ? getObjectId(body.accountId) : null
   const topicId = body.topicId ? getObjectId(body.topicId) : null
+  const tagTitle = body.tagTitle || null
 
   let sortQuery = {}
 
   switch (body.sortBy) {
     case 'trending':
-      sortQuery = { $sort: { views: -1 } }
+      sortQuery = { $sort: { views: -1, createdAt: -1 } }
       break
 
     case 'latest':
@@ -195,6 +196,7 @@ exports.getStories = (body) => {
         ],
         ...(accountId && { accountId }),
         ...(topicId && { topicId }),
+        ...(tagTitle && { tags: tagTitle }),
       },
     },
     {
