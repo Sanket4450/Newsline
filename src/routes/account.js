@@ -51,7 +51,13 @@ userRouter.post(
 )
 
 userRouter.get(
-  '/profile/:accountId',
+  '/profile',
+  authChecker,
+  accountController.getProfileInfo
+)
+
+userRouter.get(
+  '/:accountId',
   authChecker,
   validate(accountValidation.getAccountInfo),
   accountController.getAccountInfo

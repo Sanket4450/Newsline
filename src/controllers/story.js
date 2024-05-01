@@ -35,27 +35,20 @@ exports.getStories = catchAsyncErrors(async (req, res) => {
   let stories = await storyService.getStories(body)
 
   stories = await Promise.all(
-    stories.map(async (story) => ({
-      id: String(story.id),
-      title: story.title,
-      description: story.description,
-      coverImageUrl: story.coverImageKey
+    stories.map(async (story) => {
+      story.coverImageUrl = story.coverImageKey
         ? await storageService.getFileUrl(story.coverImageKey)
-        : null,
-      views: story.views,
-      commentsCount: story.commentsCount,
-      createdAt: story.createdAt,
-      topic: {
-        id: String(story.topic.id),
-        title: story.topic.title,
-      },
-      account: {
-        fullName: story.account.fullName,
-        profileImageUrl: story.account.profileImageKey
-          ? await storageService.getFileUrl(story.account.profileImageKey)
-          : null,
-      },
-    }))
+        : null
+
+      story.account.profileImageUrl = story.account.profileImageKey
+        ? await storageService.getFileUrl(story.account.profileImageKey)
+        : null
+
+      delete story.coverImageKey
+      delete story.account.profileImageKey
+
+      return story
+    })
   )
 
   return sendResponse(
@@ -143,6 +136,8 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
       },
     }))
   )
+
+  await storyService.incrementViewsCount(storyId)
 
   const fullStory = {
     ...story,

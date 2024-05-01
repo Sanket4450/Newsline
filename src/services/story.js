@@ -74,6 +74,20 @@ exports.updateStory = (storyId, updateBody) => {
   return DbRepo.updateOne(collections.STORY, { query, data })
 }
 
+exports.incrementViewsCount = (storyId) => {
+  const query = {
+    _id: getObjectId(storyId),
+  }
+
+  const data = {
+    $inc: {
+      views: 1,
+    },
+  }
+
+  return DbRepo.updateOne(collections.STORY, { query, data })
+}
+
 exports.deleteStory = (storyId) => {
   const query = {
     _id: getObjectId(storyId),
@@ -170,6 +184,7 @@ exports.getStories = (body) => {
   const accountId = body.accountId ? getObjectId(body.accountId) : null
   const topicId = body.topicId ? getObjectId(body.topicId) : null
   const tagTitle = body.tagTitle || null
+  const shouldTopicIncluded = body.shouldTopicIncluded || false
 
   let sortQuery = {}
 
@@ -210,15 +225,75 @@ exports.getStories = (body) => {
     },
     {
       $lookup: {
-        from: 'topics',
-        localField: 'topicId',
+        from: 'accounts',
+        localField: 'accountId',
         foreignField: '_id',
-        as: 'topic',
+        as: 'account',
       },
     },
     {
       $unwind: {
-        path: '$topic',
+        path: '$account',
+      },
+    },
+    {
+      $lookup: {
+        from: 'comments',
+        localField: '_id',
+        foreignField: 'storyId',
+        as: 'comments',
+      },
+    },
+    {
+      $project: {
+        title: 1,
+        coverImageKey: 1,
+        views: 1,
+        commentsCount: { $size: '$comments' },
+        createdAt: 1,
+        ...(shouldTopicIncluded && {
+          topic: {
+            title: 1,
+            id: '$topic._id',
+          },
+        }),
+        account: {
+          fullName: 1,
+          profileImageKey: 1,
+        },
+        _id: 0,
+        id: '$_id',
+      },
+    },
+  ]
+
+  shouldTopicIncluded &&
+    pipeline.splice(
+      4,
+      0,
+      {
+        $lookup: {
+          from: 'topics',
+          localField: 'topicId',
+          foreignField: '_id',
+          as: 'topic',
+        },
+      },
+      {
+        $unwind: {
+          path: '$topic',
+        },
+      }
+    )
+
+  return DbRepo.aggregate(collections.STORY, pipeline)
+}
+
+exports.getFullStory = (storyId) => {
+  const pipeline = [
+    {
+      $match: {
+        _id: getObjectId(storyId),
       },
     },
     {
@@ -247,59 +322,9 @@ exports.getStories = (body) => {
         title: 1,
         description: 1,
         coverImageKey: 1,
-        views: 1,
-        commentsCount: { $size: '$comments' },
-        createdAt: 1,
-        topic: {
-          title: 1,
-          id: '$topic._id',
-        },
-        account: {
-          fullName: 1,
-          profileImageKey: 1,
-        },
-        _id: 0,
-        id: '$_id',
-      },
-    },
-  ]
-
-  return DbRepo.aggregate(collections.STORY, pipeline)
-}
-
-exports.getFullStory = (storyId) => {
-  const pipeline = [
-    {
-      $match: {
-        _id: getObjectId(storyId),
-      },
-    },
-    {
-      $lookup: {
-        from: 'accounts',
-        localField: 'accountId',
-        foreignField: '_id',
-        as: 'account',
-      },
-    },
-    {
-      $unwind: {
-        path: '$account',
-      },
-    },
-    {
-      $addFields: {
-        commentsCount: 0,
-      },
-    },
-    {
-      $project: {
-        title: 1,
-        description: 1,
-        coverImageKey: 1,
         tags: 1,
         views: 1,
-        commentsCount: 1,
+        commentsCount: { $size: '$comments' },
         createdAt: 1,
         account: {
           fullName: 1,
