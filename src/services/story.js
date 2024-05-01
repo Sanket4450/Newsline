@@ -313,3 +313,11 @@ exports.getFullStory = (storyId) => {
 
   return DbRepo.aggregate(collections.STORY, pipeline)
 }
+
+exports.getStoriesCount = (accountId) => {
+  const query = {
+    accountId: getObjectId(accountId),
+  }
+
+  return DbRepo.count(collections.STORY, { query })
+}

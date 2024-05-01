@@ -50,6 +50,13 @@ userRouter.post(
   accountController.getSearchAccounts
 )
 
+userRouter.get(
+  '/profile/:accountId',
+  authChecker,
+  validate(accountValidation.getAccountProfile),
+  accountController.getAccountProfile
+)
+
 adminRouter.post(
   '/users',
   authChecker,

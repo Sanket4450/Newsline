@@ -58,6 +58,12 @@ const getSearchAccounts = {
   }),
 }
 
+const getAccountProfile = {
+  params: joi.object({
+    accountId: idReqValidation,
+  }),
+}
+
 const getAdminAccounts = {
   body: joi.object({
     search: stringValidation,
@@ -87,6 +93,7 @@ module.exports = {
   setInterests,
   toggleFollow,
   getAdminAccounts,
+  getAccountProfile,
   updateUserType,
   getSearchAccounts,
 }

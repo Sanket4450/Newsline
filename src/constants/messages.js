@@ -42,6 +42,7 @@ const messages = {
     BOOKMARK_EXISTS_WITH_TITLE:
       'Bookmark collection already exists with this title',
     BOOKMARK_COLLECTION_NOT_FOUND: 'Bookmark collection not found',
+    CANNOT_VIEW_YOURSELF: 'You cannot view your own profile',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',

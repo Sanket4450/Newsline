@@ -13,6 +13,7 @@ const {
   topicService,
   storageService,
   notificationService,
+  storyService,
 } = require('../services')
 
 exports.getAccount = catchAsyncErrors(async (req, res) => {
@@ -334,6 +335,84 @@ exports.toggleFollow = catchAsyncErrors(async (req, res) => {
     httpStatus.OK,
     { isFollowed },
     `Account ${isFollowed ? 'Followed' : 'Unfollowed'} successfully`
+  )
+})
+
+exports.getAccountProfile = catchAsyncErrors(async (req, res) => {
+  const readerId = req.user.accountId
+  const { accountId } = req.params
+
+  if (readerId === accountId) {
+    throw new ApiError(
+      messages.ERROR.CANNOT_VIEW_YOURSELF,
+      httpStatus.BAD_REQUEST
+    )
+  }
+
+  let account = await accountService.checkAccountExistById(accountId, {
+    fullName: 1,
+    userName: 1,
+    profileImageKey: 1,
+    bio: 1,
+    website: 1,
+    isVerified: 1,
+    followingAccounts: 1,
+  })
+
+  account._doc.id = String(account._id)
+  account._doc.profileImageUrl = account.profileImageKey
+    ? await storageService.getFileUrl(account.profileImageKey)
+    : null
+
+  account._doc.storiesCount = await storyService.getStoriesCount(accountId)
+  account._doc.followersCount = await accountService.getFollowersCount(
+    accountId
+  )
+  account._doc.followingsCount = account?.followingAccounts?.length || 0
+  account._doc.isFollowed = Boolean(
+    await accountService.getAccount({
+      _id: getObjectId(readerId),
+      followingAccounts: getObjectId(accountId),
+    })
+  )
+
+  delete account._doc.profileImageKey
+  delete account._doc._id
+  delete account._doc.followingAccounts
+
+  let stories = await storyService.getStories({
+    accountId,
+    sortBy: 'latest',
+    limit: 10,
+  })
+
+  stories = await Promise.all(
+    stories.map(async (story) => {
+      story.coverImageUrl = story.coverImageKey
+        ? await storageService.getFileUrl(story.coverImageKey)
+        : null
+
+      story.account.profileImageUrl = story.account.profileImageKey
+        ? await storageService.getFileUrl(story.account.profileImageKey)
+        : null
+
+      delete story.coverImageKey
+      delete story.account.profileImageKey
+
+      return story
+    })
+  )
+
+  const profile = {
+    ...account._doc,
+    stories,
+  }
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { profile },
+    messages.SUCCESS.ACCOUNTS_FETCHED
   )
 })
 
