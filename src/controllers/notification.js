@@ -11,6 +11,7 @@ exports.getNotifications = catchAsyncErrors(async (req, res) => {
 
   notifications = await Promise.all(
     notifications.map(async (notification) => ({
+      id: notification.id,
       type: notification.type,
       title: notification.title,
       iconUrl: notification.profileImageKey
