@@ -114,7 +114,7 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
   )
 
   moreStories = await Promise.all(
-    stories.map(async (story) => {
+    moreStories.map(async (story) => {
       story.coverImageUrl = story.coverImageKey
         ? await storageService.getFileUrl(story.coverImageKey)
         : null

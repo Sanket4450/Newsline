@@ -7,7 +7,9 @@ const {
   topicService,
   storageService,
   notificationService,
+  accountService,
 } = require('../services')
+const { getObjectId } = require('../utils/getObjectId')
 
 exports.getHomeData = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
@@ -73,6 +75,142 @@ exports.getHomeData = catchAsyncErrors(async (req, res) => {
     res,
     httpStatus.OK,
     { topics, trendingStories, recentStories, newNotifications },
+    messages.SUCCESS.HOME_DATA_FETCHED
+  )
+})
+
+exports.getDiscoverData = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+
+  const { followingAccounts } = accountService.checkAccountExistById(
+    accountId,
+    {
+      followingAccounts: 1,
+      _id: 0,
+    }
+  )
+
+  let publishers = await accountService.getAccountsWithFilter(
+    {
+      userType: 'publisher',
+      sortBy: 'popular',
+      limit: 10,
+    },
+    {
+      _id: { $ne: getObjectId(accountId) },
+    }
+  )
+
+  let authors = await accountService.getAccountsWithFilter(
+    {
+      userType: 'author',
+      sortBy: 'popular',
+      limit: 10,
+    },
+    {
+      _id: { $ne: getObjectId(accountId) },
+    }
+  )
+
+  publishers = await Promise.all(
+    publishers.map(async (publisher) => ({
+      id: String(publisher.id),
+      fullName: publisher.fullName,
+      profileImageUrl: publisher.profileImageKey
+        ? await storageService.getFileUrl(publisher.profileImageKey)
+        : null,
+    }))
+  )
+
+  publishers = await accountService.validateFollowedAccounts(
+    accountId,
+    publishers
+  )
+
+  authors = await Promise.all(
+    authors.map(async (author) => ({
+      id: String(author.id),
+      fullName: author.fullName,
+      profileImageUrl: author.profileImageKey
+        ? await storageService.getFileUrl(author.profileImageKey)
+        : null,
+    }))
+  )
+
+  authors = await accountService.validateFollowedAccounts(accountId, authors)
+
+  const currentTimestamp = Date.now()
+
+  let weekTopStories = await storyService.getStories({
+    bottomTimestamp: new Date(currentTimestamp - 7 * 24 * 60 * 60 * 1000),
+    sortBy: 'trending',
+    limit: 10,
+  })
+
+  let recommendedStories = await storyService.getStories({
+    inclusiveAccounts: followingAccounts,
+    sortBy: 'latest',
+    limit: 10,
+  })
+
+  if (weekTopStories.length < 10) {
+    const additionalStories = await storyService.getStories({
+      topTimestamp: new Date(currentTimestamp - 7 * 24 * 60 * 60 * 1000),
+      sortBy: 'latest',
+      limit: 10 - weekTopStories.length,
+    })
+
+    weekTopStories = weekTopStories.concat(additionalStories)
+  }
+
+  if (recommendedStories.length < 10) {
+    const additionalStories = await storyService.getStories({
+      exclusiveAccounts: followingAccounts,
+      sortBy: 'latest',
+      limit: 10 - recommendedStories.length,
+    })
+
+    recommendedStories = recommendedStories.concat(additionalStories)
+  }
+
+  weekTopStories = await Promise.all(
+    weekTopStories.map(async (story) => {
+      story.coverImageUrl = story.coverImageKey
+        ? await storageService.getFileUrl(story.coverImageKey)
+        : null
+
+      story.account.profileImageUrl = story.account.profileImageKey
+        ? await storageService.getFileUrl(story.account.profileImageKey)
+        : null
+
+      delete story.coverImageKey
+      delete story.account.profileImageKey
+
+      return story
+    })
+  )
+
+  recommendedStories = await Promise.all(
+    recommendedStories.map(async (story) => {
+      story.coverImageUrl = story.coverImageKey
+        ? await storageService.getFileUrl(story.coverImageKey)
+        : null
+
+      story.account.profileImageUrl = story.account.profileImageKey
+        ? await storageService.getFileUrl(story.account.profileImageKey)
+        : null
+
+      delete story.coverImageKey
+      delete story.account.profileImageKey
+
+      return story
+    })
+  )
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { publishers, authors, weekTopStories, recommendedStories },
     messages.SUCCESS.HOME_DATA_FETCHED
   )
 })

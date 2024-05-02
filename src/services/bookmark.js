@@ -168,7 +168,10 @@ exports.addBookmarkStory = (collectionId, storyId) => {
 
   const data = {
     $push: {
-      stories: getObjectId(storyId),
+      stories: {
+        $each: [getObjectId(storyId)],
+        $position: 0,
+      },
     },
   }
   return DbRepo.updateOne(collections.BOOKMARK, { query, data })

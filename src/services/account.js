@@ -234,6 +234,25 @@ exports.getAccountsWithFilter = (filter, matchQuery) => {
   }
 
   switch (sortBy) {
+    case 'popular':
+      pipeline.push(
+        {
+          $lookup: {
+            from: 'accounts',
+            localField: '_id',
+            foreignField: 'followingAccounts',
+            as: 'followers',
+          },
+        },
+        {
+          $addFields: {
+            followersCount: { $size: '$followers' },
+          },
+        },
+        { $sort: { followersCount: -1 } }
+      )
+      break
+
     case 'userName_asc':
       pipeline.push({ $sort: { userName: 1 } })
       break

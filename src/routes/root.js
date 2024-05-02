@@ -9,4 +9,6 @@ userRouter.get(
   rootController.getHomeData
 )
 
+userRouter.get('/discover', authChecker, rootController.getDiscoverData)
+
 module.exports = { userRouter }

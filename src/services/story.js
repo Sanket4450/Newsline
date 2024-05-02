@@ -103,6 +103,12 @@ exports.getStories = (body) => {
   const accountId = body.accountId ? getObjectId(body.accountId) : null
   const topicId = body.topicId ? getObjectId(body.topicId) : null
   const tagTitle = body.tagTitle || null
+  const inclusiveAccounts = body.inclusiveAccounts || null
+  const exclusiveAccounts = body.exclusiveAccounts || null
+  const bottomTimestamp = body.bottomTimestamp
+    ? new Date(body.bottomTimestamp)
+    : null
+  const topTimestamp = body.topTimestamp ? new Date(body.topTimestamp) : null
   const shouldTopicIncluded = body.shouldTopicIncluded || false
 
   let sortQuery = {}
@@ -131,6 +137,14 @@ exports.getStories = (body) => {
         ...(accountId && { accountId }),
         ...(topicId && { topicId }),
         ...(tagTitle && { tags: tagTitle }),
+        ...(inclusiveAccounts && { accountId: { $in: inclusiveAccounts } }),
+        ...(exclusiveAccounts && { accountId: { $nin: exclusiveAccounts } }),
+        ...(body.bottomTimestamp && {
+          createdAt: { $gte: bottomTimestamp },
+        }),
+        ...(body.topTimestamp && {
+          createdAt: { $lt: topTimestamp },
+        }),
       },
     },
     {

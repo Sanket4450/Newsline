@@ -69,6 +69,7 @@ const messages = {
     STORY_UPDATED: 'Story updated successfully',
     STORY_DELETED: 'Story deleted successfully',
     HOME_DATA_FETCHED: 'Home data fetched successfully',
+    DISCOVER_DATA_FETCHED: 'Discover data fetched successfully',
     FAQ_CATEGORIES_FETCHED: 'FAQ Categories fetched successfully',
     FAQ_CATEGORY_CREATED: 'FAQ Category created successfully',
     FAQ_CATEGORY_UPDATED: 'FAQ Category updated successfully',
