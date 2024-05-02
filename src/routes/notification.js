@@ -6,13 +6,6 @@ const { notificationController } = require('../controllers')
 
 userRouter.get('/', authChecker, notificationController.getNotifications)
 
-userRouter.put(
-  '/',
-  authChecker,
-  validate(notificationsValidation.deleteNotification),
-  notificationController.updateNotification
-)
-
 userRouter.delete(
   '/',
   authChecker,

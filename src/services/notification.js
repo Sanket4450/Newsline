@@ -5,10 +5,11 @@ const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const { getObjectId } = require('../utils/getObjectId')
 
-exports.checkNotificationExistById = async (storyId, data = { _id: 1 }) => {
+exports.checkNotificationExistById = async (accountId, notificationId, data = { _id: 1 }) => {
   try {
     const query = {
-      _id: getObjectId(storyId),
+      _id: getObjectId(notificationId),
+      accountId: getObjectId(accountId),
     }
 
     const notification = await DbRepo.findOne(collections.NOTIFICATION, {

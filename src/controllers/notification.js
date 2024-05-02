@@ -39,26 +39,12 @@ exports.getNotifications = catchAsyncErrors(async (req, res) => {
   )
 })
 
-exports.updateNotification = catchAsyncErrors(async (req, res) => {
-  const accountId = req.user.accountId
-  const { notificationId } = req.params
-
-  await notificationService.updateNotification(accountId, notificationId)
-
-  return sendResponse(
-    res,
-    httpStatus.OK,
-    {},
-    messages.SUCCESS.NOTIFICATION_UPDATED
-  )
-})
-
 exports.deleteNotification = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
   const { notificationId } = req.body
 
   if (notificationId) {
-    await notificationService.checkNotificationExistById(notificationId)
+    await notificationService.checkNotificationExistById(accountId, notificationId)
     await notificationService.deleteNotification(accountId, notificationId)
   } else {
     await notificationService.deleteAllNotifications(accountId)
