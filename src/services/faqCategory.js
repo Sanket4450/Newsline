@@ -43,9 +43,10 @@ exports.getCategory = (query = {}, data = { _id: 1 }) => {
   return DbRepo.findOne(collections.FAQ_CATEGORY, { query, data })
 }
 
-exports.getCategoryByTitle = (title, data = { _id: 1 }) => {
+exports.getCategoryByTitle = (title, faqCategoryId, data = { _id: 1 }) => {
   const query = {
-    title: { $regex: title, $options: 'i' },
+    title: { $regex: new RegExp(`^${title}$`, 'i') },
+    ...(faqCategoryId && { _id: { $ne: getObjectId(faqCategoryId) } }),
   }
   return exports.getCategory(query, data)
 }

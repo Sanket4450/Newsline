@@ -147,7 +147,7 @@ exports.createBookmarkCollection = (accountId, body) => {
 
 exports.getBookmarkCollectionByTitle = (title, data = { _id: 1 }) => {
   const query = {
-    title: { $regex: title, $options: 'i' },
+    title: { $regex: new RegExp(`^${title}$`, 'i') },
   }
   return getBookmarkCollection(query, data)
 }

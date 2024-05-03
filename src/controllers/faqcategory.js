@@ -48,7 +48,10 @@ exports.updateFaqCategory = catchAsyncErrors(async (req, res) => {
 
   if (
     updateBody.title &&
-    (await faqCategoryService.getCategoryByTitle(updateBody.title))
+    (await faqCategoryService.getCategoryByTitle(
+      updateBody.title,
+      faqCategoryId
+    ))
   ) {
     throw new ApiError(
       messages.ERROR.FAQ_CATEGORY_EXISTS_WITH_TITLE,

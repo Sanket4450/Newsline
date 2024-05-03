@@ -46,7 +46,9 @@ const messages = {
     REPORT_REASON_NOT_FOUND: 'Report reason not found',
     REPORT_REASON_EXISTS_WITH_TITLE:
       'Report reason already exists with this reason title',
-    REPORT_REASON_NOT_FOUND: 'Report reason not found',
+    REPORT_NOT_FOUND: 'Report not found',
+    CANNOT_REPORT_OWN_STORY: 'Cannot report your own story',
+    ALREADY_REPORTED: 'Already reported this story',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',
@@ -106,6 +108,9 @@ const messages = {
     REPORT_REASON_CREATED: 'Report reason created successfully',
     REPORT_REASON_UPDATED: 'Report reason updated successfully',
     REPORT_REASON_DELETED: 'Report reason deleted successfully',
+    STORY_REPORTED: 'Story reported successfully',
+    REPORT_FETCHED: 'Report fetched successfully',
+    REPORT_DELETED: 'Report deleted successfully',
   },
   SUBJECT: {
     REGISTER_ACCOUNT: 'Register your account',

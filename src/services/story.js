@@ -52,6 +52,10 @@ exports.checkStoryExistByAccountAndId = async (
   }
 }
 
+exports.getStory = (query = {}, data = { _id: 1 }) => {
+  return DbRepo.findOne(collections.STORY, { query, data })
+}
+
 exports.createStory = (body) => {
   const data = {
     ...body,

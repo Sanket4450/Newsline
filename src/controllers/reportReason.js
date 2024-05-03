@@ -50,7 +50,7 @@ exports.updateReportReason = catchAsyncErrors(async (req, res) => {
 
   if (
     updateBody.title &&
-    (await reportReasonService.getReasonByTitle(updateBody.title))
+    (await reportReasonService.getReasonByTitle(updateBody.title, reportReasonId))
   ) {
     throw new ApiError(
       messages.ERROR.REPORT_REASON_EXISTS_WITH_TITLE,

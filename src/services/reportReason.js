@@ -43,9 +43,10 @@ exports.getReason = (query = {}, data = { _id: 1 }) => {
   return DbRepo.findOne(collections.REPORT_REASON, { query, data })
 }
 
-exports.getReasonByTitle = (title, data = { _id: 1 }) => {
+exports.getReasonByTitle = (title, reasonId, data = { _id: 1 }) => {
   const query = {
-    title: { $regex: title, $options: 'i' },
+    title: { $regex: new RegExp(`^${title}$`, 'i') },
+    ...(reasonId && { _id: { $ne: getObjectId(reasonId) } }),
   }
   return exports.getReason(query, data)
 }

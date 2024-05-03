@@ -28,6 +28,10 @@ const {
   userRouter: userReportReasonRouter,
   adminRouter: adminReportReasonRouter,
 } = require('./reportReason')
+const {
+  userRouter: userReportRouter,
+  adminRouter: adminReportRouter,
+} = require('./report')
 
 userRouter.use('/auth', userAuthRouter)
 userRouter.use('/account', userAccountRouter)
@@ -41,12 +45,14 @@ userRouter.use('/comments', userCommentRouter)
 userRouter.use('/bookmark-collections', userbookmarkCollectionRouter)
 userRouter.use('/tags', userTagRouter)
 userRouter.use('/report-reasons', userReportReasonRouter)
+userRouter.use('/reports', userReportRouter)
 
 adminRouter.use('/account', adminAccountRouter)
 adminRouter.use('/topics', adminTopicRouter)
 adminRouter.use('/faq-categories', adminFaqCategoryRouter)
 adminRouter.use('/faqs', adminFaqRouter)
 adminRouter.use('/report-reasons', adminReportReasonRouter)
+adminRouter.use('/reports', adminReportRouter)
 
 module.exports = {
   userRouter,
