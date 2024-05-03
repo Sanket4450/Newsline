@@ -109,7 +109,7 @@ const messages = {
     REPORT_REASON_UPDATED: 'Report reason updated successfully',
     REPORT_REASON_DELETED: 'Report reason deleted successfully',
     STORY_REPORTED: 'Story reported successfully',
-    REPORT_FETCHED: 'Report fetched successfully',
+    REPORTS_FETCHED: 'Reports fetched successfully',
     REPORT_DELETED: 'Report deleted successfully',
   },
   SUBJECT: {

@@ -3,18 +3,21 @@ const joi = require('joi')
 const {
   idReqValidation,
   pageAndLimit,
+  stringValidation,
+  idValidation,
 } = require('./common')
 
 const reportStory = {
   body: joi.object({
-    accountId: idReqValidation,
     storyId: idReqValidation,
     reportReasonId: idReqValidation,
   }),
 }
 
 const getReports = {
-  query: joi.object({
+  body: joi.object({
+    reportReasonId: idValidation,
+    sortBy: stringValidation.valid('newest_first', 'oldest_first'),
     ...pageAndLimit,
   }),
 }

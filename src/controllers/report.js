@@ -8,20 +8,22 @@ const {
   accountService,
   storyService,
   reportReasonService,
+  storageService,
 } = require('../services')
 const { getObjectId } = require('../utils/getObjectId')
 
 exports.reportStory = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
   const body = req.body
 
-  await accountService.checkAccountExistById(body.accountId)
+  await accountService.checkAccountExistById(accountId)
   await storyService.checkStoryExistById(body.storyId)
   await reportReasonService.checkReasonExistById(body.reportReasonId)
 
   if (
     await storyService.getStory({
       _id: getObjectId(body.storyId),
-      accountId: getObjectId(body.accountId),
+      accountId: getObjectId(accountId),
     })
   ) {
     throw new ApiError(
@@ -32,7 +34,7 @@ exports.reportStory = catchAsyncErrors(async (req, res) => {
 
   if (
     await reportService.getReport({
-      accountId: getObjectId(body.accountId),
+      accountId: getObjectId(accountId),
       storyId: getObjectId(body.storyId),
       reportReasonId: getObjectId(body.reportReasonId),
     })
@@ -40,17 +42,43 @@ exports.reportStory = catchAsyncErrors(async (req, res) => {
     throw new ApiError(messages.ERROR.ALREADY_REPORTED, httpStatus.BAD_REQUEST)
   }
 
-  await reportService.createReport(body)
+  await reportService.createReport(accountId, body)
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_REPORTED)
 })
 
 exports.getReports = catchAsyncErrors(async (req, res) => {
-  const { page, limit } = req.query
+  const body = req.body
 
-  const reports = await reportService.getReports(page, limit)
+  if (body.reportReasonId) {
+    await reportReasonService.checkReasonExistById(body.reportReasonId)
+  }
 
-  return sendResponse(res, httpStatus.OK, { reports }, messages.SUCCESS.REPORTS)
+  let reports = await reportService.getReports(body)
+
+  reports = await Promise.all(
+    reports.map(async (report) => {
+      report.account.profileImageUrl = report.account.profileImageKey
+        ? await storageService.getFileUrl(report.account.profileImageKey)
+        : null
+
+      report.story.coverImageUrl = report.story.coverImageKey
+        ? await storageService.getFileUrl(report.story.coverImageKey)
+        : null
+
+      delete report.account.profileImageKey
+      delete report.story.coverImageKey
+
+      return report
+    })
+  )
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { reports },
+    messages.SUCCESS.REPORTS_FETCHED
+  )
 })
 
 exports.deleteReport = catchAsyncErrors(async (req, res) => {

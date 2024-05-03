@@ -12,13 +12,13 @@ userRouter.post(
   reportController.reportStory
 )
 
-// adminRouter.get(
-//   '/',
-//   authChecker,
-//   authorizeRole('admin'),
-//   reportValidation.getReports,
-//   reportController.getReports
-// )
+adminRouter.post(
+  '/filter',
+  authChecker,
+  authorizeRole('admin'),
+  validate(reportValidation.getReports),
+  reportController.getReports
+)
 
 adminRouter.delete(
   '/',

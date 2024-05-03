@@ -33,9 +33,99 @@ exports.getReport = (query = {}, data = { _id: 1 }) => {
   return DbRepo.findOne(collections.REPORT, { query, data })
 }
 
-exports.createReport = (body) => {
+exports.getReports = (filter) => {
+  const page = filter.page || 1
+  const limit = filter.limit || 10
+  const sortBy = filter.sortBy || 'newest_first'
+  const reportReasonId = filter.reportReasonId
+    ? getObjectId(filter.reportReasonId)
+    : null
+
+  let sortQuery
+
+  if (sortBy === 'oldest_first') {
+    sortQuery = { createdAt: 1 }
+  } else {
+    sortQuery = { createdAt: -1 }
+  }
+
+  const pipeline = [
+    {
+      $match: {
+        ...(reportReasonId && { reportReasonId }),
+      },
+    },
+    {
+      $lookup: {
+        from: 'accounts',
+        localField: 'accountId',
+        foreignField: '_id',
+        as: 'account',
+      },
+    },
+    {
+      $unwind: '$account',
+    },
+    {
+      $lookup: {
+        from: 'stories',
+        localField: 'storyId',
+        foreignField: '_id',
+        as: 'story',
+      },
+    },
+    {
+      $unwind: '$story',
+    },
+    {
+      $lookup: {
+        from: 'reportreasons',
+        localField: 'reportReasonId',
+        foreignField: '_id',
+        as: 'reportReason',
+      },
+    },
+    {
+      $unwind: '$reportReason',
+    },
+    {
+      $sort: sortQuery,
+    },
+    {
+      $skip: (page - 1) * limit,
+    },
+    {
+      $limit: limit,
+    },
+    {
+      $project: {
+        account: {
+          id: '$account._id',
+          fullName: '$account.fullName',
+          profileImageKey: '$account.profileImageKey',
+        },
+        story: {
+          id: '$story._id',
+          title: '$story.title',
+          coverImageKey: '$story.coverImageKey',
+        },
+        reportReason: {
+          id: '$reportReason._id',
+          title: '$reportReason.title',
+        },
+        createdAt: 1,
+        _id: 0,
+        id: '$_id',
+      },
+    },
+  ]
+
+  return DbRepo.aggregate(collections.REPORT, pipeline)
+}
+
+exports.createReport = (accountId, body) => {
   const data = {
-    accountId: getObjectId(body.accountId),
+    accountId: getObjectId(accountId),
     storyId: getObjectId(body.storyId),
     reportReasonId: getObjectId(body.reportReasonId),
   }
@@ -43,7 +133,7 @@ exports.createReport = (body) => {
   return DbRepo.create(collections.REPORT, { data })
 }
 
-exports.deleteReason = (reportId) => {
+exports.deleteReport = (reportId) => {
   const query = {
     _id: getObjectId(reportId),
   }
