@@ -218,13 +218,17 @@ exports.getDiscoverData = catchAsyncErrors(async (req, res) => {
 
 exports.getSearchResults = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
-  const { search } = req.query
+  const { search, type, page, limit } = req.body
 
-  let stories = await storyService.getStories({
-    search,
-    sortBy: 'trending',
-    limit: 10,
-  })
+  let stories =
+    type && type !== 'stories'
+      ? []
+      : await storyService.getStories({
+          search,
+          sortBy: 'trending',
+          page,
+          limit,
+        })
 
   stories = await Promise.all(
     stories.map(async (story) => {
@@ -243,15 +247,18 @@ exports.getSearchResults = catchAsyncErrors(async (req, res) => {
     })
   )
 
-  let accounts = await accountService.getAccountsWithFilter(
-    { search, sortBy: 'popular', limit: 10 },
-    {
-      type: {
-        $in: ['publisher', 'author'],
-      },
-      _id: { $ne: getObjectId(accountId) },
-    }
-  )
+  let accounts =
+    type && type !== 'accounts'
+      ? []
+      : await accountService.getAccountsWithFilter(
+          { search, sortBy: 'popular', page, limit },
+          {
+            type: {
+              $in: ['publisher', 'author'],
+            },
+            _id: { $ne: getObjectId(accountId) },
+          }
+        )
 
   accounts = await Promise.all(
     accounts.map(async (account) => ({
@@ -267,7 +274,10 @@ exports.getSearchResults = catchAsyncErrors(async (req, res) => {
 
   accounts = await accountService.validateFollowedAccounts(accountId, accounts)
 
-  let tags = await tagService.getTags({ search, limit: 10 })
+  let tags =
+    type && type !== 'tags'
+      ? []
+      : await tagService.getTags({ search, page, limit })
 
   tags = await Promise.all(
     tags.map(async (tag) => ({

@@ -8,7 +8,7 @@ userRouter.get('/home', authChecker, rootController.getHomeData)
 
 userRouter.get('/discover', authChecker, rootController.getDiscoverData)
 
-userRouter.get(
+userRouter.post(
   '/filter',
   authChecker,
   validate(rootValidation.getSearchResults),

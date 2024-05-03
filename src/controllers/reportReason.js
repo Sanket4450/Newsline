@@ -4,8 +4,6 @@ const ApiError = require('../utils/ApiError')
 const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
 const {
-  faqCategoryService,
-  faqService,
   reportReasonService,
 } = require('../services')
 
