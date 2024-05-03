@@ -220,37 +220,40 @@ exports.getSearchResults = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
   const { search, type, page, limit } = req.body
 
-  let stories =
-    type && type !== 'stories'
-      ? []
-      : await storyService.getStories({
+  let results
+
+  switch (type) {
+    case 'stories':
+      {
+        results = await storyService.getStories({
           search,
           sortBy: 'trending',
           page,
           limit,
         })
 
-  stories = await Promise.all(
-    stories.map(async (story) => {
-      story.coverImageUrl = story.coverImageKey
-        ? await storageService.getFileUrl(story.coverImageKey)
-        : null
+        results = await Promise.all(
+          results.map(async (story) => {
+            story.coverImageUrl = story.coverImageKey
+              ? await storageService.getFileUrl(story.coverImageKey)
+              : null
 
-      story.account.profileImageUrl = story.account.profileImageKey
-        ? await storageService.getFileUrl(story.account.profileImageKey)
-        : null
+            story.account.profileImageUrl = story.account.profileImageKey
+              ? await storageService.getFileUrl(story.account.profileImageKey)
+              : null
 
-      delete story.coverImageKey
-      delete story.account.profileImageKey
+            delete story.coverImageKey
+            delete story.account.profileImageKey
 
-      return story
-    })
-  )
+            return story
+          })
+        )
+      }
+      break
 
-  let accounts =
-    type && type !== 'accounts'
-      ? []
-      : await accountService.getAccountsWithFilter(
+    case 'accounts':
+      {
+        results = await accountService.getAccountsWithFilter(
           { search, sortBy: 'popular', page, limit },
           {
             type: {
@@ -260,39 +263,44 @@ exports.getSearchResults = catchAsyncErrors(async (req, res) => {
           }
         )
 
-  accounts = await Promise.all(
-    accounts.map(async (account) => ({
-      id: String(account.id),
-      fullName: account.fullName,
-      userName: account.userName,
-      isVerified: account.isVerified,
-      profileImageUrl: account.profileImageKey
-        ? await storageService.getFileUrl(account.profileImageKey)
-        : null,
-    }))
-  )
+        results = await Promise.all(
+          results.map(async (account) => ({
+            id: String(account.id),
+            fullName: account.fullName,
+            userName: account.userName,
+            isVerified: account.isVerified,
+            profileImageUrl: account.profileImageKey
+              ? await storageService.getFileUrl(account.profileImageKey)
+              : null,
+          }))
+        )
 
-  accounts = await accountService.validateFollowedAccounts(accountId, accounts)
+        results = await accountService.validateFollowedAccounts(
+          accountId,
+          results
+        )
+      }
+      break
 
-  let tags =
-    type && type !== 'tags'
-      ? []
-      : await tagService.getTags({ search, page, limit })
+    case 'tags': {
+      results = await tagService.getTags({ search, page, limit })
 
-  tags = await Promise.all(
-    tags.map(async (tag) => ({
-      id: String(tag._id),
-      title: tag.title,
-      postsCount: tag.postsCount,
-    }))
-  )
+      results = await Promise.all(
+        results.map(async (tag) => ({
+          id: String(tag._id),
+          title: tag.title,
+          postsCount: tag.postsCount,
+        }))
+      )
 
-  tags = await accountService.validateFollowedTags(accountId, tags)
+      results = await accountService.validateFollowedTags(accountId, results)
+    }
+  }
 
   return sendResponse(
     res,
     httpStatus.OK,
-    { stories, accounts, tags },
+    results,
     messages.SUCCESS.SEARCH_DATA_FETCHED
   )
 })

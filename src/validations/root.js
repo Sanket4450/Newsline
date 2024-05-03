@@ -1,11 +1,15 @@
 const joi = require('joi')
 
-const { stringValidation, pageAndLimit } = require('./common')
+const {
+  stringValidation,
+  pageAndLimit,
+  stringReqValidation,
+} = require('./common')
 
 const getSearchResults = {
   body: joi.object({
     search: stringValidation,
-    type: stringValidation.valid('stories', 'accounts', 'tags'),
+    type: stringReqValidation.valid('stories', 'accounts', 'tags'),
     ...pageAndLimit,
   }),
 }

@@ -14,7 +14,9 @@ exports.uploadFile = async (folderName, fileName, file) => {
       Body: file,
     }
 
-    await s3Client.send(new PutObjectCommand(params))
+    const abc = await s3Client.send(new PutObjectCommand(params))
+
+    console.log(abc)
 
     return params.Key
   } catch (error) {
