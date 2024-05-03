@@ -8,6 +8,7 @@ const {
   storageService,
   notificationService,
   accountService,
+  tagService,
 } = require('../services')
 const { getObjectId } = require('../utils/getObjectId')
 
@@ -217,30 +218,16 @@ exports.getDiscoverData = catchAsyncErrors(async (req, res) => {
 
 exports.getSearchResults = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
-  let topics = await topicService.getAllTopics({ title: 1 })
+  const { search } = req.query
 
-  let trendingStories = await storyService.getStories({
+  let stories = await storyService.getStories({
+    search,
     sortBy: 'trending',
     limit: 10,
   })
 
-  let recentStories = await storyService.getStories({
-    sortBy: 'latest',
-    limit: 30,
-    shouldTopicIncluded: true,
-  })
-
-  const newNotifications = Boolean(
-    await notificationService.getNotification({ accountId, isRead: false })
-  )
-
-  topics = topics.map((topic) => ({
-    id: String(topic._id),
-    title: topic.title,
-  }))
-
-  trendingStories = await Promise.all(
-    trendingStories.map(async (story) => {
+  stories = await Promise.all(
+    stories.map(async (story) => {
       story.coverImageUrl = story.coverImageKey
         ? await storageService.getFileUrl(story.coverImageKey)
         : null
@@ -256,29 +243,46 @@ exports.getSearchResults = catchAsyncErrors(async (req, res) => {
     })
   )
 
-  recentStories = await Promise.all(
-    recentStories.map(async (story) => {
-      story.coverImageUrl = story.coverImageKey
-        ? await storageService.getFileUrl(story.coverImageKey)
-        : null
-
-      story.topic.id = String(story.topic.id)
-
-      story.account.profileImageUrl = story.account.profileImageKey
-        ? await storageService.getFileUrl(story.account.profileImageKey)
-        : null
-
-      delete story.coverImageKey
-      delete story.account.profileImageKey
-
-      return story
-    })
+  let accounts = await accountService.getAccountsWithFilter(
+    { search, sortBy: 'popular', limit: 10 },
+    {
+      type: {
+        $in: ['publisher', 'author'],
+      },
+      _id: { $ne: getObjectId(accountId) },
+    }
   )
+
+  accounts = await Promise.all(
+    accounts.map(async (account) => ({
+      id: String(account.id),
+      fullName: account.fullName,
+      userName: account.userName,
+      isVerified: account.isVerified,
+      profileImageUrl: account.profileImageKey
+        ? await storageService.getFileUrl(account.profileImageKey)
+        : null,
+    }))
+  )
+
+  accounts = await accountService.validateFollowedAccounts(accountId, accounts)
+
+  let tags = await tagService.getTags({ search, limit: 10 })
+
+  tags = await Promise.all(
+    tags.map(async (tag) => ({
+      id: String(tag._id),
+      title: tag.title,
+      postsCount: tag.postsCount,
+    }))
+  )
+
+  tags = await accountService.validateFollowedTags(accountId, tags)
 
   return sendResponse(
     res,
     httpStatus.OK,
-    { topics, trendingStories, recentStories, newNotifications },
+    { stories, accounts, tags },
     messages.SUCCESS.SEARCH_DATA_FETCHED
   )
 })

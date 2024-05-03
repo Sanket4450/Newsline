@@ -208,11 +208,10 @@ exports.setInterests = catchAsyncErrors(async (req, res) => {
 
 exports.getSearchAccounts = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
-  const search = req.body.search || ''
-  const { page, limit } = req.body
+  const { search, page, limit } = req.body
 
   let accounts = await accountService.getAccountsWithFilter(
-    { search, page, limit },
+    { search, page, limit, sortBy: 'popular' },
     {
       type: {
         $in: ['publisher', 'author'],

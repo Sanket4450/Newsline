@@ -58,10 +58,6 @@ const accountSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    isWriter: {
-      type: Boolean,
-      default: false,
-    },
     type: {
       type: String,
       enum: ['reader', 'author', 'publisher'],
