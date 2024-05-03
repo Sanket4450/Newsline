@@ -32,7 +32,7 @@ const messages = {
     TAG_NOT_FOUND: 'Tag not found',
     INVALID_JSON: 'Invalid JSON, please provide valid JSON form-data',
     NOT_ALLOWED_TO_POST_STORY: 'Your account is not allowed to post a story',
-    CATEGORY_NOT_FOUND: 'Category not found',
+    FAQ_CATEGORY_NOT_FOUND: 'Category not found',
     FAQ_CATEGORY_EXISTS_WITH_TITLE:
       'FAQ Category already exists with this category title',
     FAQ_NOT_FOUND: 'FAQ not found',
@@ -43,6 +43,10 @@ const messages = {
       'Bookmark collection already exists with this title',
     BOOKMARK_COLLECTION_NOT_FOUND: 'Bookmark collection not found',
     CANNOT_VIEW_YOURSELF: 'You cannot view your own profile',
+    REPORT_REASON_NOT_FOUND: 'Report reason not found',
+    REPORT_REASON_EXISTS_WITH_TITLE:
+      'Report reason already exists with this reason title',
+    REPORT_REASON_NOT_FOUND: 'Report reason not found',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',
@@ -98,6 +102,10 @@ const messages = {
     BOOKMARKED_STORIES_FETCHED: 'Bookmarked stories fetched successfully',
     BOOKMARK_STORY_REMOVED: 'Story removed from bookmark collection',
     TAGS_FETCHED: 'Tags fetched successfully',
+    REPORT_REASONS_FETCHED: 'Report reasons fetched successfully',
+    REPORT_REASON_CREATED: 'Report reason created successfully',
+    REPORT_REASON_UPDATED: 'Report reason updated successfully',
+    REPORT_REASON_DELETED: 'Report reason deleted successfully',
   },
   SUBJECT: {
     REGISTER_ACCOUNT: 'Register your account',

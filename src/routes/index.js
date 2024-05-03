@@ -22,8 +22,12 @@ const {
   adminRouter: adminFaqRouter,
 } = require('./faq')
 const { userRouter: userCommentRouter } = require('./comment')
-const { userRouter: userbookmarkCollectionRouter} = require('./bookmark')
-const { userRouter: userTagRouter} = require('./tag')
+const { userRouter: userbookmarkCollectionRouter } = require('./bookmark')
+const { userRouter: userTagRouter } = require('./tag')
+const {
+  userRouter: userReportReasonRouter,
+  adminRouter: adminReportReasonRouter,
+} = require('./reportReason')
 
 userRouter.use('/auth', userAuthRouter)
 userRouter.use('/account', userAccountRouter)
@@ -36,11 +40,13 @@ userRouter.use('/faqs', userFaqRouter)
 userRouter.use('/comments', userCommentRouter)
 userRouter.use('/bookmark-collections', userbookmarkCollectionRouter)
 userRouter.use('/tags', userTagRouter)
+userRouter.use('/report-reasons', userReportReasonRouter)
 
 adminRouter.use('/account', adminAccountRouter)
 adminRouter.use('/topics', adminTopicRouter)
 adminRouter.use('/faq-categories', adminFaqCategoryRouter)
 adminRouter.use('/faqs', adminFaqRouter)
+adminRouter.use('/report-reasons', adminReportReasonRouter)
 
 module.exports = {
   userRouter,

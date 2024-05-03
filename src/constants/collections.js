@@ -10,8 +10,8 @@ const collections = {
   FAQ: 'Faq',
   NOTIFICATION: 'Notification',
   BOOKMARK: 'BookmarkCollection',
-  REPORT_REASON: 'BookmarkCollection',
-  BOOKMARK: 'BookmarkCollection',
+  REPORT_REASON: 'ReportReason',
+  REPORT: 'Report',
 }
 
 module.exports = collections

@@ -18,7 +18,7 @@ exports.checkCategoryExistById = async (categoryId, data = { _id: 1 }) => {
 
     if (!category) {
       throw new ApiError(
-        messages.ERROR.CATEGORY_NOT_FOUND,
+        messages.ERROR.FAQ_CATEGORY_NOT_FOUND,
         httpStatus.NOT_FOUND
       )
     }
@@ -50,7 +50,7 @@ exports.getCategoryByTitle = (title, data = { _id: 1 }) => {
   return exports.getCategory(query, data)
 }
 
-exports.getAllCategory = (data = { title: 1 }) => {
+exports.getAllCategories = (data = { title: 1 }) => {
   return DbRepo.find(collections.FAQ_CATEGORY, { data }, { createdAt: -1 })
 }
 

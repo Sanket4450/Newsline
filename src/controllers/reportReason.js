@@ -3,76 +3,85 @@ const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
 const ApiError = require('../utils/ApiError')
 const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
-const { faqCategoryService, faqService } = require('../services')
+const {
+  faqCategoryService,
+  faqService,
+  reportReasonService,
+} = require('../services')
 
 exports.getReportReasons = catchAsyncErrors(async (_, res) => {
-  const faqCategories = await faqCategoryService.getAllCategory()
+  let reportReasons = await reportReasonService.getAllReasons()
+
+  reportReasons = reportReasons.map((reason) => ({
+    id: reason._id,
+    title: reason.title,
+  }))
 
   return sendResponse(
     res,
     httpStatus.OK,
-    { faqCategories },
-    messages.SUCCESS.FAQ_CATEGORIES_FETCHED
+    { reportReasons },
+    messages.SUCCESS.REPORT_REASONS_FETCHED
   )
 })
 
-exports.createFaqCategory = catchAsyncErrors(async (req, res) => {
+exports.createReportReason = catchAsyncErrors(async (req, res) => {
   const body = req.body
 
-  if (await faqCategoryService.getCategoryByTitle(body.title)) {
+  if (await reportReasonService.getReasonByTitle(body.title)) {
     throw new ApiError(
-      messages.ERROR.FAQ_CATEGORY_EXISTS_WITH_TITLE,
+      messages.ERROR.REPORT_REASON_EXISTS_WITH_TITLE,
       httpStatus.BAD_REQUEST
     )
   }
 
-  await faqCategoryService.createCategory(body)
+  await reportReasonService.createReason(body)
 
   return sendResponse(
     res,
     httpStatus.OK,
     {},
-    messages.SUCCESS.FAQ_CATEGORY_CREATED
+    messages.SUCCESS.REPORT_REASON_CREATED
   )
 })
 
-exports.updateFaqCategory = catchAsyncErrors(async (req, res) => {
-  const { faqCategoryId, ...updateBody } = req.body
+exports.updateReportReason = catchAsyncErrors(async (req, res) => {
+  const { reportReasonId, ...updateBody } = req.body
 
-  await faqCategoryService.checkCategoryExistById(faqCategoryId)
+  await reportReasonService.checkReasonExistById(reportReasonId)
 
   if (
     updateBody.title &&
-    (await faqCategoryService.getCategoryByTitle(updateBody.title))
+    (await reportReasonService.getReasonByTitle(updateBody.title))
   ) {
     throw new ApiError(
-      messages.ERROR.FAQ_CATEGORY_EXISTS_WITH_TITLE,
+      messages.ERROR.REPORT_REASON_EXISTS_WITH_TITLE,
       httpStatus.BAD_REQUEST
     )
   }
 
-  await faqCategoryService.updateCategoryById(faqCategoryId, updateBody)
+  await reportReasonService.updateReasonById(reportReasonId, updateBody)
 
   return sendResponse(
     res,
     httpStatus.OK,
     {},
-    messages.SUCCESS.FAQ_CATEGORY_UPDATED
+    messages.SUCCESS.REPORT_REASON_UPDATED
   )
 })
 
-exports.deleteFaqCategory = catchAsyncErrors(async (req, res) => {
-  const { faqCategoryId } = req.body
+exports.deleteReportReason = catchAsyncErrors(async (req, res) => {
+  const { reportReasonId } = req.body
 
-  await faqCategoryService.checkCategoryExistById(faqCategoryId)
+  await reportReasonService.checkReasonExistById(reportReasonId)
 
-  await faqCategoryService.deleteCategory(faqCategoryId)
-  await faqService.deleteFaqsByCategory(faqCategoryId)
+  await reportReasonService.deleteReason(reportReasonId)
+//   await faqService.deleteFaqsByCategory(reportReasonId)
 
   return sendResponse(
     res,
     httpStatus.OK,
     {},
-    messages.SUCCESS.FAQ_CATEGORY_DELETED
+    messages.SUCCESS.REPORT_REASON_DELETED
   )
 })

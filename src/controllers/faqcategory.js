@@ -6,7 +6,12 @@ const messages = require('../constants/messages')
 const { faqCategoryService, faqService } = require('../services')
 
 exports.getFaqCategories = catchAsyncErrors(async (_, res) => {
-  const faqCategories = await faqCategoryService.getAllCategory()
+  let faqCategories = await faqCategoryService.getAllCategories()
+
+  faqCategories = faqCategories.map((category) => ({
+    id: category._id,
+    title: category.title,
+  }))
 
   return sendResponse(
     res,
