@@ -384,7 +384,9 @@ exports.getProfileInfo = catchAsyncErrors(async (req, res) => {
     accountId,
     sortBy: 'latest',
     limit: 10,
+    shouldTopicIncluded: true,
     shouldDescriptionIncluded: true,
+    shouldTagsIncluded: true,
   })
 
   stories = await Promise.all(
@@ -392,6 +394,8 @@ exports.getProfileInfo = catchAsyncErrors(async (req, res) => {
       story.coverImageUrl = story.coverImageKey
         ? await storageService.getFileUrl(story.coverImageKey)
         : null
+
+      story.topic.id = String(story.topic.id)
 
       story.account.profileImageUrl = story.account.profileImageKey
         ? await storageService.getFileUrl(story.account.profileImageKey)

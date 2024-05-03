@@ -110,7 +110,9 @@ exports.getStories = (body) => {
     : null
   const topTimestamp = body.topTimestamp ? new Date(body.topTimestamp) : null
   const shouldTopicIncluded = Boolean(body.shouldTopicIncluded) || false
-  const shouldDescriptionIncluded = Boolean(body.shouldDescriptionIncluded) || false
+  const shouldDescriptionIncluded =
+    Boolean(body.shouldDescriptionIncluded) || false
+  const shouldTagsIncluded = Boolean(body.shouldTagsIncluded) || false
 
   let sortQuery = {}
 
@@ -185,6 +187,9 @@ exports.getStories = (body) => {
           description: 1,
         }),
         coverImageKey: 1,
+        ...(shouldTagsIncluded && {
+          tags: 1,
+        }),
         views: 1,
         commentsCount: { $size: '$comments' },
         createdAt: 1,
