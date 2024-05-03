@@ -12,6 +12,18 @@ const notificationSchema = new Schema(
       enum: ['simple', 'publish', 'engage'],
       default: 'simple',
     },
+    event: {
+      type: String,
+      enum: [
+        'setupAccount',
+        'followAccount',
+        'uploadStory',
+        'postComment',
+        'likeComment',
+        'postReply',
+      ],
+      required: true,
+    },
     title: {
       type: String,
       required: true,
@@ -28,6 +40,11 @@ const notificationSchema = new Schema(
     storyId: {
       type: Schema.Types.ObjectId,
       ref: 'Story',
+      default: null,
+    },
+    commentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Comment',
       default: null,
     },
     isFollowedBack: {

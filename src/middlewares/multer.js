@@ -17,7 +17,7 @@ exports.uploadFile =
         },
       })
 
-      const maxFileSize = variables.maxFileSize
+      const maxFileSize = variables.MAX_FILE_SIZE
 
       const upload = multer({
         storage,

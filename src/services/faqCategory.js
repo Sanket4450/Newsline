@@ -11,7 +11,7 @@ exports.checkCategoryExistById = async (categoryId, data = { _id: 1 }) => {
       _id: getObjectId(categoryId),
     }
 
-    const category = await DbRepo.findOne(collections.FAQCATEGORY, {
+    const category = await DbRepo.findOne(collections.FAQ_CATEGORY, {
       query,
       data,
     })
@@ -36,11 +36,11 @@ exports.createCategory = (body) => {
   const data = {
     ...body,
   }
-  return DbRepo.create(collections.FAQCATEGORY, { data })
+  return DbRepo.create(collections.FAQ_CATEGORY, { data })
 }
 
 exports.getCategory = (query = {}, data = { _id: 1 }) => {
-  return DbRepo.findOne(collections.FAQCATEGORY, { query, data })
+  return DbRepo.findOne(collections.FAQ_CATEGORY, { query, data })
 }
 
 exports.getCategoryByTitle = (title, data = { _id: 1 }) => {
@@ -51,7 +51,7 @@ exports.getCategoryByTitle = (title, data = { _id: 1 }) => {
 }
 
 exports.getAllCategory = (data = { title: 1 }) => {
-  return DbRepo.find(collections.FAQCATEGORY, { data }, { createdAt: -1 })
+  return DbRepo.find(collections.FAQ_CATEGORY, { data }, { createdAt: -1 })
 }
 
 exports.updateCategoryById = (categoryId, updateData = {}) => {
@@ -65,7 +65,7 @@ exports.updateCategoryById = (categoryId, updateData = {}) => {
     },
   }
 
-  return DbRepo.updateOne(collections.FAQCATEGORY, { query, data })
+  return DbRepo.updateOne(collections.FAQ_CATEGORY, { query, data })
 }
 
 exports.deleteCategory = (categoryId) => {
@@ -73,5 +73,5 @@ exports.deleteCategory = (categoryId) => {
     _id: getObjectId(categoryId),
   }
 
-  return DbRepo.deleteOne(collections.FAQCATEGORY, { query })
+  return DbRepo.deleteOne(collections.FAQ_CATEGORY, { query })
 }

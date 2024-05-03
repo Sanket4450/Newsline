@@ -2,7 +2,14 @@ const httpStatus = require('http-status')
 const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
 const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
-const { storyService, storageService, commentService } = require('../services')
+const {
+  storyService,
+  storageService,
+  commentService,
+  accountService,
+  notificationService,
+} = require('../services')
+const { getObjectId } = require('../utils/getObjectId')
 
 exports.getComments = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
@@ -39,11 +46,22 @@ exports.getComments = catchAsyncErrors(async (req, res) => {
 
 exports.postComment = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
-  const body = req.body
+  const { storyId, ...body } = req.body
 
-  await storyService.checkStoryExistById(body.storyId)
+  const { fullName } = await accountService.checkAccountExistById(accountId, {
+    fullName: 1,
+  })
 
-  const { _id: commentId } = await commentService.postComment(accountId, body)
+  const { accountId: storyAccountId } = await storyService.checkStoryExistById(
+    storyId,
+    { accountId: 1 }
+  )
+
+  const { _id: commentId } = await commentService.postComment(
+    accountId,
+    storyId,
+    body
+  )
 
   const [comment] = await commentService.getComment(String(commentId))
 
@@ -54,6 +72,17 @@ exports.postComment = catchAsyncErrors(async (req, res) => {
 
   delete comment.account.profileImageKey
   delete comment.likedBy
+
+  if (accountId !== String(storyAccountId)) {
+    await notificationService.createNotification(String(storyAccountId), {
+      type: 'publish',
+      event: 'postComment',
+      title: `${fullName} ${messages.NOTIFICATION.COMMENTED_ON_STORY}`,
+      iconAccountId: getObjectId(accountId),
+      storyId: getObjectId(storyId),
+      commentId,
+    })
+  }
 
   return sendResponse(
     res,
@@ -97,6 +126,23 @@ exports.deleteComment = catchAsyncErrors(async (req, res) => {
 
   await commentService.deleteComment(commentId)
 
+  const notifications = await notificationService.getNotifications(
+    {
+      event: { $in: ['postComment', 'likeComment', 'postReply'] },
+      commentId: getObjectId(commentId),
+    },
+    {
+      accountId: 1,
+    }
+  )
+
+  for (let notification of notifications) {
+    await notificationService.deleteNotification(
+      String(notification.accountId),
+      String(notification._id)
+    )
+  }
+
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.COMMENT_DELETED)
 })
 
@@ -104,9 +150,44 @@ exports.toggleLike = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
   const { commentId, isLiked } = req.body
 
-  await commentService.checkCommentExistById(commentId)
+  const { fullName } = await accountService.checkAccountExistById(accountId, {
+    fullName: 1,
+  })
+
+  const { accountId: commentAccountId } =
+    await commentService.checkCommentExistById(commentId, { accountId: 1 })
 
   await commentService.toggleLike(accountId, commentId, isLiked)
+
+  if (accountId !== String(commentAccountId)) {
+    const notification = await notificationService.getNotification(
+      {
+        event: 'likeComment',
+        accountId: commentAccountId,
+        iconAccountId: getObjectId(accountId),
+        commentId: getObjectId(commentId),
+      },
+      { accountId: 1 }
+    )
+    if (isLiked) {
+      !notification &&
+        (await notificationService.createNotification(
+          String(commentAccountId),
+          {
+            event: 'likeComment',
+            title: `${fullName} ${messages.NOTIFICATION.LIKED_YOUR_COMMENT}`,
+            iconAccountId: getObjectId(accountId),
+            commentId: getObjectId(commentId),
+          }
+        ))
+    } else {
+      notification &&
+        (await notificationService.deleteNotification(
+          String(notification.accountId),
+          String(notification._id)
+        ))
+    }
+  }
 
   return sendResponse(
     res,
@@ -149,11 +230,20 @@ exports.getReplies = catchAsyncErrors(async (req, res) => {
 
 exports.postReply = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
-  const body = req.body
+  const { commentId, ...body } = req.body
 
-  await commentService.checkCommentExistById(body.commentId)
+  const { fullName } = await accountService.checkAccountExistById(accountId, {
+    fullName: 1,
+  })
 
-  const { _id: replyId } = await commentService.postReply(accountId, body)
+  const { accountId: commentAccountId } =
+    await commentService.checkCommentExistById(commentId, { accountId: 1 })
+
+  const { _id: replyId } = await commentService.postReply(
+    accountId,
+    commentId,
+    body
+  )
 
   const [reply] = await commentService.getComment(String(replyId))
 
@@ -164,6 +254,15 @@ exports.postReply = catchAsyncErrors(async (req, res) => {
 
   delete reply.account.profileImageKey
   delete reply.likedBy
+
+  if (accountId !== String(commentAccountId)) {
+    await notificationService.createNotification(String(commentAccountId), {
+      event: 'postComment',
+      title: `${fullName} ${messages.NOTIFICATION.REPLIED_ON_COMMENT}`,
+      iconAccountId: getObjectId(accountId),
+      commentId: replyId,
+    })
+  }
 
   return sendResponse(
     res,

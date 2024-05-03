@@ -17,7 +17,7 @@ const sendMail = async ({ email, subject, templateFile, data }) => {
     const renderedHtml = ejs.render(htmlContent, data)
 
     const mailOptions = {
-      from: `${variables.emailHost} <${variables.emailUser}>`,
+      from: `${variables.EMAIL_HOST} <${variables.EMAIL_USER}>`,
       to: email,
       subject,
       html: renderedHtml,

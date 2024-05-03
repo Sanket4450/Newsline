@@ -184,12 +184,12 @@ exports.getTotalCommentsCount = (storyId) => {
   return DbRepo.count(collections.COMMENT, { query })
 }
 
-exports.postComment = (accountId, body) => {
+exports.postComment = (accountId, storyId, updateBody) => {
   const data = {
     accountId: getObjectId(accountId),
-    storyId: getObjectId(body.storyId),
+    storyId: getObjectId(storyId),
     type: 'comment',
-    ...body,
+    ...updateBody,
   }
 
   return DbRepo.create(collections.COMMENT, { data })
@@ -296,10 +296,10 @@ exports.getReplies = (commentId) => {
   return DbRepo.aggregate(collections.COMMENT, pipeline)
 }
 
-exports.postReply = (accountId, body) => {
+exports.postReply = (accountId, commentId, body) => {
   const data = {
     accountId: getObjectId(accountId),
-    commentId: getObjectId(body.commentId),
+    commentId: getObjectId(commentId),
     type: 'reply',
     ...body,
   }

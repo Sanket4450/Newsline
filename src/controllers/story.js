@@ -185,6 +185,7 @@ exports.createStory = catchAsyncErrors(async (req, res) => {
   for (let follower of followers) {
     await notificationService.createNotification(String(follower._id), {
       type: 'publish',
+      event: 'uploadStory',
       title: `${fullName} ${messages.NOTIFICATION.PUBLISHED_NEW_STORY}`,
       iconAccountId: getObjectId(accountId),
       storyId,
@@ -250,6 +251,22 @@ exports.deleteStory = catchAsyncErrors(async (req, res) => {
   await storyService.checkStoryExistByAccountAndId(accountId, storyId)
 
   await storyService.deleteStory(storyId)
+
+  const notifications = await notificationService.getNotifications(
+    {
+      storyId: getObjectId(storyId),
+    },
+    {
+      accountId: 1,
+    }
+  )
+
+  for (let notification of notifications) {
+    await notificationService.deleteNotification(
+      String(notification.accountId),
+      String(notification._id)
+    )
+  }
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_DELETED)
 })

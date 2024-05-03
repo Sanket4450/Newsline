@@ -9,7 +9,7 @@ const variables = require('../constants/variables')
 exports.uploadFile = async (folderName, fileName, file) => {
   try {
     const params = {
-      Bucket: variables.s3bucketName,
+      Bucket: variables.S3_BUCKET_NAME,
       Key: `${folderName}/${fileName}`,
       Body: file,
     }
@@ -28,12 +28,12 @@ exports.uploadFile = async (folderName, fileName, file) => {
 exports.getFileUrl = async (Key) => {
   try {
     const command = new GetObjectCommand({
-      Bucket: variables.s3bucketName,
+      Bucket: variables.S3_BUCKET_NAME,
       Key,
     })
 
     const signedUrl = await getSignedUrl(s3Client, command, {
-      expiresIn: parseInt(variables.s3UrlExpiry),
+      expiresIn: parseInt(variables.S3_URL_EXPIRY),
     })
 
     return signedUrl

@@ -10,6 +10,8 @@ const Bookmark = require('./bookmark')
 const Comment = require('./comment')
 const Notification = require('./notification')
 const BookmarkCollection = require('./bookmark')
+const ReportReason = require('./reportReason')
+const Report = require('./report')
 
 module.exports = {
   Account,
@@ -23,5 +25,7 @@ module.exports = {
   Bookmark,
   Comment,
   Notification,
-  BookmarkCollection
+  BookmarkCollection,
+  ReportReason,
+  Report,
 }

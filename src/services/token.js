@@ -41,7 +41,7 @@ exports.generateRegisterToken = (accountId) => {
     payload,
     secret: process.env.REGISTER_TOKEN_SECRET,
     options: {
-      expiresIn: variables.registerTokenExpiry,
+      expiresIn: variables.REGISTER_TOKEN_EXPIRY,
     },
   })
 }
@@ -73,7 +73,7 @@ exports.generateResetToken = (accountId) => {
     payload,
     secret: process.env.RESET_TOKEN_SECRET,
     options: {
-      expiresIn: variables.resetTokenExpiry,
+      expiresIn: variables.RESET_TOKEN_EXPIRY,
     },
   })
 }

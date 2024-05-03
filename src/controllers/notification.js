@@ -14,6 +14,7 @@ exports.getNotifications = catchAsyncErrors(async (req, res) => {
       id: notification.id,
       type: notification.type,
       title: notification.title,
+      createdAt: notification.createdAt,
       iconUrl: notification.profileImageKey
         ? await storageService.getFileUrl(notification.profileImageKey)
         : notification.iconKey

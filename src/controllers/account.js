@@ -6,6 +6,7 @@ const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
 const { getObjectId } = require('../utils/getObjectId')
 const { removeDuplicates } = require('../utils/removeDuplicates')
+const notifications = require('../constants/notifications')
 const {
   accountService,
   fileService,
@@ -91,6 +92,12 @@ exports.setAccount = catchAsyncErrors(async (req, res) => {
 
   delete account._doc.profileImageKey
 
+  await notificationService.createNotification(accountId, {
+    event: 'setupAccount',
+    iconKey: notifications.USER,
+    title: messages.NOTIFICATION.ACCOUNT_SETUP,
+  })
+
   return sendResponse(
     res,
     httpStatus.OK,
@@ -141,6 +148,12 @@ exports.updateAccount = catchAsyncErrors(async (req, res) => {
     : null
 
   delete account._doc.profileImageKey
+
+  await notificationService.createNotification(accountId, {
+    event: 'setupAccount',
+    iconKey: notifications.USER,
+    title: messages.NOTIFICATION.ACCOUNT_UPDATED,
+  })
 
   return sendResponse(
     res,
@@ -298,6 +311,7 @@ exports.toggleFollow = catchAsyncErrors(async (req, res) => {
     if (existingNotification) {
       await notificationService.createNotification(followingAccountId, {
         type: 'engage',
+        event: 'followAccount',
         title: `${fullName} ${messages.NOTIFICATION.STARTED_FOLLOWING}`,
         iconAccountId: getObjectId(followerAccountId),
         isFollowedBack: true,
@@ -312,6 +326,7 @@ exports.toggleFollow = catchAsyncErrors(async (req, res) => {
     } else {
       await notificationService.createNotification(followingAccountId, {
         type: 'engage',
+        event: 'followAccount',
         title: `${fullName} ${messages.NOTIFICATION.STARTED_FOLLOWING}`,
         iconAccountId: getObjectId(followerAccountId),
         isFollowedBack: false,

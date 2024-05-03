@@ -9,7 +9,7 @@ const variables = require('../constants/variables')
 const validateFileType = (fileName) => {
   const extname = path.extname(fileName).slice(1)
 
-  const supportedFiles = variables.supportedFileTypes?.split(' ')
+  const supportedFiles = variables.SUPPORTED_FILE_TYPES?.split(' ')
 
   if (!supportedFiles.includes(extname?.toLowerCase())) {
     throw new ApiError(messages.ERROR.FILE_TYPE_NOT_SUPPORTED, httpStatus.BAD_REQUEST)

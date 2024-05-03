@@ -2,6 +2,7 @@ const httpStatus = require('http-status')
 const { catchAsyncErrors } = require('../utils/catchAsyncErrors')
 const { sendResponse } = require('../utils/responseHandler')
 const messages = require('../constants/messages')
+const notifications = require('../constants/notifications')
 const {
   authService,
   tokenService,
@@ -9,7 +10,6 @@ const {
   accountService,
   notificationService,
 } = require('../services')
-const notifications = require('../constants/notifications')
 
 exports.register = catchAsyncErrors(async (req, res) => {
   const body = req.body
@@ -54,11 +54,6 @@ exports.verifyRegisterOtp = catchAsyncErrors(async (req, res) => {
   })
 
   await accountService.updateAccountById(accountId, { isEmailVerified: true })
-
-  await notificationService.createNotification(accountId, {
-    iconKey: notifications.USER,
-    title: messages.NOTIFICATION.ACCOUNT_SETUP,
-  })
 
   const accessToken = tokenService.generateAccessToken(accountId, role)
 
@@ -162,6 +157,12 @@ exports.resetPassword = catchAsyncErrors(async (req, res) => {
   await authService.resetNewPassword(decoded.sub, body.password)
 
   await sessionService.deleteAllSessions(decoded.sub)
+
+  await notificationService.createNotification(decoded.sub, {
+    event: 'setupAccount',
+    iconKey: notifications.USER,
+    title: messages.NOTIFICATION.PASSWORD_UPDATED,
+  })
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.PASSWORD_RESET)
 })

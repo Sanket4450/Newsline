@@ -104,8 +104,13 @@ const messages = {
   },
   NOTIFICATION: {
     ACCOUNT_SETUP: 'Your account is ready!',
+    ACCOUNT_UPDATED: 'Your account updated recently!',
+    PASSWORD_UPDATED: 'Your account password has been updated!',
     STARTED_FOLLOWING: 'started following you',
     PUBLISHED_NEW_STORY: 'published a new story',
+    COMMENTED_ON_STORY: 'commmented on your story',
+    LIKED_YOUR_COMMENT: 'liked your comment',
+    REPLIED_ON_COMMENT: 'replied on your comment',
   },
 }
 

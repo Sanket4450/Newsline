@@ -37,6 +37,10 @@ exports.getNotification = (query, data = { _id: 1 }) => {
   return DbRepo.findOne(collections.NOTIFICATION, { query, data })
 }
 
+exports.getNotifications = (query, data = { _id: 1 }) => {
+  return DbRepo.find(collections.NOTIFICATION, { query, data })
+}
+
 exports.getAllNotifications = (accountId) => {
   const pipeline = [
     {
@@ -98,6 +102,7 @@ exports.getAllNotifications = (accountId) => {
         profileImageKey: 1,
         storyImageKey: 1,
         isFollowedBack: 1,
+        createdAt: 1,
         isRead: 1,
         _id: 0,
         id: '$_id',
