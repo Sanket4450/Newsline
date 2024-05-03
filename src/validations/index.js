@@ -1,5 +1,6 @@
 exports.authValidation = require('./auth')
 exports.accountValidation = require('./account')
+exports.rootValidation = require('./root')
 exports.topicValidation = require('./topic')
 exports.storyValidation = require('./story')
 exports.faqCategoryValidation = require('./faqCategory')

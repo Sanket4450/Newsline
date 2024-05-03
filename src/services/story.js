@@ -109,7 +109,8 @@ exports.getStories = (body) => {
     ? new Date(body.bottomTimestamp)
     : null
   const topTimestamp = body.topTimestamp ? new Date(body.topTimestamp) : null
-  const shouldTopicIncluded = body.shouldTopicIncluded || false
+  const shouldTopicIncluded = Boolean(body.shouldTopicIncluded) || false
+  const shouldDescriptionIncluded = Boolean(body.shouldDescriptionIncluded) || false
 
   let sortQuery = {}
 
@@ -180,6 +181,9 @@ exports.getStories = (body) => {
     {
       $project: {
         title: 1,
+        ...(shouldDescriptionIncluded && {
+          description: 1,
+        }),
         coverImageKey: 1,
         views: 1,
         commentsCount: { $size: '$comments' },

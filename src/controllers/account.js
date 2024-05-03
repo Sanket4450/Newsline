@@ -385,6 +385,7 @@ exports.getProfileInfo = catchAsyncErrors(async (req, res) => {
     accountId,
     sortBy: 'latest',
     limit: 10,
+    shouldDescriptionIncluded: true,
   })
 
   stories = await Promise.all(
