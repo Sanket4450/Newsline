@@ -21,11 +21,11 @@ exports.getFaqs = catchAsyncErrors(async (req, res) => {
 })
 
 exports.createFaq = catchAsyncErrors(async (req, res) => {
-  const body = req.body
+  const { faqCategoryId, ...createBody } = req.body
 
-  await faqCategoryService.checkCategoryExistById(body.faqCategoryId)
+  await faqCategoryService.checkCategoryExistById(faqCategoryId)
 
-  await faqService.createFaq(body)
+  await faqService.createFaq(faqCategoryId, createBody)
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.FAQ_CREATED)
 })

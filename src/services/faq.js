@@ -59,10 +59,10 @@ exports.getFaqs = (body) => {
   return DbRepo.aggregate(collections.FAQ, pipeline)
 }
 
-exports.createFaq = (body) => {
+exports.createFaq = (faqCategoryId, createBody) => {
   const data = {
-    faqCategoryId: getObjectId(body.faqCategoryId),
-    ...body,
+    faqCategoryId: getObjectId(faqCategoryId),
+    ...createBody,
   }
   return DbRepo.create(collections.FAQ, { data })
 }
