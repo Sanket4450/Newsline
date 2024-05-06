@@ -6,7 +6,7 @@ const { faqValidation } = require('../validations')
 const { faqController } = require('../controllers')
 
 userRouter.post(
-  '/',
+  '/filter',
   authChecker,
   validate(faqValidation.getFaqs),
   faqController.getFaqs
