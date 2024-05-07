@@ -32,6 +32,35 @@ exports.checkReasonExistById = async (reasonId, data = { _id: 1 }) => {
   }
 }
 
+exports.checkReasonInUse = async (reasonId) => {
+  try {
+    const query = {
+      reportReasonId: getObjectId(reasonId),
+    }
+
+    const data = {
+      _id: 1,
+    }
+
+    const report = await DbRepo.findOne(collections.REPORT, {
+      query,
+      data,
+    })
+
+    if (!report) {
+      throw new ApiError(
+        messages.ERROR.REPORT_REASON_ALREADY_IN_USE,
+        httpStatus.NOT_FOUND
+      )
+    }
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
+
 exports.createReason = (body) => {
   const data = {
     ...body,

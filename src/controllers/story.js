@@ -13,6 +13,7 @@ const {
   notificationService,
   commentService,
   bookmarkService,
+  reportService,
 } = require('../services')
 const { getObjectId } = require('../utils/getObjectId')
 
@@ -250,11 +251,19 @@ exports.updateStory = catchAsyncErrors(async (req, res) => {
 
 exports.deleteStory = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
+  const role = req.user.role
   const { storyId } = req.body
 
-  await storyService.checkStoryExistByAccountAndId(accountId, storyId)
+  role === 'admin'
+    ? await storyService.checkStoryExistById(storyId)
+    : await storyService.checkStoryExistByAccountAndId(accountId, storyId)
 
   await storyService.deleteStory(storyId)
+
+  const comments = await commentService.getCommentsByStory(storyId)
+
+  const bookmarkCollections =
+    await bookmarkService.getBookmarkCollectionsByStory(storyId)
 
   const notifications = await notificationService.getNotifications(
     {
@@ -265,11 +274,26 @@ exports.deleteStory = catchAsyncErrors(async (req, res) => {
     }
   )
 
+  const reports = await reportService.getReportsByStory(storyId)
+
+  for (comm of comments) {
+    await commentService.deleteComment(String(comm._id))
+    await commentService.deleteReplies(comm._id)
+  }
+
+  for (let collection of bookmarkCollections) {
+    await bookmarkService.deleteNotification(String(collection._id), storyId)
+  }
+
   for (let notification of notifications) {
     await notificationService.deleteNotification(
       String(notification.accountId),
       String(notification._id)
     )
+  }
+
+  for (let report of reports) {
+    await reportService.deleteReport(String(report._id))
   }
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_DELETED)

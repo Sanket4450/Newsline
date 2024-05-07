@@ -12,7 +12,10 @@ const {
   userRouter: userTopicRouter,
   adminRouter: adminTopicRouter,
 } = require('./topic')
-const { userRouter: userStoryRouter } = require('./story')
+const {
+  userRouter: userStoryRouter,
+  adminRouter: adminStoryRouter,
+} = require('./story')
 const {
   userRouter: userFaqCategoryRouter,
   adminRouter: adminFaqCategoryRouter,
@@ -49,6 +52,7 @@ userRouter.use('/reports', userReportRouter)
 
 adminRouter.use('/account', adminAccountRouter)
 adminRouter.use('/topics', adminTopicRouter)
+adminRouter.use('/stories', adminStoryRouter)
 adminRouter.use('/faq-categories', adminFaqCategoryRouter)
 adminRouter.use('/faqs', adminFaqRouter)
 adminRouter.use('/report-reasons', adminReportReasonRouter)

@@ -37,6 +37,14 @@ exports.checkBookmarkCollectionExistByAccountAndId = async (
   }
 }
 
+exports.getBookmarkCollectionsByStory = (storyId, data = { _id: 1 }) => {
+  const query = {
+    stories: getObjectId(storyId),
+  }
+
+  return DbRepo.find(collections.BOOKMARK, { query, data })
+}
+
 exports.getAllBookmarkCollections = (accountId, data = { title: 1 }) => {
   const query = {
     accountId: getObjectId(accountId),

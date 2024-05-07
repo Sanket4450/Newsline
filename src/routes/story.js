@@ -2,7 +2,7 @@ const userRouter = require('express').Router()
 const adminRouter = require('express').Router()
 const fields = require('../constants/fields')
 const validate = require('../middlewares/validate')
-const { authChecker } = require('../middlewares/auth')
+const { authChecker, authorizeRole } = require('../middlewares/auth')
 const { uploadFile } = require('../middlewares/multer')
 const formatter = require('../middlewares/formatter')
 const { storyValidation } = require('../validations')
@@ -49,4 +49,12 @@ userRouter.delete(
   storyController.deleteStory
 )
 
-module.exports = { userRouter }
+adminRouter.delete(
+  '/',
+  authChecker,
+  authorizeRole('admin'),
+  validate(storyValidation.deleteStory),
+  storyController.deleteStory
+)
+
+module.exports = { userRouter, adminRouter }

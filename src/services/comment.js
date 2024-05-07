@@ -52,6 +52,14 @@ exports.checkCommentExistWithAccountById = async (
   }
 }
 
+exports.getCommentsByStory = (storyId, data = { _id: 1 }) => {
+  const query = {
+    storyId: getObjectId(storyId),
+  }
+
+  return DbRepo.find(collections.COMMENT, { query, data })
+}
+
 exports.getComments = (body) => {
   const storyId = body.storyId
   const sortBy = body.sortBy || 'top'
@@ -223,6 +231,14 @@ exports.deleteComment = (commentId) => {
   }
 
   return DbRepo.deleteOne(collections.COMMENT, { query })
+}
+
+exports.deleteReplies = (commentId) => {
+  const query = {
+    commentId: getObjectId(commentId),
+  }
+
+  return DbRepo.deleteMany(collections.COMMENT, { query })
 }
 
 exports.toggleLike = (accountId, commentId, isLiked) => {

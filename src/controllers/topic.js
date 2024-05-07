@@ -68,6 +68,8 @@ exports.deleteTopic = catchAsyncErrors(async (req, res) => {
 
   await topicService.checkTopicExistById(topicId)
 
+  await topicService.checkTopicHasStories(topicId)
+
   await topicService.deleteTopic(topicId)
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.TOPIC_DELETED)

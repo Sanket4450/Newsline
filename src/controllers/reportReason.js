@@ -73,8 +73,9 @@ exports.deleteReportReason = catchAsyncErrors(async (req, res) => {
 
   await reportReasonService.checkReasonExistById(reportReasonId)
 
+  await reportReasonService.checkReasonInUse(reportReasonId)
+
   await reportReasonService.deleteReason(reportReasonId)
-//   await faqService.deleteFaqsByCategory(reportReasonId)
 
   return sendResponse(
     res,

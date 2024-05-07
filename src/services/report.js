@@ -33,6 +33,14 @@ exports.getReport = (query = {}, data = { _id: 1 }) => {
   return DbRepo.findOne(collections.REPORT, { query, data })
 }
 
+exports.getReportsByStory = (storyId, data = { _id: 1 }) => {
+  const query = {
+    storyId: getObjectId(storyId),
+  }
+
+  return DbRepo.find(collections.REPORT, { query, data })
+}
+
 exports.getReports = (filter) => {
   const page = filter.page || 1
   const limit = filter.limit || 10

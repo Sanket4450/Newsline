@@ -36,6 +36,30 @@ exports.getAllTopics = (data = { title: 1, iconKey: 1 }) => {
   return DbRepo.find(collections.TOPIC, { data })
 }
 
+exports.checkTopicHasStories = async (topicId) => {
+  try {
+    const query = {
+      topicId: getObjectId(topicId),
+    }
+
+    const data = {
+      _id: 1,
+    }
+
+    if (await DbRepo.findOne(collections.STORY, { query, data })) {
+      throw new ApiError(
+        messages.ERROR.TOPIC_HAS_STORIES,
+        httpStatus.BAD_REQUEST
+      )
+    }
+  } catch (error) {
+    throw new ApiError(
+      error.message,
+      error.statusCode || httpStatus.INTERNAL_SERVER_ERROR
+    )
+  }
+}
+
 exports.validateSelectedInterests = async (accountId) => {
   try {
     const topics = await exports.getAllTopics()
