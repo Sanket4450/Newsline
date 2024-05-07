@@ -50,6 +50,7 @@ const messages = {
     CANNOT_REPORT_OWN_STORY: 'Cannot report your own story',
     ALREADY_REPORTED: 'Already reported this story',
     FILE_OPERATION: 'Error in file operation',
+    COULD_NOT_DELETE_SESSIONS: 'Could not delete sessions',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',

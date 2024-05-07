@@ -1,6 +1,7 @@
 const httpStatus = require('http-status')
 const ApiError = require('../utils/ApiError')
 const messages = require('../constants/messages')
+const variables = require('../constants/variables')
 const DbRepo = require('../repos/dbRepo')
 const collections = require('../constants/collections')
 const { getObjectId } = require('../utils/getObjectId')
@@ -379,4 +380,14 @@ exports.getFollowersCount = (accountId) => {
   }
 
   return DbRepo.count(collections.ACCOUNT, { query })
+}
+
+exports.deleteExpiredSessions = () => {
+  const query = {
+    lastActive: {
+      $lte: new Date(Date.now() - variables.SESSION_CLEANUP_DURATION),
+    },
+  }
+
+  return DbRepo.deleteMany(collections.SESSION, { query })
 }

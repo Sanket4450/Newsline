@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '.env.dev' })
+require('dotenv').config()
 
 const express = require('express')
 const cors = require('cors')
@@ -9,6 +9,7 @@ const { userRouter, adminRouter } = require('./routes')
 const ApiError = require('./utils/ApiError')
 const messages = require('./constants/messages')
 const { errorConverter, errorHandler } = require('./middlewares/error')
+require('./services/cronjob')
 
 const port = process.env.PORT || 8888
 
