@@ -49,6 +49,7 @@ const messages = {
     REPORT_NOT_FOUND: 'Report not found',
     CANNOT_REPORT_OWN_STORY: 'Cannot report your own story',
     ALREADY_REPORTED: 'Already reported this story',
+    FILE_OPERATION: 'Error in file operation',
   },
   SUCCESS: {
     REGISTER_OTP_SENT: 'Registration OTP sent to your email',
