@@ -10,6 +10,7 @@ const {
   accountService,
   notificationService,
 } = require('../services')
+const ApiError = require('../utils/ApiError')
 
 exports.register = catchAsyncErrors(async (req, res) => {
   const body = req.body
@@ -73,6 +74,10 @@ exports.login = catchAsyncErrors(async (req, res) => {
   const { accountId, role } = await authService.checkAccountExistWithEmail(
     body.email
   )
+
+  if (body.isAdmin && role !== 'admin') {
+    throw new ApiError(messages.ERROR.ONLY_ADMINS_CAN_LOGIN, httpStatus.UNAUTHORIZED)
+  }
 
   await authService.checkEmailVerified(accountId)
 

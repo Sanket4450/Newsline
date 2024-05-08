@@ -5,6 +5,7 @@ const {
   passwordValidation,
   otpValidation,
   stringReqValidation,
+  booleanValidation,
 } = require('./common')
 
 const register = {
@@ -25,6 +26,7 @@ const login = {
   body: joi.object({
     email: emailValidation,
     password: passwordValidation,
+    isAdmin: booleanValidation
   }),
 }
 

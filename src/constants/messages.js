@@ -7,6 +7,7 @@ const messages = {
     ACCOUNT_NOT_EXIST_WITH_EMAIL: 'Account does not exist with this email',
     INCORRECT_PASSWORD: 'Incorrect password',
     ACCOUNT_NOT_FOUND: 'Account not found',
+    ONLY_ADMINS_CAN_LOGIN: 'Only administrators have access to login',
     ERROR_SENDING_MAIL: 'Error sending mail',
     INVALID_REGISTER_OTP: 'Invalid registeration OTP',
     EMAIL_NOT_VERIFIED: 'Email is not verified',
