@@ -54,6 +54,10 @@ const accountSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'Language',
     },
+    isEditor: {
+      type: Boolean,
+      default: false,
+    },
     isVerified: {
       type: Boolean,
       default: false,

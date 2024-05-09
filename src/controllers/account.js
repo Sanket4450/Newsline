@@ -32,6 +32,7 @@ exports.getAccount = catchAsyncErrors(async (req, res) => {
     bio: 1,
     website: 1,
     language: 1,
+    isEditor: 1,
     isVerified: 1,
     _id: 1,
   })
@@ -82,6 +83,7 @@ exports.setAccount = catchAsyncErrors(async (req, res) => {
     bio: 1,
     website: 1,
     language: 1,
+    isEditor: 1,
     isVerified: 1,
     _id: 0,
   })
@@ -139,6 +141,7 @@ exports.updateAccount = catchAsyncErrors(async (req, res) => {
     bio: 1,
     website: 1,
     language: 1,
+    isEditor: 1,
     isVerified: 1,
     _id: 0,
   })
@@ -519,6 +522,7 @@ exports.updateUserType = catchAsyncErrors(async (req, res) => {
 
   const updateData = {
     type: userType,
+    isEditor: userType === 'author' || userType === 'publisher',
     isVerified: userType === 'publisher',
   }
 
