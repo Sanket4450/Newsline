@@ -32,7 +32,6 @@ exports.getAccount = catchAsyncErrors(async (req, res) => {
     bio: 1,
     website: 1,
     language: 1,
-    isEditor: 1,
     isVerified: 1,
     _id: 1,
   })
@@ -83,7 +82,6 @@ exports.setAccount = catchAsyncErrors(async (req, res) => {
     bio: 1,
     website: 1,
     language: 1,
-    isEditor: 1,
     isVerified: 1,
     _id: 0,
   })
@@ -141,7 +139,6 @@ exports.updateAccount = catchAsyncErrors(async (req, res) => {
     bio: 1,
     website: 1,
     language: 1,
-    isEditor: 1,
     isVerified: 1,
     _id: 0,
   })
@@ -364,6 +361,7 @@ exports.getProfileInfo = catchAsyncErrors(async (req, res) => {
     profileImageKey: 1,
     bio: 1,
     website: 1,
+    isEditor: 1,
     isVerified: 1,
     followingAccounts: 1,
   })
@@ -420,7 +418,7 @@ exports.getProfileInfo = catchAsyncErrors(async (req, res) => {
     res,
     httpStatus.OK,
     { profileInfo },
-    messages.SUCCESS.ACCOUNT_INFO_FETCHED
+    messages.SUCCESS.PROFILE_INFO_FETCHED
   )
 })
 

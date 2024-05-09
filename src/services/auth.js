@@ -89,7 +89,7 @@ exports.sendRegisterOtp = async (email) => {
 
   await emailService.sendRegisterOTP(emailOptions)
 
-  return { otp }
+  return otp
 }
 
 exports.createAccount = async (body) => {

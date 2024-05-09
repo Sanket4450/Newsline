@@ -76,27 +76,43 @@ exports.login = catchAsyncErrors(async (req, res) => {
   )
 
   if (body.isAdmin && role !== 'admin') {
-    throw new ApiError(messages.ERROR.ONLY_ADMINS_CAN_LOGIN, httpStatus.UNAUTHORIZED)
+    throw new ApiError(
+      messages.ERROR.ONLY_ADMINS_CAN_LOGIN,
+      httpStatus.UNAUTHORIZED
+    )
   }
 
   await authService.loginAccount(body)
 
-  const { isProfileCompleted } = await accountService.getAccountById(
-    accountId,
-    {
+  const { isEmailVerified, isProfileCompleted } =
+    await accountService.getAccountById(accountId, {
       isEmailVerified: 1,
       isProfileCompleted: 1,
-    }
-  )
+    })
 
-  const accessToken = tokenService.generateAccessToken(accountId, role)
+  let otp
 
-  await sessionService.createSession(accountId, accessToken)
+  if (!isEmailVerified) {
+    otp = await authService.sendRegisterOtp(body.email)
+
+    await accountService.updateAccountById(accountId, { otp })
+  }
+
+  const registerToken = !isEmailVerified
+    ? tokenService.generateRegisterToken(accountId)
+    : null
+
+  const accessToken = isEmailVerified
+    ? tokenService.generateAccessToken(accountId, role)
+    : null
+
+  isEmailVerified &&
+    (await sessionService.createSession(accountId, accessToken))
 
   return sendResponse(
     res,
     httpStatus.OK,
-    { accessToken, isProfileCompleted },
+    { accessToken, isEmailVerified, isProfileCompleted },
     messages.SUCCESS.ACCOUNT_LOGGED_IN
   )
 })
