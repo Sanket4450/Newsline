@@ -250,6 +250,31 @@ exports.updateStory = catchAsyncErrors(async (req, res) => {
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.STORY_UPDATED)
 })
 
+exports.getAdminStory = catchAsyncErrors(async (req, res) => {
+  const { storyId } = req.params
+
+  await storyService.checkStoryExistById(storyId)
+
+  let [story] = await storyService.getFullStory(storyId)
+
+  story.coverImageUrl = story.coverImageKey
+    ? await storageService.getFileUrl(story.coverImageKey)
+    : null
+  story.account.profileImageUrl = story.account.profileImageKey
+    ? await storageService.getFileUrl(story.account.profileImageKey)
+    : null
+
+  delete story.coverImageKey
+  delete story.account.profileImageKey
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { story },
+    messages.SUCCESS.STORY_DATA_FETCHED
+  )
+})
+
 exports.deleteStory = catchAsyncErrors(async (req, res) => {
   const accountId = req.user.accountId
   const role = req.user.role

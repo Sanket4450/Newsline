@@ -49,6 +49,14 @@ userRouter.delete(
   storyController.deleteStory
 )
 
+adminRouter.get(
+  '/:storyId',
+  authChecker,
+  authorizeRole('admin'),
+  validate(storyValidation.getStory),
+  storyController.getAdminStory
+)
+
 adminRouter.delete(
   '/',
   authChecker,
