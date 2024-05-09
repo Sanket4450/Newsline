@@ -80,6 +80,7 @@ exports.getStory = catchAsyncErrors(async (req, res) => {
 
   let moreStories = await storyService.getStories({
     accountId: String(story.account.id),
+    notStoryId: storyId,
     limit: 10,
   })
 

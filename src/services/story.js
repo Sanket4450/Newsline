@@ -107,6 +107,7 @@ exports.getStories = (body) => {
   const accountId = body.accountId ? getObjectId(body.accountId) : null
   const topicId = body.topicId ? getObjectId(body.topicId) : null
   const tagTitle = body.tagTitle || null
+  const notStoryId = body.notStoryId ? getObjectId(body.notStoryId) : null
   const inclusiveAccounts = body.inclusiveAccounts || null
   const exclusiveAccounts = body.exclusiveAccounts || null
   const bottomTimestamp = body.bottomTimestamp
@@ -144,6 +145,7 @@ exports.getStories = (body) => {
         ...(accountId && { accountId }),
         ...(topicId && { topicId }),
         ...(tagTitle && { tags: tagTitle }),
+        ...(notStoryId && { _id: { $ne: notStoryId } }),
         ...(inclusiveAccounts && { accountId: { $in: inclusiveAccounts } }),
         ...(exclusiveAccounts && { accountId: { $nin: exclusiveAccounts } }),
         ...(body.bottomTimestamp && {
