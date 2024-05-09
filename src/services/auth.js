@@ -120,22 +120,28 @@ exports.verifyRegisterOtp = (otp, registerOtp) => {
   }
 }
 
-exports.loginAccount = async (body) => {
-  Logger.info(`Inside loginAccount => body = ${body}`)
+exports.matchPassword = async (password, hashedPassword) => {
+  Logger.info(
+    `Inside matchPassword => password = ${password} hashedPassword = ${hashedPassword}`
+  )
 
-  const data = {
-    role: 1,
-    password: 1,
-  }
-
-  const account = await accountService.getAccount({ email: body.email }, data)
-
-  if (!(await bcrypt.compare(body.password, account.password))) {
+  if (!(await bcrypt.compare(password, hashedPassword))) {
     throw new ApiError(
       messages.ERROR.INCORRECT_PASSWORD,
       httpStatus.UNAUTHORIZED
     )
   }
+}
+
+exports.loginAccount = async (body) => {
+  Logger.info(`Inside loginAccount => body = ${body}`)
+
+  const account = await accountService.getAccount(
+    { email: body.email },
+    { password: 1 }
+  )
+
+  await exports.matchPassword(body.password, account.password)
 }
 
 exports.forgotPasswordWithEmail = async (email) => {

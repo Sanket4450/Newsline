@@ -218,3 +218,26 @@ exports.resetPassword = catchAsyncErrors(async (req, res) => {
 
   return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.PASSWORD_RESET)
 })
+
+exports.resetOldPassword = catchAsyncErrors(async (req, res) => {
+  const accountId = req.user.accountId
+  const body = req.body
+
+  const { password } = await accountService.checkAccountExistById(accountId, {
+    password: 1,
+  })
+
+  await authService.matchPassword(body.oldPassword, password)
+
+  await authService.resetNewPassword(accountId, body.password)
+
+  await sessionService.deleteAllSessions(accountId)
+
+  await notificationService.createNotification(accountId, {
+    event: 'setupAccount',
+    iconKey: notifications.USER,
+    title: messages.NOTIFICATION.PASSWORD_UPDATED,
+  })
+
+  return sendResponse(res, httpStatus.OK, {}, messages.SUCCESS.PASSWORD_RESET)
+})

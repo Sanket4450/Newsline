@@ -56,6 +56,13 @@ const resetPassword = {
   }),
 }
 
+const resetOldPassword = {
+  body: joi.object({
+    oldPassword: passwordValidation,
+    password: passwordValidation,
+  }),
+}
+
 module.exports = {
   register,
   resendRegisterOtp,
@@ -64,4 +71,5 @@ module.exports = {
   forgotPassword,
   verifyResetPasswordOtp,
   resetPassword,
+  resetOldPassword,
 }

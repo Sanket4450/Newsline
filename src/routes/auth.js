@@ -37,4 +37,10 @@ userRouter.post(
   authController.resetPassword
 )
 
+userRouter.post(
+  '/reset-old-password',
+  validate(authValidation.resetOldPassword),
+  authController.resetOldPassword
+)
+
 module.exports = { userRouter }
