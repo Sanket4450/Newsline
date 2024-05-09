@@ -10,6 +10,12 @@ userRouter.post(
 )
 
 userRouter.post(
+  '/resend-register-otp',
+  validate(authValidation.resendRegisterOtp),
+  authController.resendRegisterOtp
+)
+
+userRouter.post(
   '/verify-register-otp',
   validate(authValidation.verifyRegisterOtp),
   authController.verifyRegisterOtp

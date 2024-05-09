@@ -15,6 +15,12 @@ const register = {
   }),
 }
 
+const resendRegisterOtp = {
+  body: joi.object({
+    email: emailValidation,
+  }),
+}
+
 const verifyRegisterOtp = {
   body: joi.object({
     otp: otpValidation,
@@ -26,7 +32,7 @@ const login = {
   body: joi.object({
     email: emailValidation,
     password: passwordValidation,
-    isAdmin: booleanValidation
+    isAdmin: booleanValidation,
   }),
 }
 
@@ -52,6 +58,7 @@ const resetPassword = {
 
 module.exports = {
   register,
+  resendRegisterOtp,
   verifyRegisterOtp,
   login,
   forgotPassword,
