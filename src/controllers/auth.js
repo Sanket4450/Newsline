@@ -17,10 +17,39 @@ exports.register = catchAsyncErrors(async (req, res) => {
 
   await authService.checkAccountNotExistWithEmail(body.email)
 
-  const { otp } = await authService.sendRegisterOtp(body.email)
-  body.otp = otp
+  body.otp = await authService.sendRegisterOtp(body.email)
 
   const { accountId } = await authService.createAccount(body)
+
+  const registerToken = tokenService.generateRegisterToken(accountId)
+
+  return sendResponse(
+    res,
+    httpStatus.OK,
+    { registerToken },
+    messages.SUCCESS.REGISTER_OTP_SENT
+  )
+})
+
+exports.resendRegisterOtp = catchAsyncErrors(async (req, res) => {
+  const body = req.body
+
+  const { accountId } = await authService.checkAccountExistWithEmail(body.email)
+
+  const { isEmailVerified } = await accountService.getAccountById(accountId, {
+    isEmailVerified: 1,
+  })
+
+  if (isEmailVerified) {
+    throw new ApiError(
+      messages.ERROR.EMAIL_ALREADY_VERIFIED,
+      httpStatus.CONFLICT
+    )
+  }
+
+  const otp = await authService.sendRegisterOtp(body.email)
+
+  await accountService.updateAccountById(accountId, { otp })
 
   const registerToken = tokenService.generateRegisterToken(accountId)
 
@@ -90,10 +119,8 @@ exports.login = catchAsyncErrors(async (req, res) => {
       isProfileCompleted: 1,
     })
 
-  let otp
-
   if (!isEmailVerified) {
-    otp = await authService.sendRegisterOtp(body.email)
+    const otp = await authService.sendRegisterOtp(body.email)
 
     await accountService.updateAccountById(accountId, { otp })
   }
@@ -112,7 +139,12 @@ exports.login = catchAsyncErrors(async (req, res) => {
   return sendResponse(
     res,
     httpStatus.OK,
-    { accessToken, isEmailVerified, isProfileCompleted },
+    {
+      ...(!!registerToken && { registerToken }),
+      ...(!!accessToken && { accessToken }),
+      isEmailVerified,
+      isProfileCompleted,
+    },
     messages.SUCCESS.ACCOUNT_LOGGED_IN
   )
 })

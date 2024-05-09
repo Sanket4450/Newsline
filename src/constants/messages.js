@@ -10,6 +10,7 @@ const messages = {
     ONLY_ADMINS_CAN_LOGIN: 'Only administrators have access to login',
     ERROR_SENDING_MAIL: 'Error sending mail',
     INVALID_REGISTER_OTP: 'Invalid registeration OTP',
+    EMAIL_ALREADY_VERIFIED: 'Email is already verified',
     EMAIL_NOT_VERIFIED: 'Email is not verified',
     INVALID_RESET_PASSWORD_OTP: 'Invalid reset password OTP',
     SOMETHING_WENT_WRONG: 'Something went wrong, please try again',
