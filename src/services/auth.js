@@ -77,21 +77,6 @@ exports.checkAccountExistWithEmail = async (email) => {
   return { accountId: String(account._id), role: account.role }
 }
 
-exports.checkEmailVerified = async (accountId) => {
-  Logger.info(`Inside checkEmailVerified => account = ${accountId}`)
-
-  const { isEmailVerified } = await accountService.getAccountById(accountId, {
-    isEmailVerified: 1,
-  })
-
-  if (!isEmailVerified) {
-    throw new ApiError(
-      messages.ERROR.EMAIL_NOT_VERIFIED,
-      httpStatus.UNAUTHORIZED
-    )
-  }
-}
-
 exports.sendRegisterOtp = async (email) => {
   Logger.info(`Inside sendRegisterOtp => email = ${email}`)
 

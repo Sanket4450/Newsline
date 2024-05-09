@@ -79,13 +79,12 @@ exports.login = catchAsyncErrors(async (req, res) => {
     throw new ApiError(messages.ERROR.ONLY_ADMINS_CAN_LOGIN, httpStatus.UNAUTHORIZED)
   }
 
-  await authService.checkEmailVerified(accountId)
-
   await authService.loginAccount(body)
 
   const { isProfileCompleted } = await accountService.getAccountById(
     accountId,
     {
+      isEmailVerified: 1,
       isProfileCompleted: 1,
     }
   )
