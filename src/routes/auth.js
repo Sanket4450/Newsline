@@ -1,5 +1,6 @@
 const userRouter = require('express').Router()
 const validate = require('../middlewares/validate')
+const { authChecker } = require('../middlewares/auth')
 const { authValidation } = require('../validations')
 const { authController } = require('../controllers')
 
@@ -39,6 +40,7 @@ userRouter.post(
 
 userRouter.post(
   '/reset-old-password',
+  authChecker,
   validate(authValidation.resetOldPassword),
   authController.resetOldPassword
 )
