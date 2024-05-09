@@ -47,9 +47,9 @@ exports.resendRegisterOtp = catchAsyncErrors(async (req, res) => {
     )
   }
 
-  const otp = await authService.sendRegisterOtp(body.email)
+  const registerOtp = await authService.sendRegisterOtp(body.email)
 
-  await accountService.updateAccountById(accountId, { otp })
+  await accountService.updateAccountById(accountId, { registerOtp })
 
   const registerToken = tokenService.generateRegisterToken(accountId)
 
@@ -120,9 +120,9 @@ exports.login = catchAsyncErrors(async (req, res) => {
     })
 
   if (!isEmailVerified) {
-    const otp = await authService.sendRegisterOtp(body.email)
+    const registerOtp = await authService.sendRegisterOtp(body.email)
 
-    await accountService.updateAccountById(accountId, { otp })
+    await accountService.updateAccountById(accountId, { registerOtp })
   }
 
   const registerToken = !isEmailVerified
