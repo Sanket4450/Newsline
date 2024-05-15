@@ -231,8 +231,6 @@ exports.resetOldPassword = catchAsyncErrors(async (req, res) => {
 
   await authService.resetNewPassword(accountId, body.password)
 
-  await sessionService.deleteAllSessions(accountId)
-
   await notificationService.createNotification(accountId, {
     event: 'setupAccount',
     iconKey: notifications.USER,
