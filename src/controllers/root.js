@@ -9,6 +9,7 @@ const {
   notificationService,
   accountService,
   tagService,
+  bookmarkService
 } = require('../services')
 const { getObjectId } = require('../utils/getObjectId')
 
@@ -49,7 +50,17 @@ exports.getHomeData = catchAsyncErrors(async (req, res) => {
       delete story.coverImageKey
       delete story.account.profileImageKey
 
-      return story
+      const storyId = story.id;
+
+      let bookmarkCollections = await bookmarkService.getAllBookmarkCollections(accountId,{ stories: 1} )
+      
+      const isSaved = bookmarkCollections.some((collection) =>
+        collection?.stories?.some((storyObjectId) =>
+          storyObjectId.equals(storyId)
+        )
+      )
+
+      return { ...story, isSaved };
     })
   )
 
@@ -68,7 +79,17 @@ exports.getHomeData = catchAsyncErrors(async (req, res) => {
       delete story.coverImageKey
       delete story.account.profileImageKey
 
-      return story
+      const storyId = story.id;
+
+      let bookmarkCollections = await bookmarkService.getAllBookmarkCollections(accountId,{ stories: 1} )
+      
+      const isSaved = bookmarkCollections.some((collection) =>
+        collection?.stories?.some((storyObjectId) =>
+          storyObjectId.equals(storyId)
+        )
+      )
+
+      return { ...story, isSaved };
     })
   )
 
@@ -187,7 +208,17 @@ exports.getDiscoverData = catchAsyncErrors(async (req, res) => {
       delete story.coverImageKey
       delete story.account.profileImageKey
 
-      return story
+      const storyId = story.id;
+
+      let bookmarkCollections = await bookmarkService.getAllBookmarkCollections(accountId,{ stories: 1} )
+      
+      const isSaved = bookmarkCollections.some((collection) =>
+        collection?.stories?.some((storyObjectId) =>
+          storyObjectId.equals(storyId)
+        )
+      )
+
+      return { ...story, isSaved };
     })
   )
 
@@ -204,7 +235,17 @@ exports.getDiscoverData = catchAsyncErrors(async (req, res) => {
       delete story.coverImageKey
       delete story.account.profileImageKey
 
-      return story
+      const storyId = story.id;
+
+      let bookmarkCollections = await bookmarkService.getAllBookmarkCollections(accountId,{ stories: 1} )
+      
+      const isSaved = bookmarkCollections.some((collection) =>
+        collection?.stories?.some((storyObjectId) =>
+          storyObjectId.equals(storyId)
+        )
+      )
+
+      return { ...story, isSaved };
     })
   )
 
